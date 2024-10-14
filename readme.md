@@ -235,13 +235,15 @@ config json file
   -pool system eg for vegetation - define say 50 trees and thousands of points and system will place vegetation in front of camera and hide those further away
 
 *Common objects*    
-Openworld includes some common
+Openworld includes some commonly used objects such as fire, water, flares, smoke and sky with some like the ones available in threejs. Many of these are shaders 
+
 ![image](https://github.com/user-attachments/assets/ee950d2f-7ca7-4a2f-8397-6bf3a9d8269d)
 
 ![image](https://github.com/user-attachments/assets/4f4499fd-e278-4457-8810-71d83fd11289)
 
 some shaders like water, fire, flares, skymat, smoke
-basic multi player
+
+*Multi player*. 
   - just position, turn and who, and simple actions eg way
        also speech - php
 
