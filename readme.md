@@ -244,10 +244,16 @@ Openworld includes some commonly used objects such as fire, water, flares, smoke
 some shaders like water, fire, flares, skymat, smoke
 
 *Multi player*. 
-  - just position, turn and who, and simple actions eg way
+Demos include multi player though not built into the gaming engine. Has a client class with sessions and player info but the actual game play is specific for each demo
+Very simple and just broadcasts a logged in players  position and turn and a player action like 'wave'. Also allows chat and whos one. The server side is written in php with mysql .  Possibly in the future could write game server in flutter 
+
+and who, and simple actions eg way
        also speech - php
 
-hotloading
+*Hotloading*  
+Demos include hotloading function where everything you put in that hotload function will be reloaded. Eg a set of grass objects 
+
+
 
 -demos made with blender modelling tool
   -mesh editing, animations, texturing in blender
