@@ -3,12 +3,15 @@
    -converted to flutter threedart
      -works for ios, android and web 
         -will add windows and linux
+     -use of hotloading
+        - can say add grass around your camera and see it straight away
   -includes two game demos
      -Second temple set in 72ad before roman invasion and tasked with finding the ark so can defeat the coming enemies
      -Lindos 1522 set in 1522 before sulamain invasion
         -uncover a spy to save lindos
      -models are all blender 
        -all opensource materials
+       
   only include what most openworlds would want
     -not all have 
        inventory
@@ -67,9 +70,10 @@
    
  sound system
     -can load pool of audio taht can switch off and mute when app is deactivated
+    -typical things like volume, looping
 
-
- selection system so can select an item
+ selection system so can select an item eg a wallet on the ground
+ 
  usage of delays eg have actor jump, then 5 seconds later play laugh sound
  persistence
    can store data so when restart app will remember game state
@@ -81,7 +85,7 @@
     -multipel maps and will choose the one at end so can have maps eg for a city and a global map
     -exmaples of display of maps in two demos
 music where cna specify mutple tunes that play with a random probability
-config file
+config json file
   -can define objects as a text file and set position for the defined object multiple times
   -pool system eg for vegetation - define say 50 trees and thousands of points and system will place vegetation in front of camera and hide those further away
     
@@ -90,6 +94,8 @@ basic multi player
   - just position, turn and who, and simple actions eg way
        also speech - php
 
+-demos made with blender modelling tool
+  -mesh editing, animations, texturing in blender
  
 A minimalistic framework to make it easier creating an multi user open world with threejs for both smartphones and desktops
 
