@@ -181,12 +181,20 @@ The allows for a sequence of actions to possibly be performed such as have an ac
 usage of delays eg have actor jump, then 5 seconds later play laugh sound
 
 
- persistence
-   can store data so when restart app will remember game state
- rooms where define an area for a room and 
+*Persistence*  
+It is possible to store data in a persistent way so that when an app is closed all game information can be retrieved. For example rememeber the state of the weather.
+
+can store data so when restart app will remember game state
+
+*Rooms*  
+Openworld allows rooms to be defined as having a central x,y point with a rectangle having distance from the point. The room can have a looping sound associated with it such an ambient shop sound. it can also ahve a random intermittent sound such as a smithy hammering something occasionly. It possible to define that the room is indoors and if in the room rain will not appear. It also possible to define a distance trigger for the room so that when you enter a room you can trigger and event such as shop keeping saying hello.
+
+rooms where define an area for a room and 
     can trigger entry and exit of room eg have butcher say hello when someone enters
     room sound eg sound fo a smithy when enter
     indoors when indoors then not effected by rain
+
+    
  maps where just specify two points on a map ie pixel pos and world pos and can tranlate your position onto map
     -multipel maps and will choose the one at end so can have maps eg for a city and a global map
     -exmaples of display of maps in two demos
