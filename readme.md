@@ -1,5 +1,8 @@
 # Open World for dart
--orignally converted from  openworld repositor .. for threejs
+This is a flutter based gaming engine based upon our existing Openworld repository https://github.com/forthtemple/openworldthreejs which uses threejs. The gaming engine uses three_dart (https://github.com/Knightro63/three_dart originally based on https://pub.dev/packages/three_dart) so it is easy to convert threejs code to three_dart. Because it uses flutter it has the advantage of being cross platform working on Android, iOS, web, Linux and windows and also has hotloading which the game engine takes advantage of being able to add 3D objects to a scene on the fly.
+
+This gaming engine includes two demo games.
+
    -converted to flutter threedart
      -works for ios, android and web 
         -will add windows and linux
