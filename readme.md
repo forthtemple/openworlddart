@@ -1,6 +1,6 @@
 # Open World for dart
 **Intro**  
-This is a flutter based gaming engine based upon our existing Openworld repository https://github.com/forthtemple/openworldthreejs which uses threejs. The gaming engine uses three_dart (https://github.com/Knightro63/three_dart originally based on https://pub.dev/packages/three_dart) so it is easy to convert threejs code to three_dart. Because it uses flutter it has the advantage of being cross platform working on Android, iOS, web, Linux and windows and also has hotloading which the game engine takes advantage of being able to add 3D objects to a scene on the fly.
+This is a flutter based gaming engine based upon our existing Openworld repository https://github.com/forthtemple/openworldthreejs which uses threejs. The gaming engine uses three_dart (https://github.com/Knightro63/three_dart (is more up to date then three_dart on pub.dev) originally based on https://pub.dev/packages/three_dart) so it is easy to convert threejs code to three_dart. Because it uses flutter it has the advantage of being cross platform working on Android, iOS, web, Linux and windows and also has hotloading which the game engine takes advantage of being able to add 3D objects to a scene on the fly.
 
    -converted to flutter threedart
      -works for ios, android and web 
@@ -10,7 +10,11 @@ This is a flutter based gaming engine based upon our existing Openworld reposito
      -becauses uses threedart largely compatible with threejs so easy to port existing threejs
      
 This gaming engine includes two demo games with full source and all resources including blender models, sound, textures freely available in this repository.
-One game is set in Jerusalem at the Second Temple 72AD just before a roman invasion.  A second game is set in Lindos, Rhodes south of Greece in 1522 just before Sulamains invasion. Both games are available on iTunes.
+One game is set in Jerusalem at the Second Temple 72AD just before a roman invasion. 
+
+<img src="https://github.com/user-attachments/assets/87d3e8a2-fd28-428f-807e-733b0f1bbef2" width="400">
+
+A second game is set in Lindos, Rhodes south of Greece in 1522 just before Sulamains invasion. Both games are available on iTunes.
 
   -includes two game demos
      -Second temple set in 72ad before roman invasion
