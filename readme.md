@@ -2,13 +2,14 @@
 **Intro**  
 A flutter based gaming engine based upon my existing openworld repository https://github.com/forthtemple/openworldthreejs which uses threejs. The gaming engine uses the three_dart (https://github.com/Knightro63/three_dart (is more up to date then three_dart on pub.dev) originally based on https://pub.dev/packages/three_dart) package making it easy to convert threejs code to three_dart. Because it uses flutter games created are cross platform working on Android, iOS, web, Linux and windows. And with the flutter feature of hotloading it allows 3D objects to be added to a scene on the fly making game design easier.
 
+<!--
    -converted to flutter threedart
      -works for ios, android and web 
         -will add windows and linux
      -use of hotloading
         - can say add grass around your camera and see it straight away
      -becauses uses threedart largely compatible with threejs so easy to port existing threejs
-     
+-->     
 This gaming engine includes two demo games with full source and all resources including blender models, sound, textures being freely available in this repository.
 One game is set in Jerusalem at the Second Temple 72AD just before a roman invasion. 
 
@@ -16,6 +17,7 @@ One game is set in Jerusalem at the Second Temple 72AD just before a roman invas
 
 A second game is set in Lindos, Rhodes south of Greece in 1522 just before Sulamains invasion. Both games are available on iTunes.
 
+<!--
   -includes two game demos
      -Second temple set in 72ad before roman invasion
      https://apps.apple.com/us/app/ark-uncovered/id6593662011
@@ -27,10 +29,10 @@ A second game is set in Lindos, Rhodes south of Greece in 1522 just before Sulam
         links on itunes and android
      -models are all blender 
        -all opensource materials
-       
+-->       
 The philosphy of the engine is to not let the engine get bloated,  only including features that typical openworld games would require on a smartphone or desktop. For example most openworld games will have animated actors, such as a person or monster walking. Most would include models,  planes and sprites, sound, light, weather, time of day, maps, music and rooms. But not all would include, for example, a players inventory system or a combat system or a monetary system. Therefore these features are excluded.
 
-      
+<!--      
   Engine not too bloated - only include what most openworld would want
     -not all have 
        inventory
@@ -46,6 +48,7 @@ The philosphy of the engine is to not let the engine get bloated,  only includin
        -music
        -rooms
       -demo  show how tailor to game eg lindos 1522 has its own combat system that is not part of openworld
+-->
 
 Alongside threedarts existing 3D functions such as loading models, lighting, texturing, shaders it includes functions specifically useful in openword games such as:
 
