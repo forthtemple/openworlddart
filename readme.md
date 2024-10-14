@@ -3,29 +3,51 @@
    -converted to flutter threedart
      -works for ios, android and web 
         -will add windows and linux
-  -includes two demos
+  -includes two game demos
      -Second temple set in 72ad before roman invasion and tasked with finding the ark so can defeat the coming enemies
      -Lindos 1522 set in 1522 before sulamain invasion
         -uncover a spy to save lindos
      -models are all blender 
        -all opensource materials
-
+  only include what most openworlds would want
+    -not all have 
+       inventory
+       combat system
+       shop system
+    -but most will have terrains with a surface to walk on, walls not want to go through and roof
+       -animated objects, models, planes sprites
+       -sound
+       -light
+       -weather
+       -time of day
+       -maps
+       -music
+       -rooms
+      -demos show how tailor to game eg lindos 1522 has its own combat system that is not part of openworld
+      
  openworld engine threedart loading of
  animated actors
    ability for actor wield objects
    share animations between actors with same skeleton
+ sprites, planes, text   
  models eg terrain
- sprites, planes, text
- collision system with a main terrain which is used as surface, walls and roofs
+   collision system with a main terrain which is used as surface, walls and roofs
     -eg if raining and roof above know not to show rain
     -walls cannot walk into
       -ray intersect
- object hide if distance way, placement on surface, turn, scale, texturing
+    surface place objects on the terrain eg a rock  
+ spatial abilities like
+    placement on surface, turn, scale, texturing
+    object hide if distance way from camera
     -object lerping between two points
     -placing object in front of camera
-  trigger system so if certain distance will trigger 
-   -trigger if touch an object
-   -custom triggers eg trigger for when an npc dies   
+    -turn lerp eg if faces you isnt sudden
+ trigger system 
+   -if certain distance will trigger eg if go near a monster cna make attack
+   -trigger if click/touch an object
+      -eg click on a wallet on the ground
+   -custom triggers 
+      eg your own trigger for when an npc dies   
  movement system
    -with flutter joystick or keyboard on web
      -works on keyboard or screenonly
