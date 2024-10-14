@@ -28,7 +28,17 @@
    -custom triggers eg trigger for when an npc dies
  selection system so can select an item
  usage of delays eg have actor jump, then 5 seconds later play laugh sound
- 
+ rooms where define an area for a room and 
+    can trigger entry and exit of room eg have butcher say hello when someone enters
+    room sound eg sound fo a smithy when enter
+    indoors when indoors then not effected by rain
+ maps where just specify two points on a map ie pixel pos and world pos and can tranlate your position onto map
+    -multipel maps and will choose the one at end so can have maps eg for a city and a global map
+    -exmaples of display of maps in two demos
+music where cna specify mutple tunes that play with a random probability
+
+    
+    
  
 A minimalistic framework to make it easier creating an multi user open world with threejs for both smartphones and desktops
 
