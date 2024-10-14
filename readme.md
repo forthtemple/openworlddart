@@ -27,6 +27,7 @@ A second game is set in Lindos, Rhodes south of Greece in 1522 just before Sulam
         links on itunes and android
      -Lindos 1522 set in 1522 before sulamain invasion
        https://apps.apple.com/us/app/lindos-1522/id6736712620
+       https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.rhodes3d
         -uncover a spy to save lindos
         links on itunes and android
      -models are all blender 
