@@ -1,4 +1,15 @@
-# Open World for threejs
+# Open World for dart
+-based on openworld repositor .. for threejs
+   -converted to flutter threedart
+     -works for ios, android and web 
+        -will add windows and linux
+  -includes two demos
+     -Second temple set in 72ad before roman invasion and tasked with finding the ark so can defeat the coming enemies
+     -Lindos 1522 set in 1522 before sulamain invasion
+        -uncover a spy to save lindos
+     -models are all blender 
+       -all opensource materials
+     
 A minimalistic framework to make it easier creating an multi user open world with threejs for both smartphones and desktops
 
 To demonstrate the framework, a demo has been made for the Second Temple, the temple that was at the center of judaism before 77AD. It is where the dome of the rock currently stands on the temple mount in Jerusalem. In the demo you can explore the Second Temple. This framework also includes the original blender models for the temple and the actors in the demo. It also demonstrates a multi user server. The demo should work on smartphone browsers (tested on iPhone and iPad 9.3) and desktops.
