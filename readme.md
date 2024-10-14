@@ -26,11 +26,13 @@
   trigger system so if certain distance will trigger 
    -trigger if touch an object
    -custom triggers eg trigger for when an npc dies   
-   
+ movement system
+   -with flutter joystick or keyboard on web
+     -works on keyboard or screenonly
  mob system
     ability to put text on objects eg speech for actors
-    chatter
-    speech
+       chatter
+       speech
     random walking around point
     movingto
 
@@ -47,6 +49,8 @@
 
  selection system so can select an item
  usage of delays eg have actor jump, then 5 seconds later play laugh sound
+ persistence
+   can store data so when restart app will remember game state
  rooms where define an area for a room and 
     can trigger entry and exit of room eg have butcher say hello when someone enters
     room sound eg sound fo a smithy when enter
@@ -59,7 +63,11 @@ config file
   -can define objects as a text file and set position for the defined object multiple times
   -pool system eg for vegetation - define say 50 trees and thousands of points and system will place vegetation in front of camera and hide those further away
     
-    
+some shaders like water, fire, flares
+basic multi player
+  - just position, turn and who, and simple actions eg way
+       also speech - php
+
  
 A minimalistic framework to make it easier creating an multi user open world with threejs for both smartphones and desktops
 
