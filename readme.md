@@ -74,6 +74,26 @@ Alongside using threedarts existing spatial placement of objects in a scene also
 
 texturing resusing mesh and changing texture  - save space
 
+Triggers
+Openworld also includes a trigger system whereby it is easy to trigger an event if for example the camera gets a certain distance from an npc for example. For example in the following example a cat actor is loaded and a distance trigger is added where if the player goes with 4 meters of the cat it meows.
+
+    Group cat = await OPENWORLD.Actor.createActor('assets/actors/cat.glb', z:0);
+    cat.scale.set(0.01,0.01,0.01);
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(
+        cat,1,1, 0, 4);
+    OPENWORLD.Space.objTurn(cat,0);
+    scene.add(cat);
+    OPENWORLD.BaseObject.setDistanceTrigger(cat, dist: 4);
+    cat.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+      if (event.action) {
+         OPENWORLD.Sound.play(path: "sounds/meow.mp3", volume: 0.2);
+      } else {
+      }
+    });
+
+The is also a trigger if a 3D object in the scene is clicked. With the trigger you could do something like pick up a wallet.
+
+It also includes custom triggers so for example you could create a trigger when an npc dies
 
  trigger system 
    -if certain distance will trigger eg if go near a monster cna make attack
@@ -81,6 +101,8 @@ texturing resusing mesh and changing texture  - save space
       -eg click on a wallet on the ground
    -custom triggers 
       eg your own trigger for when an npc dies   
+
+      
  movement system
    -with flutter joystick or keyboard on web
      -works on keyboard or screenonly
