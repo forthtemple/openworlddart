@@ -253,10 +253,20 @@ and who, and simple actions eg way
 *Hotloading*  
 Demos include hotloading function where everything you put in that hotload function will be reloaded. Eg a set of grass objects 
 
-
+**Blender**
 
 -demos made with blender modelling tool
   -mesh editing, animations, texturing in blender
+  all availble in this respotiroy
+  
+*Terrain*    
+terrain is exported to obj, use strip
+  - seems to work better in terms of intersections
+  wall, roof surface in name show screenshot
+
+*Actors    
+actor, models are export as glb from blender
+
  
 A minimalistic framework to make it easier creating an multi user open world with threejs for both smartphones and desktops
 
