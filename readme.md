@@ -151,13 +151,20 @@ Time of day can be specified using a skymat shader that allows for specifying th
 time system
    night and day - light
 
+*Light*  
+Openworld includes features like specifying that a light should be switched on at night and turned off during the day. Also allows light to flicker and also to lerp turning a light on so its not sudden.
 
 light system
    flicker, view only night or day
-   
- sound system
+
+*Sound*  
+Sound system includes a pool of flutter audioplayers which can be reused when its finished playing. The pool also allows all audioplayers to be silenced when close the game and reactivated when the game is restarted. The sound system also includes features like volume, looping, fading and also delay.
+
+sound system
     -can load pool of audio taht can switch off and mute when app is deactivated
     -typical things like volume, looping
+
+*Object Selection*  
 
  selection system so can select an item eg a wallet on the ground
  
