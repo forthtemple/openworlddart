@@ -194,11 +194,20 @@ rooms where define an area for a room and
     room sound eg sound fo a smithy when enter
     indoors when indoors then not effected by rain
 
-    
+*Maps*  
+Openworld has maps where it can show your position on a map. It allows multiple maps where you can have maps for say a city and then a larger map for wilderness for example. Each map is an image and all you do is specify two points per map with a pixel position and a corresponding world position. With the two points it possible to calculate the image position from the world position.
+
+<img src="https://github.com/user-attachments/assets/816b8b2d-b8d5-4a8c-80a2-e73cb7077fc4" width="350">
+
  maps where just specify two points on a map ie pixel pos and world pos and can tranlate your position onto map
     -multipel maps and will choose the one at end so can have maps eg for a city and a global map
     -exmaples of display of maps in two demos
+
+*Music*  
+Possible to specify multiple songs to play in the game. Possible to have multiple songs and specify the probability a song will play
+
 music where cna specify mutple tunes that play with a random probability
+
 config json file
   -can define objects as a text file and set position for the defined object multiple times
   -pool system eg for vegetation - define say 50 trees and thousands of points and system will place vegetation in front of camera and hide those further away
