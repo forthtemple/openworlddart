@@ -13,6 +13,7 @@
  openworld engine threedart loading of
  animated actors
    ability for actor wield objects
+   share animations between actors with same skeleton
  models eg terrain
  sprites, planes, text
  collision system with a main terrain which is used as surface, walls and roofs
@@ -22,13 +23,17 @@
  object hide if distance way, placement on surface, turn, scale, texturing
     -object lerping between two points
     -placing object in front of camera
+  trigger system so if certain distance will trigger 
+   -trigger if touch an object
+   -custom triggers eg trigger for when an npc dies   
+   
  mob system
     ability to put text on objects eg speech for actors
     chatter
     speech
     random walking around point
     movingto
-    
+
  weather system
    wind, rain, fog, cloud
  time system
@@ -39,9 +44,7 @@
  sound system
     -can load pool of audio taht can switch off and mute when app is deactivated
 
- trigger system so if certain distance will trigger 
-   -trigger if touch an object
-   -custom triggers eg trigger for when an npc dies
+
  selection system so can select an item
  usage of delays eg have actor jump, then 5 seconds later play laugh sound
  rooms where define an area for a room and 
@@ -53,7 +56,8 @@
     -exmaples of display of maps in two demos
 music where cna specify mutple tunes that play with a random probability
 config file
-  -can define objects
+  -can define objects as a text file and set position for the defined object multiple times
+  -pool system eg for vegetation - define say 50 trees and thousands of points and system will place vegetation in front of camera and hide those further away
     
     
  
