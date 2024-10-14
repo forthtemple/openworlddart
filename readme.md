@@ -45,7 +45,7 @@ The philosphy of the engine has been to not let the engine get bloated and only 
 Alongside threedarts existing 3D functions such as loading models, lighting, texturing, shaders it includes functions specifically useful in openword games such as:
 
 Adding 3D objects - animated actors, models, sprites, planes and text
-  Easy actor animation including duration, looping, cloning existing actors, assigning new textures to cloned actor, sharing animations between actors with the same skeleton, doing one acion and then transitioning to an idling action.  Also includes models that cna be cloned and also reused with different texutre. Sprites and planes can be added 
+  Easy actor animation including duration, looping, cloning existing actors, assigning new textures to cloned actor, sharing animations between actors with the same skeleton, doing one acion and then transitioning to an idling action.  Also includes models that cna be cloned and also reused with different texutre. Allows saving of space where can reuse models and just apply a different skin to it. Sprites and planes can be added 
 
  on top of threedart openworld engine designed for handling:
  animated actors
@@ -64,13 +64,17 @@ Adding 3D objects - animated actors, models, sprites, planes and text
     surface place objects on the terrain eg a rock  
 
 Spatial features
+Alongside using threedarts existing spatial placement of objects in a scene also includes procuedres to make it easy to place objects on a terrain at a certain point, turn and scale objects. All turn values are in degrees iwht 0 degrees being north and 90 being east. It also has functions making it easy to hide 3d objects if the camera gets a certain disance away from an object. Also includes 3d object spatial lerping so possible to move an object along a terrain from one point to another in a given amount of time. Similarly with turning an object it is possible to lerp. Eg turn 90 degrees in 1 second. It also includes functions easy to place an object in front of a camera.
 
     placement on surface, turn, scale
     object hide if distance way from camera
     -object lerping between two points
     -placing object in front of camera
     -turn lerp eg if faces you isnt sudden
- texturing resusing mesh and changing texture  - save space
+
+texturing resusing mesh and changing texture  - save space
+
+
  trigger system 
    -if certain distance will trigger eg if go near a monster cna make attack
    -trigger if click/touch an object
