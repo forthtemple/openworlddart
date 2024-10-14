@@ -1,6 +1,6 @@
 # Open World for dart
 **Intro**  
-This is a flutter based gaming engine based upon our existing Openworld repository https://github.com/forthtemple/openworldthreejs which uses threejs. The gaming engine uses three_dart (https://github.com/Knightro63/three_dart (is more up to date then three_dart on pub.dev) originally based on https://pub.dev/packages/three_dart) so it is easy to convert threejs code to three_dart. Because it uses flutter it has the advantage of being cross platform working on Android, iOS, web, Linux and windows and also has hotloading which the game engine takes advantage of being able to add 3D objects to a scene on the fly.
+A flutter based gaming engine based upon my existing openworld repository https://github.com/forthtemple/openworldthreejs which uses threejs. The gaming engine uses the three_dart (https://github.com/Knightro63/three_dart (is more up to date then three_dart on pub.dev) originally based on https://pub.dev/packages/three_dart) package making it easy to convert threejs code to three_dart. Because it uses flutter games created are cross platform working on Android, iOS, web, Linux and windows. And with the flutter feature of hotloading it allows 3D objects to be added to a scene on the fly making game design easier.
 
    -converted to flutter threedart
      -works for ios, android and web 
@@ -9,7 +9,7 @@ This is a flutter based gaming engine based upon our existing Openworld reposito
         - can say add grass around your camera and see it straight away
      -becauses uses threedart largely compatible with threejs so easy to port existing threejs
      
-This gaming engine includes two demo games with full source and all resources including blender models, sound, textures freely available in this repository.
+This gaming engine includes two demo games with full source and all resources including blender models, sound, textures being freely available in this repository.
 One game is set in Jerusalem at the Second Temple 72AD just before a roman invasion. 
 
 <img src="https://github.com/user-attachments/assets/87d3e8a2-fd28-428f-807e-733b0f1bbef2" width="400">
@@ -28,7 +28,7 @@ A second game is set in Lindos, Rhodes south of Greece in 1522 just before Sulam
      -models are all blender 
        -all opensource materials
        
-The philosphy of the engine has been to not let the engine get bloated and only include features that most openworld games would require on a smartphone or desktop. For example most openworld games would have animated actors eg a person or monster walking, most would include meshes planes and sprites, sound, light, weather, time of day, maps, music and rooms. But not all would include for example a player inventory system or a combat system or a shop money system, therefore these features are excluded.
+The philosphy of the engine is to not let the engine get bloated,  only including features that typical openworld games would require on a smartphone or desktop. For example most openworld games will have animated actors, such as a person or monster walking. Most would include models,  planes and sprites, sound, light, weather, time of day, maps, music and rooms. But not all would include, for example, a players inventory system or a combat system or a monetary system. Therefore these features are excluded.
 
       
   Engine not too bloated - only include what most openworld would want
