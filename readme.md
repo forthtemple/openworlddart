@@ -44,7 +44,7 @@ The philosphy of the engine has been to not let the engine get bloated and only 
 
 Alongside threedarts existing 3D functions such as loading models, lighting, texturing, shaders it includes functions specifically useful in openword games such as:
 
-Adding 3D objects - animated actors, models, sprites, planes and text
+*Adding 3D objects - animated actors, models, sprites, planes and text*
   Easy actor animation including duration, looping, cloning existing actors, assigning new textures to cloned actor, sharing animations between actors with the same skeleton, doing one acion and then transitioning to an idling action.  Also includes models that cna be cloned and also reused with different texutre. Allows saving of space where can reuse models and just apply a different skin to it. Sprites and planes can be added 
 
  on top of threedart openworld engine designed for handling:
@@ -54,7 +54,7 @@ Adding 3D objects - animated actors, models, sprites, planes and text
  Easy addition of sprites, planes and text
  sprites, planes, text   
 
- Collision detection
+*Collision detection*
  The openworld allows for a single terrain model to be defined. In blender you can have multiple groups in the terrain. If the group contains the name surface then it is treated as a surface and 3D objects can easily be placed onto the surface using opendarts rayscaste. Likewise in belnder can define a gorup with the word wall in it and openworld will allow wall detection and likewise roof detection. Roof detection is useful to know if indoors and to turn off the rain in the weather system.
  
    collision system with a main terrain which is used as surface, walls and roofs
@@ -63,7 +63,7 @@ Adding 3D objects - animated actors, models, sprites, planes and text
       -ray intersect
     surface place objects on the terrain eg a rock  
 
-Spatial features
+*Spatial features*
 Alongside using threedarts existing spatial placement of objects in a scene also includes procuedres to make it easy to place objects on a terrain at a certain point, turn and scale objects. All turn values are in degrees iwht 0 degrees being north and 90 being east. It also has functions making it easy to hide 3d objects if the camera gets a certain disance away from an object. Also includes 3d object spatial lerping so possible to move an object along a terrain from one point to another in a given amount of time. Similarly with turning an object it is possible to lerp. Eg turn 90 degrees in 1 second. It also includes functions easy to place an object in front of a camera.
 
     placement on surface, turn, scale
@@ -74,7 +74,7 @@ Alongside using threedarts existing spatial placement of objects in a scene also
 
 texturing resusing mesh and changing texture  - save space
 
-Triggers
+*Triggers*
 Openworld also includes a trigger system whereby it is easy to trigger an event if for example the camera gets a certain distance from an npc for example. For example in the following example a cat actor is loaded and a distance trigger is added where if the player goes with 4 meters of the cat it meows.
 
     Group cat = await OPENWORLD.Actor.createActor('assets/actors/cat.glb', z:0);
