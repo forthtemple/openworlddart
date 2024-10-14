@@ -1,18 +1,22 @@
 # Open World for dart
--based on openworld repositor .. for threejs
+-orignally converted from  openworld repositor .. for threejs
    -converted to flutter threedart
      -works for ios, android and web 
         -will add windows and linux
      -use of hotloading
         - can say add grass around your camera and see it straight away
+     -becauses uses threedart largely compatible with threejs so easy to port existing threejs
   -includes two game demos
-     -Second temple set in 72ad before roman invasion and tasked with finding the ark so can defeat the coming enemies
+     -Second temple set in 72ad before roman invasion
+       -tasked with finding the ark so can defeat the coming enemies
+        links on itunes and android
      -Lindos 1522 set in 1522 before sulamain invasion
         -uncover a spy to save lindos
+        links on itunes and android
      -models are all blender 
        -all opensource materials
        
-  only include what most openworlds would want
+  Engine not too bloated - only include what most openworld would want
     -not all have 
        inventory
        combat system
@@ -26,12 +30,13 @@
        -maps
        -music
        -rooms
-      -demos show how tailor to game eg lindos 1522 has its own combat system that is not part of openworld
+      -demo  show how tailor to game eg lindos 1522 has its own combat system that is not part of openworld
       
- openworld engine threedart loading of
+ on top of threedart openworld engine designed for handling:
  animated actors
    ability for actor wield objects
    share animations between actors with same skeleton
+     
  sprites, planes, text   
  models eg terrain
    collision system with a main terrain which is used as surface, walls and roofs
@@ -40,11 +45,12 @@
       -ray intersect
     surface place objects on the terrain eg a rock  
  spatial abilities like
-    placement on surface, turn, scale, texturing
+    placement on surface, turn, scale
     object hide if distance way from camera
     -object lerping between two points
     -placing object in front of camera
     -turn lerp eg if faces you isnt sudden
+ texturing resusing mesh and changing texture  - save space
  trigger system 
    -if certain distance will trigger eg if go near a monster cna make attack
    -trigger if click/touch an object
