@@ -103,9 +103,23 @@ It also includes custom triggers so for example you could create a trigger when 
       eg your own trigger for when an npc dies   
 
       
- movement system
+*Movement system*
+Uses flutter joystick (https://pub.dev/packages/flutter_joystick) used in confjuction with threejs joystick so can move using a smartphone.  Includes swiping screen to turn and swiping up and down for pitch
+
+Also ability to use keyboard. threedart has been modified so keyboard capture can be turned off from dom and allow typing into a flutter dialog for example
+
+
    -with flutter joystick or keyboard on web
      -works on keyboard or screenonly
+
+*Mob System*
+System to make it easy for npcs especially actors eg an animated guard. For example can set an actor to randomly walk around a point of a given distance and frequency eg a dog walking around randomly. Also includes move to loop where can have an npc walking through a set of positions over and over eg a guard walking up and down a corridor.  Also include features to make it easy to add random chatter to an npc so for example 
+
+![image](https://github.com/user-attachments/assets/63442d1c-8c3c-4ecd-9d29-624e784c2182)
+
+Also add a speech so an npc can say multiple sentences
+
+
  mob system
     ability to put text on objects eg speech for actors
        chatter
