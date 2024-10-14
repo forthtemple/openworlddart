@@ -115,7 +115,8 @@ Also ability to use keyboard. threedart has been modified so keyboard capture ca
 *Mob System*
 System to make it easy for npcs especially actors eg an animated guard. For example can set an actor to randomly walk around a point of a given distance and frequency eg a dog walking around randomly. Also includes move to loop where can have an npc walking through a set of positions over and over eg a guard walking up and down a corridor.  Also include features to make it easy to add random chatter to an npc so for example 
 
-![image](https://github.com/user-attachments/assets/63442d1c-8c3c-4ecd-9d29-624e784c2182)
+![image](https://github.com/user-attachments/assets/63442d1c-8c3c-4ecd-9d29-624e784c2182 = 250x)
+<img src="https://github.com/user-attachments/assets/63442d1c-8c3c-4ecd-9d29-624e784c2182" width="256">
 
 Also add a speech so an npc can say multiple sentences
 
