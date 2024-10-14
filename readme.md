@@ -165,10 +165,22 @@ sound system
     -typical things like volume, looping
 
 *Object Selection*  
+Openworld allows for an object to be highlighted. When combined with a touch trigger it allows an item to be highlighted further when clicked. For example clicking on a book on a table and being able to read it:
 
- selection system so can select an item eg a wallet on the ground
- 
- usage of delays eg have actor jump, then 5 seconds later play laugh sound
+ ![image](https://github.com/user-attachments/assets/b716eaf3-8f63-4135-a616-f6941c7b16ec)
+
+*Delays*  
+Many openworld functions have a delay. For example have an actor wave his hand in 5 seconds or have cat meow in 5 seconds
+
+```
+  OPENWORLD.Sound.play(path: "sounds/meow.mp3", volume: 0.2, delay:5);
+```
+
+The allows for a sequence of actions to possibly be performed such as have an actor spin in 1 second, jump in 2 seconds and then laugh in 3 seconds.
+
+usage of delays eg have actor jump, then 5 seconds later play laugh sound
+
+
  persistence
    can store data so when restart app will remember game state
  rooms where define an area for a room and 
