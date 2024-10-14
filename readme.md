@@ -9,7 +9,27 @@
         -uncover a spy to save lindos
      -models are all blender 
        -all opensource materials
-     
+
+ openworld engine threedart loading of
+ animated actors
+ models eg terrain
+ sprites, planes, text
+ ability to put text on objects eg speech for actors
+ ability for actor wield objects
+ weather system
+ sound system
+    -can load pool of audio taht can switch off and mute when app is deactivated
+ collision system with a main terrain which is used as surface, walls and roofs
+    -eg if raining and roof above know not to show rain
+    -walls cannot walk into
+      -ray intersect
+ trigger system so if certain distance will trigger 
+   -trigger if touch an object
+   -custom triggers eg trigger for when an npc dies
+ selection system so can select an item
+ usage of delays eg have actor jump, then 5 seconds later play laugh sound
+ 
+ 
 A minimalistic framework to make it easier creating an multi user open world with threejs for both smartphones and desktops
 
 To demonstrate the framework, a demo has been made for the Second Temple, the temple that was at the center of judaism before 77AD. It is where the dome of the rock currently stands on the temple mount in Jerusalem. In the demo you can explore the Second Temple. This framework also includes the original blender models for the temple and the actors in the demo. It also demonstrates a multi user server. The demo should work on smartphone browsers (tested on iPhone and iPad 9.3) and desktops.
@@ -35,6 +55,11 @@ There is also a server written in PHP and MySQL that allows multiple users to in
 
 
 **Using blender models**  
+
+terrain is exported to obj, use strip
+  - seems to work better in terms of intersections
+actor, models are export as glb from blender
+
 All the models in the demos are created using Blender. There are included in the repository. In the demo, models are exported as wavefront 'obj' models since they allow for multiple texturing. For actors they are exported from Blender as json models since they include animations which json allows for but obj does not.
 
 If you open /models/secondtemple/temple/temple.blend notice the multiple meshes. Notice that some have the word wall and some surface in them.
