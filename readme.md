@@ -48,6 +48,8 @@ Alongside threedarts existing 3D functions such as loading models, lighting, tex
 *Adding 3D objects - animated actors, models, sprites, planes and text*  
   Easy actor animation including duration, looping, cloning existing actors, assigning new textures to cloned actor, sharing animations between actors with the same skeleton, doing one acion and then transitioning to an idling action.  Also includes models that cna be cloned and also reused with different texutre. Allows saving of space where can reuse models and just apply a different skin to it. Sprites and planes can be added 
 
+![image](https://github.com/user-attachments/assets/41a0a204-c41a-4115-9605-f8039a7d1bad)
+
  on top of threedart openworld engine designed for handling:
  animated actors
    ability for actor wield objects
