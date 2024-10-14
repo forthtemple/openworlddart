@@ -42,20 +42,29 @@ The philosphy of the engine has been to not let the engine get bloated and only 
        -rooms
       -demo  show how tailor to game eg lindos 1522 has its own combat system that is not part of openworld
 
-      
+Alongside threedarts existing 3D functions such as loading models, lighting, texturing, shaders it includes functions specifically useful in openword games such as:
+
+Adding 3D objects - animated actors, models, sprites, planes and text
+  Easy actor animation including duration, looping, cloning existing actors, assigning new textures to cloned actor, sharing animations between actors with the same skeleton, doing one acion and then transitioning to an idling action.  Also includes models that cna be cloned and also reused with different texutre. Sprites and planes can be added 
+
  on top of threedart openworld engine designed for handling:
  animated actors
    ability for actor wield objects
    share animations between actors with same skeleton
-     
+ Easy addition of sprites, planes and text
  sprites, planes, text   
- models eg terrain
+
+ Collision detection
+ The openworld allows for a single terrain model to be defined. In blender you can have multiple groups in the terrain. If the group contains the name surface then it is treated as a surface and 3D objects can easily be placed onto the surface using opendarts rayscaste. Likewise in belnder can define a gorup with the word wall in it and openworld will allow wall detection and likewise roof detection. Roof detection is useful to know if indoors and to turn off the rain in the weather system.
+ 
    collision system with a main terrain which is used as surface, walls and roofs
     -eg if raining and roof above know not to show rain
     -walls cannot walk into
       -ray intersect
     surface place objects on the terrain eg a rock  
- spatial abilities like
+
+Spatial features
+
     placement on surface, turn, scale
     object hide if distance way from camera
     -object lerping between two points
