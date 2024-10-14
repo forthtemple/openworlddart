@@ -134,9 +134,19 @@ Weather is added to the Openworld engine and includes wind, rain, cloud and fog.
 
  weather system
    wind, rain, fog, cloud
- time system
+
+*Time*     
+Time of day can be specified using a skymat shader that allows for specifying the azimuth so can generate sunsets, sunrises, noon, night. Also the day length can be specified. For example 1 hour to equal 24 hours. Therefore a full day can occur in one hour. Will change ambience  as well so at night the terrain will be dark. Also incorporated into weather so for example if its foggy at night the fog is black while during the day it is grey.
+
+![image](https://github.com/user-attachments/assets/814bbed1-a672-4298-8d06-ee1d7ddc7545)
+
+![image](https://github.com/user-attachments/assets/7bdf6eba-8e67-4ab0-8a2d-d5d8d868cbf7)
+
+time system
    night and day - light
- light system
+
+
+light system
    flicker, view only night or day
    
  sound system
