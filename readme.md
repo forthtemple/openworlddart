@@ -1,29 +1,31 @@
 # Open World for dart
 This is a flutter based gaming engine based upon our existing Openworld repository https://github.com/forthtemple/openworldthreejs which uses threejs. The gaming engine uses three_dart (https://github.com/Knightro63/three_dart originally based on https://pub.dev/packages/three_dart) so it is easy to convert threejs code to three_dart. Because it uses flutter it has the advantage of being cross platform working on Android, iOS, web, Linux and windows and also has hotloading which the game engine takes advantage of being able to add 3D objects to a scene on the fly.
 
-This gaming engine includes two demo games with full source and all resources including blender models, sound, textures freely available in this repository.
-One game is set in Jerusalem at the Second Temple 72AD just before a roman invasion. This app is available on iTunes at:
-https://apps.apple.com/us/app/ark-uncovered/id6593662011
-
-A second game is set in Lindos, Rhodes south of Greece in 1522 just before Sulamains invasion. This app is available on iTunes at:
-https://apps.apple.com/us/app/lindos-1522/id6736712620
-
    -converted to flutter threedart
      -works for ios, android and web 
         -will add windows and linux
      -use of hotloading
         - can say add grass around your camera and see it straight away
      -becauses uses threedart largely compatible with threejs so easy to port existing threejs
+     
+This gaming engine includes two demo games with full source and all resources including blender models, sound, textures freely available in this repository.
+One game is set in Jerusalem at the Second Temple 72AD just before a roman invasion.  A second game is set in Lindos, Rhodes south of Greece in 1522 just before Sulamains invasion. Both games are available on iTunes.
+
   -includes two game demos
      -Second temple set in 72ad before roman invasion
+     https://apps.apple.com/us/app/ark-uncovered/id6593662011
        -tasked with finding the ark so can defeat the coming enemies
         links on itunes and android
      -Lindos 1522 set in 1522 before sulamain invasion
+       https://apps.apple.com/us/app/lindos-1522/id6736712620
         -uncover a spy to save lindos
         links on itunes and android
      -models are all blender 
        -all opensource materials
        
+The philosphy of the engine has been to not let the engine get bloated and only include features that most openworld games would require on a smartphone or desktop. For example most openworld games would have animated actors eg a person or monster walking, most would include meshes planes and sprites, sound, light, weather, time of day, maps, music and rooms. But not all would include for example a player inventory system or a combat system or a shop money system, therefore these features are excluded.
+
+      
   Engine not too bloated - only include what most openworld would want
     -not all have 
        inventory
@@ -39,6 +41,7 @@ https://apps.apple.com/us/app/lindos-1522/id6736712620
        -music
        -rooms
       -demo  show how tailor to game eg lindos 1522 has its own combat system that is not part of openworld
+
       
  on top of threedart openworld engine designed for handling:
  animated actors
