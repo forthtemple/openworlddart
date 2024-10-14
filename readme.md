@@ -1,6 +1,5 @@
 # Open World for dart
-**Intro**  
-A flutter based gaming engine based upon my existing openworld repository https://github.com/forthtemple/openworldthreejs which uses threejs. The gaming engine uses the three_dart (https://github.com/Knightro63/three_dart (is more up to date then three_dart on pub.dev) originally based on https://pub.dev/packages/three_dart) package making it easy to convert threejs code to three_dart. Because it uses flutter games created are cross platform working on Android, iOS, web, Linux and windows. And with the flutter feature of hotloading it allows 3D objects to be added to a scene on the fly making game design easier.
+A flutter based gaming engine based upon my existing openworld repository [openworldthreejs](https://github.com/forthtemple/openworldthreejs) which uses threejs. The gaming engine uses the [three_dart](https://github.com/Knightro63/three_dart (is more up to date then three_dart on pub.dev)) package making it easy to convert threejs code to three_dart. Because it uses flutter games created are cross platform working on Android, iOS, web, Linux and windows. And with the flutter feature of hotloading it allows 3D objects to be added to a scene on the fly making game design easier.
 
 <!--
    -converted to flutter threedart
@@ -11,11 +10,14 @@ A flutter based gaming engine based upon my existing openworld repository https:
      -becauses uses threedart largely compatible with threejs so easy to port existing threejs
 -->     
 This gaming engine includes two demo games with full source and all resources including blender models, sound, textures being freely available in this repository.
+
 One game is set in Jerusalem at the Second Temple 72AD just before a roman invasion. 
 
 <img src="https://github.com/user-attachments/assets/87d3e8a2-fd28-428f-807e-733b0f1bbef2" width="400">
 
 A second game is set in Lindos, Rhodes south of Greece in 1522 just before Sulamains invasion. Both games are available on iTunes.
+
+![image](https://github.com/user-attachments/assets/be650f03-b6dd-4156-9a4c-ba32e5a1edca)
 
 <!--
   -includes two game demos
