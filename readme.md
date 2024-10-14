@@ -204,18 +204,48 @@ Openworld has maps where it can show your position on a map. It allows multiple 
     -exmaples of display of maps in two demos
 
 *Music*  
-Possible to specify multiple songs to play in the game. Possible to have multiple songs and specify the probability a song will play
+Possible to specify multiple songs to play in the game. Possible to have multiple songs as mp3 assets and specify the probability a song will play
 
 music where cna specify mutple tunes that play with a random probability
+
+*Config file*  
+Rather than hard code all 3d object  it is possible to specify all 3D objects in a configuration file specified in assets as 'config.json'. For example vegetation where wish to define grass in many locations it is possible to define a grass object and then specify multiple positions of the grass in the game
+
+```
+{"objects": [
+  {"name": "grass","object": [
+    {"type": "model", "filename":"assets/models/grass.glb","s":0.03}
+  ]},
+  ],
+
+"positions":
+{"staticpositions":[
+      {"name": "grass", "p": [412.20,307.97,0]},
+      {"name": "grass", "p": [412.50,307.27,0], "s":0.5},
+      {"name": "grass", "p": [410.50,306.27,0], "s":0.6, "t":90}
+]
+}]
+  }
+}
+```
+It is also possible to define pool objects in the config file. For example in a forest with a thousand trees can define 50 and only show 50 at anyone time showing the closest 50 to the camera.
 
 config json file
   -can define objects as a text file and set position for the defined object multiple times
   -pool system eg for vegetation - define say 50 trees and thousands of points and system will place vegetation in front of camera and hide those further away
-    
-some shaders like water, fire, flares
+
+*Common objects*    
+Openworld includes some common
+![image](https://github.com/user-attachments/assets/ee950d2f-7ca7-4a2f-8397-6bf3a9d8269d)
+
+![image](https://github.com/user-attachments/assets/4f4499fd-e278-4457-8810-71d83fd11289)
+
+some shaders like water, fire, flares, skymat, smoke
 basic multi player
   - just position, turn and who, and simple actions eg way
        also speech - php
+
+hotloading
 
 -demos made with blender modelling tool
   -mesh editing, animations, texturing in blender
