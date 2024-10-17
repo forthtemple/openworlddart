@@ -1,0 +1,842 @@
+{"objects": [
+  {"name": "meat","ignore":true, "object": [
+    {"type": "sprite", "texture":"assets/textures/meat.png","height":0.5, "width":0.2, "randommirroru":true, "ambient":false, "zi":0.1}
+  ]},
+  {"name": "meat2","object": [
+    {"type": "model", "filename":"assets/models/meat2.glb","s":0.035, "t":90}
+  ]},
+  {"name": "grass","object": [
+    {"type": "model", "filename":"assets/models/grass.glb","s":0.03}
+  ]},
+  {"name": "grass2",  "object": [
+    {"type": "sprite", "texture":"assets/textures/grass2.png","height":0.25, "width":0.4,"z":-0.05,"randommirroru":true}
+  ]},
+  {"name": "grass3",  "object": [
+    {"type": "sprite", "texture":"assets/textures/grass3.png","height":0.3, "width":0.3,"randommirroru":true}
+  ]},
+  {"name": "tree",  "object": [
+    {"type": "sprite", "texture":"assets/textures/tree.png","height":0.8, "width":0.8,"randommirroru":true}
+  ]},
+  {"name": "tree2",  "object": [
+    {"type": "sprite", "texture":"assets/textures/tree2.png","height":0.6, "width":0.6,"randommirroru":true}
+  ]},
+  {"name": "tent","object": [
+    {"type": "model", "filename":"assets/models/tent.glb","s":0.015, "t": -90, "emissive":  "222222"}
+  ]},
+  {"name": "sack","object": [
+    {"type": "model", "filename":"assets/models/sack.glb","s":0.0015, "t": -90}
+  ]},
+  {"name": "bedsidetable","object": [
+    {"type": "model", "filename":"assets/models/bedsidetable.glb","s":0.25, "emissive":  "222222"}
+  ]},
+  {"name": "cypresstree","object": [
+    {"type": "model", "filename":"assets/models/tree2.glb","s":0.03,"emissive":  "222222"}
+  ]},
+  {"name": "bunk","object": [
+    {"type": "model", "filename":"assets/models/bunk.glb","s":0.012,"emissive":  "222222", "t":-90}
+  ]},
+  {"name": "postoffice","object": [
+    {"type": "plane", "text":"Lindos Post Office","s":0.6, "t":90, "color": "000000", "z": 0.0, "backgroundopacity": 0}
+  ]},
+  {"name": "bag","object": [
+    {"type": "model", "filename":"assets/models/bag.glb","s":0.015,"emissive":  "222222"}
+  ]},
+  {"name": "restaurant","object": [
+    {"type": "plane", "text":"Tasty Restaurant","s":0.6, "t":160, "color": "000000", "z": 0.0, "backgroundopacity": 0}
+  ]},
+  {"name": "stool","object": [
+    {"type": "model", "filename":"assets/models/stool.glb","s":0.0012,"emissive":  "222222"}
+  ]},
+  {"name": "table","object": [
+    {"type": "model", "filename":"assets/models/table.glb","s":0.0022,"emissive":  "222222", "t": -90}
+  ]},
+  {"name": "shelf","object": [
+    {"type": "model", "filename":"assets/models/shelf.glb","s":0.015,"emissive":  "222222", "t": -90}
+  ]},
+  {"name": "bowl","object": [
+    {"type": "model", "filename":"assets/models/bowl.glb","s":0.0065,"emissive":  "222222"}
+  ]},
+  {"name": "knife","object": [
+    {"type": "model", "filename":"assets/models/knife.glb","s":0.01,"emissive":  "222222", "z": 0.23}
+  ]},
+  {"name": "mug","object": [
+    {"type": "model", "filename":"assets/models/mug.glb","s":0.0035,"emissive":  "222222"}
+  ]},
+  {"name": "barrel","object": [
+    {"type": "model", "filename":"assets/models/barrel.glb","s":0.005,"emissive":  "222222"}
+  ]},
+  {"name": "chair","object": [
+    {"type": "model", "filename":"assets/models/chair.glb","s":0.00065,"emissive":  "222222", "t": -90}
+  ]},
+  {"name": "cabinet",  "object": [
+    {"type": "model", "filename":"assets/models/cabinet.glb","s":0.01,"emissive":  "222222", "t": -90}
+  ]},
+  {"name": "crockery",  "object": [
+    {"type": "plane", "texture":"assets/textures/crockery.png","height":0.4, "width":0.4,"z":0.4, "ambient":false}
+  ]},
+  {"name": "cross",  "object": [
+    {"type": "model", "filename":"assets/models/cross.glb","s":0.015,"emissive":  "222222", "t": 0}
+  ]},
+  {"name": "generalstore",  "object": [
+    {"type": "plane", "texture":"assets/textures/generalstore.png","height":0.2, "width":0.6, "ambient":false}
+  ]},
+  {"name": "bankbars",  "object": [
+    {"type": "model", "filename":"assets/models/bankbars.glb","s":1.0,"emissive":  "222222", "t": 90}
+  ]},
+  {"name": "armourshop",  "object": [
+    {"type": "plane", "texture":"assets/textures/armourer.png","height":0.5, "width":0.6,"z":0.4, "ambient":false}
+  ]},
+  {"name": "weaponshop",  "object": [
+    {"type": "plane", "texture":"assets/textures/weaponer.png","height":0.5, "width":0.6,"z":0.4, "ambient":false}
+  ]},
+  {"name": "bottleshop",  "object": [
+    {"type": "plane", "texture":"assets/textures/bottleshop.png","height":0.5, "width":0.6,"z":0.4, "ambient":false}
+  ]},
+  {"name": "kiln",  "object": [
+    {"type": "model", "filename":"assets/models/kiln.glb","s":0.04,"emissive":  "222222", "z":-0.1, "t": 0}
+  ]},
+  {"name": "smellybottle","object": [
+    {"type": "plane", "texture":"assets/textures/smellybottle.jpg", "width":0.3,  "height":0.4, "t":90,  "z": 0.0, "ambient": false}
+  ]},
+  {"name": "smellybottle","ignore":true,"object": [
+    {"type": "plane", "text":"Smelly Bottle Restaurant","s":0.6, "t":90, "color": "000000", "z": 0.0, "backgroundopacity": 0, "w": 300}
+  ]},
+  {"name": "divider",  "object": [
+    {"type": "model", "filename":"assets/models/divider.glb","s":0.015,"emissive":  "222222",  "t": 0}
+  ]},
+  {"name": "woodbed",  "object": [
+    {"type": "model", "filename":"assets/models/bed.glb", "texture":"assets/textures/wood.jpg","s":0.0017,"emissive":  "222222",  "t": -90}
+  ]},
+  {"name": "icon",  "object": [
+    {"type": "plane", "texture":"assets/textures/icon.jpg","height":0.35, "width":0.25, "ambient":false}
+  ]},
+  {"name": "shrubbery",  "object": [
+    {"type": "sprite", "texture":"assets/textures/shrubbery.png","height":0.4, "width":0.6, "z":-0.1, "randommirroru":true}
+  ]},
+  {"name": "bench",  "object": [
+    {"type": "model", "filename":"assets/models/bench.glb", "s":0.014,"emissive":  "222222",  "t": -90}
+  ]},
+  {"name": "curtain",  "object": [
+    {"type": "model", "filename":"assets/models/curtain.glb", "s":0.02, "z":0.08, "emissive":  "222222",  "t": -180}
+  ]},
+  {"name": "mailbox",  "object": [
+    {"type": "model", "filename":"assets/models/mailbox.glb", "s":0.008, "z":0.0, "emissive":  "222222",  "t": -90}
+  ]},
+  {"name": "postoffice2","object": [
+    {"type": "plane", "text":"Post Office","s":0.6, "t":90, "color": "000000", "z": 0.0, "backgroundopacity": 0, "w": 300}
+  ]},
+  {"name": "woodbench",  "object": [
+    {"type": "model", "filename":"assets/models/woodbench.glb", "s":0.017, "z":0.0, "emissive":  "222222",  "t": -90}
+  ]},
+  {"name": "soupkitchen","object": [
+    {"type": "plane", "text":"Soup Kitchen","s":0.6, "t":90, "color": "000000", "z": 0.0, "backgroundopacity": 0, "w": 300}
+  ]},
+  {"name": "freesoup","object": [
+    {"type": "plane", "text":"Free Soup","s":0.4, "t":90, "color": "000000", "z": 0.0, "backgroundopacity": 0, "w": 300}
+  ]},
+  {"name": "bars",  "object": [
+    {"type": "model", "filename":"assets/models/bars.glb", "s":0.022, "z":0.0, "emissive":  "222222",  "t": -90}
+  ]},
+  {"name": "shackles",  "object": [
+    {"type": "sprite", "texture":"assets/textures/chain.png","height":0.12, "width":0.01}
+  ]},
+  {"name": "dirtpile",  "object": [
+    {"type": "model", "filename":"assets/models/dirtpile.glb", "s":0.03, "z":0.0, "emissive":  "222222"}
+  ]},
+  {"name": "playingcards",  "object": [
+    {"type": "plane", "texture":"assets/textures/playingcards.png","height":0.13, "width":0.08, "pitch": 90, "ambient": false}
+  ]},
+  {"name": "gaminghouse","object": [
+    {"type": "plane", "texture":"assets/textures/loadeddice.png", "width":0.4,  "height":0.4, "t":90,  "z": 0.0, "ambient": false}
+  ]},
+  {"name": "gaminghouse","ignore":true, "object": [
+    {"type": "plane", "text":"Gaming House","s":0.6, "t":90, "color": "000000", "z": 0.0, "backgroundopacity": 0, "w": 300}
+  ]},
+  {"name": "newspapers",  "object": [
+    {"type": "model", "filename":"assets/models/newspapers.glb", "s":0.005, "z":0.0, "emissive":  "222222"}
+  ]},
+  {"name": "newspaper",  "object": [
+    {"type": "model", "filename":"assets/models/newspapers.glb", "sx":0.005,"sy":0.005,"sz":0.0005, "z":0.0, "emissive":  "222222"}
+  ]},
+  {"name": "quill",  "object": [
+    {"type": "sprite", "texture":"assets/textures/quill.png","height":0.1, "width":0.02}
+  ]},
+  {"name": "generalstore2",  "object": [
+    {"type": "plane", "texture":"assets/textures/generalstore2.png","height":0.17, "width":0.8, "ambient":false}
+  ]},
+  {"name": "lindosrock",  "object": [
+    {"type": "model", "filename":"assets/models/rock.glb", "s":0.04, "z":0.0, "emissive":  "222222", "t": -90}
+  ]},
+  {"name": "wall",  "object": [
+    {"type": "model", "filename":"assets/models/wall.glb", "sx":0.1,"sy":0.1,"sz":0.05, "z":0.0, "emissive":  "222222", "t": -90}
+  ]},
+  {"name": "shrub",  "object": [
+    {"type": "model", "filename":"assets/models/shrub.glb", "s":0.015, "z":0.0, "emissive":  "222222", "t": -90}
+  ]},
+  {"name": "doormat",  "object": [
+    {"type": "model", "filename":"assets/models/doormat.glb", "s":0.015, "z":0.0, "emissive":  "222222", "t": -90}
+  ]},
+  {"name": "cleobulus",  "object": [
+    {"type": "model", "filename":"assets/models/cleobulus.glb", "s":0.08, "z":0.0, "emissive":  "222222", "t": -90}
+  ]},
+  {"name": "vault",  "object": [
+    {"type": "model", "filename":"assets/models/vault.glb", "s":0.01, "z":0.0, "emissive":  "222222", "t": -90}
+  ]},
+  {"name": "generalboard",  "object": [
+    {"type": "model", "filename":"assets/models/board.glb", "s":0.015, "z":0.0, "emissive":  "222222", "t": 90}
+  ]},
+  {"name": "wooddoor",  "object": [
+    {"type": "model", "filename":"assets/models/door.glb", "s":0.02, "x":0.2, "z":0.0, "emissive":  "222222", "t": -90}
+  ]},
+  {"name": "hauberk", "ignore":true, "object": [
+    {"type": "model", "filename":"assets/models/hauberk.glb", "s":0.009, "z":0.0, "emissive":  "222222", "t": -90}
+  ]},
+  {"name": "cheese",  "object": [
+    {"type": "model", "filename":"assets/models/cheese.glb", "s":0.005, "z":0.0, "emissive":  "222222", "t": -90}
+  ]},
+  {"name": "book",  "ignore":true, "object": [
+    {"type": "model", "filename":"assets/models/book.glb", "s":0.004, "z":0.0, "emissive":  "222222", "t": -90}
+  ]},
+  {"name": "soupbowl", "ignore":true,  "object": [
+    {"type": "model", "filename":"assets/models/soupbowl.glb", "s":0.005, "z":0.0, "emissive":  "222222", "t": -90}
+  ]},
+  {"name": "pot",  "object": [
+    {"type": "model", "filename":"assets/models/pot.glb", "s":0.005, "z":0.0, "emissive":  "222222", "t": -90}
+  ]},
+  {"name": "broom", "ignore":true,  "object": [
+    {"type": "model", "filename":"assets/models/broom.glb", "s":0.01, "z":0.0, "emissive":  "222222", "t": -90}
+  ]},
+  {"name": "key",  "object": [
+    {"type": "model", "filename":"assets/models/key.glb", "s":0.005, "z":0.0, "emissive":  "222222", "t": -90}
+  ]},
+  {"name": "dice",  "object": [
+    {"type": "model", "filename":"assets/models/dice.glb", "s":0.002, "z":0.0, "emissive":  "333333", "t": -90}
+  ]},
+  {"name": "apples",  "object": [
+    {"type": "model", "filename":"assets/models/apples.glb", "s":0.001, "z":0.0, "emissive":  "222222", "t": -90}
+  ]},
+  {"name": "boat", "ignore":true, "object": [
+    {"type": "model", "filename":"assets/models/boat.glb", "s":0.002, "z":0.0, "emissive":  "222222", "t": -90}
+  ]},
+  {"name": "boat2",  "ignore":true, "object": [
+    {"type": "model", "filename":"assets/models/boat2.glb", "s":0.03, "z":0.0, "emissive":  "222222", "t": -90}
+  ]},
+  {"name": "guide",  "object": [
+    {"type": "model", "filename":"assets/models/guide.glb", "s":0.015, "z":0.0, "emissive":  "222222", "t": -90}
+  ]},
+  {"name": "clock",  "object": [
+    {"type": "plane", "texture":"assets/textures/clock.png","height":0.4, "width":0.1, "ambient":false}
+  ]},
+  {"name": "rosary", "ignore":true, "object": [
+    {"type": "plane", "texture":"assets/textures/rosary.png","height":0.11, "width":0.11, "pitch":90,  "ambient":false}
+  ]},
+  {"name": "helmet",  "object": [
+    {"type": "model", "filename":"assets/models/helmet.glb", "s":0.005, "z":0.0, "emissive":  "222222", "t": -90}
+  ]},
+  {"name": "flute",  "ignore":true, "object": [
+    {"type": "model", "filename":"assets/models/flute.glb", "s":0.01, "z":0.0, "emissive":  "888888", "t": -90}
+  ]},
+  {"name": "bottle",  "ignore":true, "object": [
+    {"type": "model", "filename":"assets/models/bottle.glb", "s":0.04, "z":0.0, "emissive":  "222222", "t": -90}
+  ]},
+  {"name": "sword","ignore":true,  "object": [
+    {"type": "model", "filename":"assets/models/sword.glb", "s":0.002, "z":0.23, "emissive":  "222222", "t": -90, "pitch": 90}
+  ]},
+  {"name": "armourersign","object": [
+    {"type": "plane", "text":"Thieves will be drawn & quartered with no exceptions","s":0.4, "t":90, "color": "ffffff", "z": 0.0, "backgroundopacity": 0, "w": 300}
+  ]},
+  {"name": "brand","object": [
+    {"type": "model", "filename":"assets/models/brand.glb", "s":0.012, "z":0.33, "iemissive":  "888888", "t": -90},
+    {"type": "pointlight",  "intensity":1, "distance":2, "flicker":true, "nightonly":true, "color": "FFA500"},
+    {"type": "fire", "s": 0.04, "z": 0.05}
+  ]},
+  {"name": "flamingbrand", "object": [
+    {"type": "model", "filename":"assets/models/flamingbrand.glb", "s":0.012, "z":0.33, "iemissive":  "888888", "t": -90},
+    {"type": "pointlight",  "intensity":1, "distance":2, "flicker":true, "nightonly":true, "color": "FFA500"},
+    {"type": "fire", "s": 0.04, "z": 0.35}
+  ]}
+],
+
+"positions":
+{"staticpositions":[
+
+      {"name": "tree", "p": [412.20,307.97,0]},
+      {"name": "tree", "p": [401.14,308.83,0.0]},
+      {"name": "tree", "p": [405.33,316.44,0.0]},
+      {"name": "tree", "p": [371.75,263.99,0.0]},
+      {"name": "tree", "p": [372.79,268.93,0.0]},
+      {"name": "tree", "p": [374.91,275.53,0.0]},
+      {"name": "tree", "p": [370.68,288.44,0.0]},
+      {"name": "tree", "p": [371.69,226.33,0.0]},
+      {"name": "tree", "p": [381.57,222.20,0.0]},
+      {"name": "tree", "p": [381.04,211.48,0.0]},
+      {"name": "tree", "p": [381.32,211.44,0.0]},
+      {"name": "tree", "p": [402.48,303.60,0.0]},
+      {"name": "tree", "p": [408.73,304.99,0.0]},
+      { "name": "grass","p": [ 392.28,303.83,0.0], "d": 10},
+      { "name": "grass","p": [ 391.27,303.60,0.0], "d": 10},
+      { "name": "grass","p": [ 392.11,303.63,0.0], "d": 10},
+      { "name": "grass","p": [ 391.67,302.32,0.0] , "d": 10},
+
+      {"name": "postoffice", "p": [ 365.38,273.52,1.05],   "d": 5, "t": 90},
+      { "name": "bag","p": [ 366.11,273.90,-0.02],   "d": 5,"t":20, "description":"post office"},
+      { "name": "bag","ignore":true, "p": [ 366.22,272.90,-0.02],   "d": 5,"t":20, "description":"post office"},
+      { "name": "bag","p": [ 365.84,272.39,-0.02],   "d": 5,"t":0, "s":3, "description":"post office"},
+
+      {"name":"meat","ignore":true, "p": [ 390.04,246.33],"description":"butcher", "d": 5 },
+      {"name":"meat2","p": [ 390.86,244.73],"description":"butcher", "d": 5},
+
+      { "name":"restaurant","p": [ 381.36,256.13,-0.25],"description":"restuarant label","d": 5},
+      { "name":"stool","p": [ 381.47,255],"description":"restuarant", "d": 4},
+      { "name":"stool","p": [ 381.24,254.59],"description":"restuarant", "d": 4},
+      { "name":"table","p": [ 381.69,254.59],"description":"tasty restaurant", "d": 4},
+      { "name":"mug", "p":[381.69,254.59,0.2],"description":"tasty restaurant", "d": 4},
+      { "name":"mug", "p":[382.2,254.79,0.6],"description":"tasty restaurant wall", "d": 4},
+      { "name":"shelf", "p":[382.2,254.83,0.6],"t": 90 ,"description":"tasty restaurant wall", "d": 4},
+      {  "name":"bowl", "p":[381.42,254.60,0.2],"description":"restuarant", "d": 4},
+      {"name":"knife", "p":[381.6,254.60,0.2],"t": 95 ,"description":"restuarant", "d": 4},
+      { "name":"barrel", "p":[382.47,252.00],"description":"restuarant back", "d": 4},
+      { "name":"barrel", "p":[382.30,251.71],"description":"restuarant back", "d": 4},
+
+      { "name":"table", "p":[397.16,240.99],"description":"home", "d": 4},
+      { "name":"chair", "p":[397.45,241.52],"description":"home", "d": 4},
+      { "name":"cabinet", "p":[397.50,241.91],"t": 40 ,"description":"home", "d": 4},
+      { "name":"crockery", "p":[397.50,241.91],"t": 130 ,"description":"home", "d": 4},
+      { "name":"cross", "p":[396.85,240.1,0.6] ,"description":"crucifix","sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 4},
+
+      { "name":"generalstore", "p":[379.45,259.5,0.27], "t": 0, "d": 4},
+      { "name":"generalstore", "p":[379.5,259.5,0.1] ,"sx": 1.5 ,"sy": 1 ,"sz": 1.5, "t": 0, "d": 4 },
+      { "name":"generalstore", "p":[379.75,258.5,0.15] , "t": 0, "d": 4},
+
+      { "name":"table", "p":[400.4,233.56],"description":"home2","t": -120 , "d": 4},
+      { "name":"chair", "p":[399.45,234.07],"description":"home2", "d": 4},
+      { "name":"chair", "p":[399.86,234.19],"description":"home2", "d": 4},
+      { "name":"cabinet", "p":[399.26,235.44],"description":"home2","t": -30 , "d": 4},
+      { "name":"crockery", "p":[399.26,235.44],"t": 60 ,"description":"home2", "d": 4},
+
+      { "name":"bankbars", "p":[376.15,254.45],"description":"bank", "d": 4},
+
+      { "name":"barrel", "p":[373.2,244.9,0.88],"sx": 3 ,"sy": 3 ,"sz": 3 ,"pitch": 90 ,"iroll": 180  ,"description":"brewery", "d": 6},
+      { "name":"barrel", "p":[373.9,244.5,0.88],"sx": 3 ,"sy": 3 ,"sz": 3 ,"pitch": 90 ,"iroll": 20  ,"description":"brewery", "d": 6},
+      { "name":"barrel", "p":[373.9,244.2] ,"description":"brewery", "d": 4},
+      { "name":"barrel", "ignore":true, "p":[373.6,243] ,"description":"brewery", "d": 4},
+      { "name":"barrel",  "p":[373.3,243.2] ,"description":"brewery", "d": 4},
+      { "name":"chair", "p":[375.17,242.14] ,"description":"brewery","t": -90 , "d": 4},
+      { "name":"chair", "p":[375.19,243.19],"description":"brewery","t": -90 , "d": 4},
+
+      { "name":"cabinet", "p":[385.15,264],"description":"armourer","t": 120 , "d": 4},
+      { "name":"cabinet", "p":[385.1,265],"description":"armourer","t": 40 , "d": 4},
+      { "name":"armourshop", "ignore":true,"p":[385.15,264],"description":"armourer","t": 210 , "d": 4},
+      { "name":"armourshop", "p":[385.1,265],"description":"armourer","t": 130 , "d": 4},
+
+      { "name":"divider",  "p":[384.20, 264.09] ,"t": 205 ,"description":"armourer","sx": 0.45 ,"sy": 0.45 ,"sz": 0.45 , "d": 4},
+      { "name":"armourersign", "p":[384.15, 264.09,0.1] ,"t": 115 ,"description":"armourer","sx": 0.7 ,"sy": 0.7 ,"sz": 0.7, "d": 4},
+
+      { "name":"weaponshop", "ignore":true, "p":[383.45,272.40],"description":"weaponer","t": 105, "d": 4 },
+      { "name":"cabinet", "p":[383.45,272.40],"description":"weaponer","t": 15, "d": 4 },
+      { "name":"weaponshop", "p":[384.2,272.2,-0.1],"description":"weaponer","t": 175  , "d": 4},
+      { "name":"cabinet", "p":[384.2,272.2,-0.1],"description":"weaponer","t": 85  , "d": 4},
+
+      { "name":"bottleshop", "p":[376.5,267.8],"description":"bottleshop","t": 85 , "d": 4},
+      { "name":"cabinet", "p":[376.5,267.8,-0.1],"description":"bottleshop","t": -15  , "d": 4},
+      { "name":"bottleshop", "ignore":true, "p":[378,267.6],"description":"bottleshop","t": 195, "d": 4 },
+      { "name":"cabinet", "p":[378,267.6,-0.1],"description":"bottleshop","t": 105 , "d": 4 },
+      { "name":"barrel", "p":[377.49,266.45],"description":"bottleshop", "d": 4},
+
+      { "name":"kiln", "p":[380.39,239.18],"description":"smithy", "d": 4 },
+      { "name":"kiln", "p":[381.69,238.65],"description":"smithy", "d": 4 },
+
+      { "name":"chair", "p":[430.6,276],"description":"acropols","t": -90 , "d": 4},
+      { "name":"bedsidetable", "p":[430.30,275.35,0],"description":"acropols","t": 30  ,"sx": 2 , "d": 4},
+      { "name":"bedsidetable", "p":[427.81,279.71,0],"description":"acropols","t": 10  ,"sx": 2 , "d": 4},
+
+      { "name":"chair", "p":[430.60,278.81],"description":"acropols" ,"t": 30, "d": 4 },
+      { "name":"table", "p":[430.3,278.53,0] ,"description":"acropols","t": 30 , "d": 4 },
+      { "ignore":true, "name":"smellybottle",  "p":[  380,339,0.5] ,"description":"smelly bottle restaurant -  dudd", "t": 90, "d": 4 },
+      { "ignore":true, "name":"bottleshop", "p":[380,339,0.5],"description":"bottleshop dudd","t": 195 , "d": 4},
+
+      { "name":"smellybottle", "p":[ 392.53, 300.73,0.9] ,"description":"smelly bottle restaurant - to 392.26, 299.95,1.0 392.65,300.15", "t": 100 , "d": 4},
+      { "name":"smellybottle", "p":[395.13, 299.36,0.4] ,"description":"smelly bottle restaurant inside", "s":0.5, "t": 140 , "d": 4},
+
+      { "name":"table", "p":[393.7,299.84],"description":"smelly bottle","t": 60, "d": 4 },
+      { "name":"barrel", "p":[394.59,299.38],"description":"restuarant", "d": 4},
+      { "name":"barrel", "p":[394.43,299.82],"description":"restuarant", "d": 4},
+      { "name":"barrel", "p":[394.95,299.47],"description":"restuarant", "d": 4},
+      { "name":"chair", "p":[394,299.84],"t": 45 , "d": 4},
+      { "name":"mug", "p":[393.59,299.95,0.18] ,"description":"smelly restaurant", "d": 4},
+      { "name":"bowl", "p":[393.67,299.85,0.2] ,"description":"smelly restaurant" , "d": 4},
+      { "name":"chair", "p":[393.98,299.37],"t": 135 , "d": 4},
+      { "name":"bowl", "p":[393.81, 299.61, 0.2] ,"description":"smelly restaurant was 393.7,299.56,", "d": 4},
+      { "name":"knife", "p":[393.67,299.68,0.2] ,"description":"smelly restaurant", "d": 4},
+
+      { "name":"cross", "p":[374.79,272.52,0.3],"description":"crucifix in church" , "d": 4},
+      { "name":"icon", "p":[375.47,271.96,0.4],"description":"icon on wall in church" ,"t": 180 , "d": 4},
+
+      { "name":"table", "p":[396.95,301.58],"sx": 0.7 ,"sz": 0.8 ,"t": -10 ,"description":"home3", "d": 4},
+      { "name":"chair", "p":[396.55,301.53],"t": -85 , "d": 4},
+      { "name":"chair", "p":[397.33,301.66],"t": 55 , "d": 4},
+      { "name":"divider", "p":[397.63,302.5],"t": -13 ,"sz": 0.7 ,"sy": 0.5 ,"sx": 0.7 , "d": 4},
+      { "name":"woodbed", "ignore":true, "p":[398,302.1],"t": -13 , "d": 4},
+      { "name":"crockery", "p":[398.42,301.71,-0.2] ,"description":"home","t": 160  ,"sx": 0.6 ,"sy": 0.6 ,"sz": 0.6 , "d": 4},
+
+      { "name":"shrubbery", "p":[411.23,307.92] , "d": 4},
+      { "name":"shrubbery", "p":[410.82,308.60] , "d": 4},
+      { "name":"shrubbery", "p":[410.50,309.60] , "d": 4},
+      { "name":"shrubbery", "p":[410.95,309.99] , "d": 4},
+      { "name":"shrubbery", "p":[412.03,309.64] , "d": 4},
+      { "name":"shrubbery", "p":[375.33,274.70] , "d": 4},
+      { "name":"shrubbery", "p":[375.54,275.80] , "d": 4},
+      { "name":"shrubbery", "p":[374.59,276.11] , "d": 4},
+      { "name":"shrubbery", "p":[374.19,274.93] , "d": 4},
+      { "name":"shrubbery", "p":[371.81,269.08] , "d": 4},
+      { "name":"shrubbery", "p":[372.95,268.31], "d": 4 },
+      { "name":"shrubbery", "p":[399.85,302.69] , "d": 4},
+      { "name":"shrubbery", "p":[400.61,303.16], "d": 4 },
+      { "name":"shrubbery", "p":[372.03,264.80] , "d": 4},
+      { "name":"shrubbery", "p":[372.16,263.37] , "d": 4},
+      { "name":"shrubbery", "p":[370.97,263.07], "d": 4 },
+      { "name":"bench", "p":[370.50,263.71] ,"t": -90 , "d": 4},
+      { "name":"bench", "p":[439.48,280.28] ,"t": 160 ,"description":"bench acropolis", "d": 4},
+      { "name":"shrubbery", "p":[379.88,209.10] , "d": 4},
+      { "name":"shrubbery", "p":[380.90,211.33] , "d": 4},
+      { "name":"shrubbery", "p":[399.92,232.49] ,"description":"home2 shrubber", "d": 4},
+      { "name":"shrubbery", "p":[388.76,226.96,0.1]  ,"description":"", "d": 4},
+      { "name":"woodbed", "p":[394.82,295.86],"t": 0, "d": 4 },
+      { "name":"curtain", "p":[394.5,295.86],"t": -90 , "d": 4 },
+      { "name":"curtain", "p":[394.5,295.86],"t": 90  ,"sx": 1.01 ,"sy": 1.01 ,"sz": 1.01 , "d": 4},
+      { "name":"stool", "p":[395.07,296.33] ,"t": 0, "d": 4 },
+      { "name":"bunk", "p":[384.6,252.17],"description":"homeroom","t": 90  , "d": 4 },
+      { "name":"bunk", "p":[383.9,250.49],"description":"homeroom","t": 250  , "d": 4 },
+      { "name":"bunk", "p":[384.95,250.49],"description":"homeroom","t": 160  , "d": 4 },
+      { "name":"chair", "p":[383.5,251.81],"description":"homeroom","t": 0  , "d": 4 },
+      { "name":"icon", "p":[383.4,251.81,0.6],"description":"homeroom","t": -10    , "d": 4},
+      { "name":"icon", "p":[385.1,252.14,0.6],"description":"homeroom 385.1,251.45","t": 170   , "d": 4 },
+      { "name":"bag", "ignore":true, "p":[384.28,256.67,-0.02] ,"t": 20 ,"description":"post office2", "d": 4},
+      { "name":"bag", "p":[383.91,256.74,-0.02] ,"t": 20 ,"description":"post office2", "d": 4},
+      { "name":"bag", "p":[385.08,256.55,-0.02] ,"t": 0 ,"description":"post office2","sx": 3 ,"sy": 3 ,"sz": 3 , "d": 4},
+      { "name":"sack", "p":[385.63,256.71],"description":"postoffice2" , "d": 4},
+      { "name":"sack", "p":[386.05,256.68],"description":"postoffice2" , "d": 4},
+
+      { "name":"mailbox", "p":[383.72,257.3,0] ,"t": -10 ,"description":"post office2","sx": 1 ,"sy": 1 ,"sz": 1 , "d": 4},
+      { "name":"postoffice2", "p":[383.35,257.85,1.1] ,"t": 80 ,"description":"post office2 383.15,258.15,","sx": 1 ,"sy": 1 ,"sz": 1, "d":6 },
+      { "name":"table", "p":[385.9,242.62],"t": -10 ,"description":"soup kitchen", "d": 4},
+      { "name":"table", "p":[386.60,242.61],"t": -10 ,"description":"soup kitchen", "d": 4},
+      { "name":"table", "p":[387.33,242.74],"t": -10 ,"description":"soup kitchen", "d": 4},
+      { "name":"table", "p":[387.10,243.65],"t": -10 ,"description":"soup kitchen", "d": 4},
+      { "name":"table", "p":[386.5,243.66],"t": -10 ,"description":"soup kitchen", "d": 4},
+      { "name":"table", "p":[385.79,243.40],"t": -10 ,"description":"soup kitchen", "d": 4},
+      { "name":"bench", "p":[387.16,242.42] ,"t": 170 ,"sx": 0.8 ,"sy": 0.8 ,"sz": 0.8 , "d": 4},
+      { "name":"bench", "p":[386.65,242.17] ,"t": 170 ,"sx": 0.8 ,"sy": 0.8 ,"sz": 0.8 , "d": 4},
+      { "name":"bench", "p":[386.02,242.31] ,"t": 170 ,"sx": 0.8 ,"sy": 0.8 ,"sz": 0.8 , "d": 4},
+      { "name":"bench", "p":[385.62,243.78],"t": -10 ,"sx": 0.8 ,"sy": 0.8 ,"sz": 0.8 , "d": 4},
+      { "name":"bench", "p":[386.21,243.97] ,"t": -10 ,"sx": 0.8 ,"sy": 0.8 ,"sz": 0.8 , "d": 4},
+      { "name":"bench", "p":[386.90,244.16],"t": -10 ,"sx": 0.8 ,"sy": 0.8 ,"sz": 0.8 , "d": 4},
+      { "name":"woodbench", "p":[387.65,243.23],"t": -100 ,"description":"soup kitchen", "d": 4},
+      { "name":"soupkitchen", "p":[385.17,242.81,0.92] ,"t": 75 ,"description":"soupkitchen","sx": 1 ,"sy": 1 ,"sz": 1 , "d": 4},
+      { "name":"divider",  "p":[387.87,243.84,0.65] ,"t": -15 ,"description":"soupkitchen","sx": 0.45 ,"sy": 0.45 ,"sz": 0.45 , "d": 4},
+      { "name":"freesoup", "p":[387.8,243.85,0.7] ,"t": 75 ,"description":"soupkitchen","sx": 0.7 ,"sy": 0.7 ,"sz": 0.7, "d": 4},
+
+      { "name":"bars", "p":[368.36,281.15],"description":"prison","t": 105 , "d": 4},
+      { "name":"bars", "p":[368.26,280.7],"description":"prison","t": 105 , "d": 4},
+      { "name":"bars", "p":[368.11,280.2],"description":"prison","t": 105, "d": 4 },
+      { "name":"bars", "p":[367.97,279.77],"description":"prison","t": 105 , "d": 4},
+      { "name":"shackles", "p":[368.66,279.99,0.55] ,"description":"prison","t": 0 , "d": 4},
+      { "name":"shackles", "p":[369.59,280.00,0.55] ,"description":"prison","t": 0 , "d": 4},
+      { "name":"shackles", "p":[369.84,280.39,0.55] ,"description":"prison","t": 0 , "d": 4},
+      { "name":"shackles", "p":[369.07,280.82,0.55] ,"description":"prison","t": 0 , "d": 4},
+
+      { "name":"dirtpile", "p":[670.97,542.97,0] ,"description":"cleobulos","t": 0 },
+      { "name":"dirtpile", "p":[672.30,543.37,0] ,"description":"cleobulos","t": 30 },
+      { "name":"dirtpile", "p":[673.68,544.14,0] ,"description":"cleobulos","t": -30 },
+
+      { "name":"table", "p":[364.09,246.19],"description":"baccarat","t": -90 ,"sz": 1.4 ,"sx": 0.5 , "d": 4},
+      { "name":"chair", "p":[363.95,245.61] ,"description":"baccarat","t": -180 , "d": 4 },
+      { "name":"playingcards", "ignore":true, "p":[364.09,246.19,0.27],"description":"baccarat"   ,"iroll": 90 , "d": 4  },
+      { "name":"chair", "p":[363.92,248.21],"description":"blackjack","t": -90, "d": 4 },
+      { "name":"playingcards", "p":[364.41,248.13,0.27],"description":"blackjack"  ,"iroll": 90   , "d": 4 },
+      { "name":"chair", "p":[365,251.6],"description":"backroom","t": 0 , "d": 4},
+      { "name":"table", "p":[365.13,251.47],"description":"backroom","t": 0, "d": 4 },
+      { "name":"table", "p":[363.40,247.65,0],"description":"casino","t": 100 , "d": 4  },
+      { "name":"chair", "p":[363.44,248],"description":"casino","t": 0, "d": 4 },
+      { "name":"chair", "p":[363.30,247.21],"description":"casino","t": 180 , "d": 4},
+      { "name":"chair", "p":[363.8,247.60],"description":"casino","t": 100 , "d": 4},
+      { "name":"gaminghouse", "p":[365.87,247.35,1],"description":"casino text text","t": 280, "d": 4 },
+      { "name":"gaminghouse", "p":[363.21, 247.54,0.7],"description":"casino text text","t": 280, "d": 4 },
+      { "name":"table", "p":[378.22,281.05,0],"description":"newsroom","t": 90  ,"sx": 2 , "d": 4 },
+      { "name":"chair", "p":[378.33,280.66],"description":"newsroom 378.27,280.45","t": 180 , "d": 4},
+      { "name":"chair", "p":[378.16, 281.39],"description":"newsroom 378.18,281.45","t": 0 , "d": 4},
+      { "name":"chair", "p":[378.57,280.45],"description":"newsroom","t": 180 , "d": 4},
+      { "name":"chair", "p":[378.48,281.45],"description":"newsroom","t": 0 , "d": 4},
+      { "name":"table", "p":[376.47,281.41,0],"description":"newsroom","t": 90 ,"sx": 2 , "d": 4 },
+      { "name":"chair", "p":[377.22,281.27],"description":"newsroom","t": 90 , "d": 4},
+      { "name":"chair", "p":[377.16,281.58],"description":"newsroom","t": 90 , "d": 4},
+      { "name":"chair", "p":[376.56,280.70],"description":"newsroom","t": 180 , "d": 4},
+      { "name":"chair", "p":[376.49,281.98],"description":"newsroom","t": 0 , "d": 4},
+
+      { "name":"newspaper", "p":[ 378.17, 281.25 ,0.2] ,"sx": 1 ,"sy": 1 ,"description":"newsroom 378.24,281.04","t": 90 , "d": 4},
+      { "name":"newspaper", "ignore":true, "p":[378.44,281.04,0.2] ,"sx": 1.2 ,"sy": 1.25 ,"description":"newsroom","t": 45, "d": 4 },
+      { "name":"newspaper", "p":[378.34, 280.8,0.2] ,"sx": 1 ,"sy": 1 ,"description":"newsroom 378.49,280.83","t": 100 , "d": 4},
+      { "name":"newspapers", "p":[378.15,281.80,0] ,"sx": 1.2 ,"sy": 1.25 ,"description":"newsroom","t": 0 , "d": 4},
+      { "name":"newspapers", "p":[378.93,280.30,0] ,"sx": 1.2 ,"sy": 1.25 ,"description":"newsroom","t": 0, "d": 4 },
+      { "name":"newspapers", "p":[376.76,281.28,0.2] ,"sx": 1.2 ,"sy": 1.25 ,"description":"newsroom","t": 0 , "d": 4},
+      { "name":"newspapers", "p":[377.82,280.66,0] ,"sx": 1.2 ,"sy": 1.25 ,"description":"newsroom","t": 0 , "d": 4},
+      { "name":"newspaper", "p":[376.51,281.50,0.2] ,"sx": 1.5 ,"sy": 1.5 ,"description":"newsroom","t": 0, "d": 4 },
+      { "name":"quill", "p":[376.46,281.22,0.2] ,"sx": 1 ,"sy": 1 ,"description":"newsroom","t": 0, "d": 4 },
+      { "name":"quill", "p":[377.96,281.19,0.2] ,"sx": 1 ,"sy": 1 ,"description":"newsroom","t": 0, "d": 4 },
+      { "name":"quill", "p":[378.44,280.84,0.2] ,"sx": 1 ,"sy": 1 ,"description":"newsroom","t": 0 , "d": 4},
+
+      { "name":"woodbench", "p":[384.35,285.24],"t": -40 ,"description":"trading post","sx": 1.5 , "d": 4},
+      { "name":"generalstore2", "p":[385.29,283.93,0.9]  ,"t": -110 ,"description":"trading post" , "d": 4},
+      { "name":"generalstore2", "p":[385.75,285.08,0.9]  ,"t": -220 ,"description":"trading post" , "d": 4},
+      { "name":"generalstore", "p":[384.69,283.76,0.35] ,"t": -110 ,"description":"trading post", "d": 4 },
+      { "name":"cabinet", "p":[384.69,283.76],"description":"tradingpost","t": -200 , "d": 4},
+      { "name":"crockery", "p":[385.6,284.3,0] ,"sy": 0.6 ,"t": -120 ,"description":"trading post" , "d": 4},
+      { "name":"cabinet", "p":[385.6,284.3],"description":"tradingpost","t": -210, "d": 4 },
+      { "name":"sack", "p":[385.85,284.87],"description":"tradingpost" , "d": 4},
+      { "name":"sack", "p":[384.93,284.39],"description":"tradingpost" , "d": 4},
+      { "name":"sack", "p":[385.48,284.86],"description":"tradingpost" , "d": 4},
+      { "name":"sack", "p":[383.06,285.28],"description":"tradingpost" , "d": 4},
+      { "name":"sack", "p":[384.19,284.13],"description":"tradingpost","sx": 2 ,"sy": 2 ,"sz": 2, "d": 4},
+      { "name":"sack", "p":[372.09,331.26] ,"description":"tent" , "d": 4},
+      { "name":"sack", "p":[371.81,331.77] ,"description":"tent", "d": 4 },
+      { "name":"bedsidetable", "p":[372.10,331.9] ,"description":"tent" , "d": 4},
+      { "name":"woodbench",  "p":[407.03,308.3],"t": -15 ,"description":"realestate","sx": 1.5 , "d": 4},
+
+      { "name":"brand", "p":[365.77,274.36,0.6],"description":"postoffice","t": 270   , "d": 4},
+      { "name":"brand", "p":[390.55,246.88,0.6],"description":"restaurant","t": 90  , "d": 4 },
+      { "name":"brand", "p":[381.64,253.35,0.7],"description":"restaurant","t": 180  , "d": 4 },
+      { "name":"brand", "p":[379.36,258.58,0.6],"description":"generalstore","t": 270   , "d": 4},
+      { "name":"brand", "ignore":true, "p":[397.8,240.55,0.7],"description":"home","t": 90   , "d": 4},
+      { "name":"brand", "p":[375.26,253.55,0.7],"description":"bank","t": 180   , "d": 4},
+      { "name":"brand", "p":[372.6,242.64,0.7],"description":"brewery","t": 270   , "d": 4},
+      { "name":"brand", "p":[384.13,263.8,0.5],"description":"armourer","t": 190   , "d": 4},
+      { "name":"brand", "p":[382.95,271.42,0.5],"description":"weaponer","t": -90  , "d": 4 },
+      { "name":"brand", "p":[377.22,268.05,0.6],"description":"bottleshop","t": 0    , "d": 4},
+      { "name":"brand", "p":[430.7,279.35,0.7] ,"description":"acropols","t": 30   , "d": 4},
+      { "name":"brand", "p":[436.25,280.8,0.7]  ,"description":"acropols flute","t": 180   , "d": 4},
+      { "name":"brand", "p":[432.41, 277.68,0.7],"description":"acrop sleeping quarters","t": 127   , "d": 4},
+      { "name":"brand" , "p":[393.91,299.25,0.5],"description":"smelly","t": 200   , "d": 4},
+      { "name":"brand", "p":[385.05,248.1,0.5],"description":"restaurant","t": 180  , "d": 4 },
+      { "name":"brand", "p":[388.1,242.65,0.7],"description":"restaurant","t": 90   , "d": 4 },
+      { "name":"brand", "p":[365.04,248.85,0.7],"description":"casino","t": 0   ,  "d": 4 },
+      { "name":"brand", "p":[377.66,280.16,0.9],"description":"newsroom","t": 270  , "d": 4  },
+      { "name":"brand", "p":[382.5,285.78,0.9],"description":"tradingpost","t": 240  , "d": 4  },
+      { "name":"brand", "p":[405.9,307.87,0.7],"description":"tradingpost","t": 270 , "d": 4  },
+      { "name":"flamingbrand", "p":[371.34,332.28],"description":"tent"  , "d": 10},
+      { "name":"brand", "p":[365.56,226.85,0.6],"description":"houseii","t": 200   , "d": 4},
+      { "name":"brand", "p":[372.56,219.45,0.6],"description":"houseiii","t": 190   , "d": 4},
+      { "name":"brand", "p":[365.88,215.68,0.7],"description":"houseiv","t": 10   , "d": 4},
+      { "name":"brand", "p":[374.29, 272.03,0.7],"description":"endo","t": 270   , "d": 4},
+      { "name":"brand", "ignore":true, "p":[ 397.44, 301.68,0.7],"description":"home3","t": 180   , "d": 4},
+
+      { "name":"lindosrock", "p":[366.45,257.78,-0.4] ,"t": 80 },
+      { "name":"lindosrock", "p":[365.65,261.5,-0.4] ,"t": 80 ,"pitch": 20 },
+      { "name":"lindosrock", "p":[365,265.22,-0.4] ,"t": 260 ,"pitch": 20 },
+      { "name":"lindosrock", "p":[364.36,269.27,-0.4] ,"t": 80 ,"pitch": 20 },
+      { "name":"lindosrock", "p":[364.00,272.63,-0.4] ,"t": 260 },
+      { "name":"lindosrock", "p":[363.26,276.5,-0.4] ,"t": 80 },
+      { "name":"lindosrock", "p":[363.5,279,-0.4] ,"t": 270 },
+      { "name":"lindosrock", "p":[364.1,282.39,-0.4] ,"t": 105 },
+      { "name":"lindosrock", "p":[364.94,285.92,-0.4] ,"t": 285 },
+      { "name":"lindosrock", "p":[366.36,289.40,-0.4] ,"t": 145 },
+      { "name":"lindosrock", "p":[360,242.01,-0.3] ,"t": 100 ,"sx": 0.5 ,"sy": 0.5 ,"sz": 0.5 },
+      { "name":"lindosrock", "p":[357.5,240.41,-0.3] ,"t": 120 ,"sx": 0.5 ,"sy": 0.5 ,"sz": 0.5 },
+      { "name":"lindosrock", "p":[356.17,237.78,-0.3] ,"t": 100 ,"sx": 0.5 ,"sy": 0.5 ,"sz": 0.5  },
+      { "name":"lindosrock", "p":[397.04,293.58,-0.3] ,"t": 100 ,"description":"between lindos and acroplolis","sx": 0.5 ,"sy": 0.5 ,"sz": 0.5 },
+      { "name":"lindosrock", "p":[396.13,290.24,-0.3] ,"t": 100 ,"description":"between lindos and acroplolis","sx": 0.5 ,"sy": 0.5 ,"sz": 0.5 },
+      { "name":"lindosrock", "p":[394.84,287.02,-0.3] ,"t": 100 ,"description":"between lindos and acroplolis","sx": 0.5 ,"sy": 0.5 ,"sz": 0.5 },
+      { "name":"lindosrock", "p":[393.94,282.99,-0.3] ,"t": 100 ,"description":"between lindos and acroplolis","sx": 0.5 ,"sy": 0.5 ,"sz": 0.5 },
+      { "name": "grass","p": [ 391.35,301.87,0.0],  "d": 10},
+      { "name": "grass","p": [ 390.46,302.47,0.0],  "d": 10},
+      { "name": "grass","p": [ 393.04,304.89,0.0],  "d": 10},
+      { "name": "grass","p": [ 393.75,305.38,0.0],  "d": 10},
+      { "name": "grass","p": [ 394.50,306.04,0.0],  "d": 10},
+      { "name": "grass","p": [ 396.06,307.50,0.0],  "d": 10},
+      { "name": "grass","p": [ 397.81,308.93,0.0],  "d": 10},
+      { "name": "grass","p": [ 400.64,311.21,0.0],  "d": 10},
+      { "name": "grass","p": [ 382.04,291.58,0.0],  "d": 10},
+      { "name": "grass","p": [ 382.71,292.71,0.0],  "d": 10},
+      { "name": "grass","p": [ 383.63,293.67,0.0],  "d": 10},
+      { "name": "grass","p": [ 384.60,294.67,0.0],  "d": 10},
+      { "name": "grass","p": [386.17,296.25,0.0],  "d": 10},
+      { "name": "grass","p": [387.59,298.38,0.0],  "d": 10},
+
+      { "name":"lindosrock", "p":[414.48,322.17,-0.4] ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 },
+      { "name":"lindosrock", "p":[414.23,322.41,-0.4] ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 },
+      { "name":"lindosrock", "p":[413.56,323.09,-0.4] ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 },
+      { "name":"lindosrock", "p":[412.62,324.04,-0.4] ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 },
+      { "name":"lindosrock", "p":[411.33,324.93,-0.4] ,"sx": 0.4 ,"sy": 0.4 ,"sz": 0.4 },
+      { "name":"lindosrock", "p":[389.86,302.67,-0.4] ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 },
+      { "name":"lindosrock", "p":[392.08,303.21,-0.4] ,"sx": 0.2 ,"sy": 0.2 ,"sz": 0.2 },
+      { "name":"lindosrock", "p":[392.89,304.58,-0.4] ,"sx": 0.4 ,"sy": 0.3 ,"sz": 0.4 },
+      { "name":"lindosrock", "p":[387.91,300.34,-0.4] ,"sx": 0.4 ,"sy": 0.4 ,"sz": 0.4 },
+      { "name":"lindosrock", "p":[411.13,300.89,-0.4] ,"t": 100 ,"sx": 0.4 ,"sy": 0.4 ,"sz": 0.4 },
+
+      { "name": "grass","p": [402.13,232.11,0.0],  "d": 10},
+      { "name": "grass","p": [400.92,231.15,0.0],  "d": 10},
+      { "name": "grass","p": [400.61,230.94,0.0],  "d": 10},
+      { "name": "grass","p": [399.96,229.65,0.0],  "d": 10},
+      { "name": "grass","p": [400.74,229.09,0.0],  "d": 10},
+
+      { "name":"lindosrock", "p":[402.70,233.20] ,"roll": -20 ,"sx": 0.2 ,"sy": 0.2 ,"sz": 0.2  , "d": 10},
+      { "name":"wall", "p":[673.82,543.69,-0.1] ,"description":"cleobulos","t": -25 , "d": 40},
+      { "name":"dirtpile", "p":[667.01,541.18,-0.1] ,"description":"cleobulos","t": -30 ,"sx": 1.5 ,"sy": 1.5 ,"sz": 1.5 , "d": 10},
+      { "name":"dirtpile", "p":[669.72,544.69,-0.1] ,"description":"cleobulos","t": -30 ,"sx": 1.5 ,"sy": 1.5 ,"sz": 1.5 , "d": 10},
+      { "name":"dirtpile", "p":[662.66,544.92,-0.2] ,"description":"cleobulos","t": -30 ,"sx": 1.5 ,"sy": 1.5 ,"sz": 1.5 , "d": 10},
+
+      { "name":"wall", "p":[673.82,543.69,-0.1] ,"description":"cleobulos","t": -25 , "d": 40},
+      { "name":"dirtpile", "p":[667.01,541.18,-0.1] ,"description":"cleobulos","t": -30 ,"sx": 1.5 ,"sy": 1.5 ,"sz": 1.5 , "d": 10},
+      { "name":"dirtpile", "p":[669.72,544.69,-0.1] ,"description":"cleobulos","t": -30 ,"sx": 1.5 ,"sy": 1.5 ,"sz": 1.5 , "d": 10},
+      { "name":"dirtpile", "p":[662.66,544.92,-0.2] ,"description":"cleobulos","t": -30 ,"sx": 1.5 ,"sy": 1.5 ,"sz": 1.5 , "d": 10},
+      { "name":"shrub", "p":[425.68,287.63] ,"description":"outside acrop", "d": 10},
+      { "name":"shrub", "p":[427.03,288.46] ,"description":"outside acrop", "d": 10},
+      { "name":"shrub", "p":[424.49,284.37] ,"description":"outside acrop", "d": 10},
+      { "name":"shrub", "p":[421.29,287.18] ,"description":"outside acrop", "d": 10},
+      { "name":"shrub", "p":[418.05,286.24] ,"description":"outside acrop", "d": 10},
+      { "name":"shrub", "p":[416.20,286.31] ,"description":"outside acrop", "d": 10},
+      { "name":"shrub", "p":[424.51,287.28] ,"description":"outside acrop", "d": 10},
+      { "name":"shrub", "p":[217.95,120.81] ,"description":"outside acrop", "d": 10},
+      { "name":"shrub", "p":[217.48,117.58] ,"description":"outside acrop", "d": 10},
+      { "name":"shrub", "p":[217.24,112.38] ,"description":"outside acrop", "d": 10},
+      { "name":"shrub", "p":[214.91,108.67] ,"description":"outside acrop", "d": 10},
+      { "name":"shrub", "p":[211.06,105.68] ,"description":"outside acrop", "d": 10},
+
+      { "name":"lindosrock", "p":[425.33,277.66,-0.3]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10},
+      { "name":"lindosrock", "p":[424.54,276.32,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10},
+      { "name":"lindosrock", "p":[421.23,279.00,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10},
+      { "name":"lindosrock", "p":[420.12,274.11,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10},
+      { "name":"lindosrock", "p":[428.95,270.58,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10},
+      { "name":"lindosrock", "p":[438.57,277.81,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10},
+      { "name":"lindosrock", "p":[436.45,277.30,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10},
+      { "name":"lindosrock", "p":[433.88,276.97,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10},
+      { "name":"lindosrock", "p":[437.02,273.36,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10},
+      { "name":"lindosrock", "p":[444.90,274.33,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10},
+      { "name":"lindosrock", "p":[434.40,278.38,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3, "d": 10 },
+      { "name":"lindosrock", "p":[435.20,278.36,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10},
+      { "name":"lindosrock", "p":[421.25, 271.33,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10},
+      { "name":"lindosrock", "p":[422.53, 269.31,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10},
+      { "name":"lindosrock", "p":[ 422.98, 267.64,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10},
+      { "name":"lindosrock", "p":[424.59, 273.25,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10},
+      { "name":"lindosrock", "p":[423.87, 274.13,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10, "rt": 360},
+      { "name":"lindosrock", "p":[427.80, 277.78,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10, "rt": 360},
+      { "name":"lindosrock", "p":[ 428.53, 278.61,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10, "rt": 360},
+      { "name":"lindosrock", "p":[ 435.08, 274.68,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10, "rt": 360},
+      { "name":"lindosrock", "p":[ 434.19, 275.29,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10, "rt": 360},
+      { "name":"lindosrock", "p":[ 436.51, 277.22,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10, "rt": 360},
+      { "name":"lindosrock", "p":[443.56, 275.71,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10, "rt": 360},
+      { "name":"lindosrock", "p":[ 445.67, 273.61,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10, "rt": 360},
+      { "name":"lindosrock", "p":[  446.42, 270.78,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10, "rt": 360},
+      { "name":"lindosrock", "p":[ 445.40, 269.14,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10, "rt": 360},
+      { "name":"lindosrock", "p":[  444.71, 268.04,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10, "rt": 360},
+      { "name":"lindosrock", "p":[   442.13, 267.51,-0.2]  ,"sx": 0.3 ,"sy": 0.3 ,"sz": 0.3 , "d": 10, "rt": 360},
+
+
+      { "name": "tent","p": [ 371.91,331.56,-0.05],  "t": 45, "d": 20},
+
+      { "name": "bunk","p": [ 431.2,276,0],  "t": -235,  "d": 5,"description":"acropolis", "d": 4},
+      {"name": "bunk", "p": [ 428.68,279.58],  "t": -165,  "d": 5,"description":"acropolis", "d": 4},
+
+      { "name":"woodbed", "p":[399.7,233.40] ,"t": -30  ,"description":"home2", "d": 4},
+      { "name":"doormat", "p":[400.28,232.78],"t": 145 ,"description":"home2", "d": 4},
+       {"name": "cypresstree", "p": [ 441.44,282.32,0.0]},
+      { "name":"cleobulus", "p":[672.37,546.23] ,"description":"cleobulos","t": 0  , "d": 10},
+      { "name":"table", "p":[364.41,248.13] ,"description":"blackjack","t": 0 ,"sz": 1.35 ,"sx": 0.5 , "d": 4},
+      { "name":"vault", "p":[364.78,249.42,0.4] ,"description":"jackpot","roll": 90 ,"sx": 1.5 ,"sy": 1.5 ,"sz": 1.5  ,"t": 10, "d": 4 },
+      { "name":"generalboard", "ignore":true, "p":[365.10,249.35,0.2]  ,"description":"jackpot" ,"t": 100 ,"sx": 0.45 ,"sz": 0.8   , "d": 4},
+
+      { "name":"wooddoor", "p":[366.83,232.38] ,"description":"housei door","t": 111 ,"sz": 1.7 ,"sx": 0.9 , "d": 4},
+      { "name":"wooddoor", "p":[365.2,228.07] ,"description":"houseii door","t": 111 , "d": 4 },
+      { "name":"wooddoor", "p":[372.67,222.15] ,"description":"houseiii door","t": 0 ,"sz": 1.15 , "d": 4},
+      { "name":"wooddoor", "p":[365.35,213.85] ,"description":"houseiv door","t": 0  ,"sz": 1.4 , "d": 4},
+      { "name":"wooddoor", "p":[399.95,232.90] ,"description":"virgin" ,"t": -24  ,"sz": 1.2 , "d": 4},
+      { "name":"bars", "p":[375.85,253.19],"description":"bank", "d": 4},
+      { "name":"generalboard", "p":[367.78,284.60,0.25],"description":"near post office","t": 20  , "d": 4 },
+      { "name":"generalboard", "p":[381.08,259.51,0.25],"description":"outside general store","t": 90  , "d": 4},
+
+      { "name":"stool", "p":[394.8,296.51] ,"t": 0 ,"description":"whorestool", "d": 4},
+      { "name":"bedsidetable", "p":[394.04, 295.84,0],"description":"whorehouse","t": 30  , "d": 4},
+
+      { "name":"hauberk", "ignore":true, "p":[430.60,279.2,0],"description":"acropols","t": 15    , "d": 4},
+      { "name":"hauberk", "ignore":true, "p":[428.54,280.53,0],"description":"acropols","t": 15   , "d": 4},
+      { "name":"book", "ignore":true, "p":[430.30,275.35,0.25],"description":"acropols"    , "d": 4},
+      { "name":"mirror", "p":[428.03,279.47,0.2] ,"description":"acropolis hiehgitlevel is ignored with withcollisiondown","t": 190   , "d": 4},
+      { "name":"rosary", "ignore":true, "p":[430.60,276.0,0.15],"description":"acropols"     , "d": 4},
+      { "name":"helmet", "p":[430.19,275.2,0.7] ,"description":"acropols","pitch": 90 ,"t": 30  , "d": 4  },
+      { "name":"mirror", "p":[383.55,251.38,0.2] ,"description":"homeroom","t": 250    , "d": 4},
+      { "name":"soupbowl", "ignore":true, "p":[386.61,242.78,0.2]  ,"t": 0 ,"description":"soupkitchen","sx": 1 ,"sy": 1 ,"sz": 1, "d": 4 },
+      { "name":"pot", "p":[387.63,243.00,0.23] ,"t": 180 ,"description":"soup kitchen", "d": 4},
+      { "name":"pot", "p":[387.65,243.44,0.23] ,"t": 180 ,"description":"soup kitchen", "d": 4},
+      { "name":"pot", "p":[387.04,242.76,0.2]  ,"t": 180 ,"description":"soup  kitchen"},
+      { "name":"broom" ,"ignore":true, "p":[400.35,234.00] ,"t": 0 ,"description":"virgins room", "d": 4},
+      { "name":"key", "p":[400.42,232.86] ,"t": 0 ,"description":"outside virgins room", "d": 4},
+      { "name":"dice", "p":[365.20,251.42,0.19]  , "description":"casino backroom", "d": 4},
+      { "name":"apples", "p":[380.18,258.27,0.0] , "d": 4, "description": "generalstore"},
+      { "name":"newspapers", "ignore":true, "p":[380.34,259.14,0.02] , "d": 4, "description": "generalstore"},
+      { "ignore":true, "name":"boat", "p":[408.75,327.88,0.0] ,"description":"boat on shore","t": 90 ,"pitch": 10, "d": 4 },
+      { "ignore":true, "name":"boat2", "p":[409.75,327.88,0.0] ,"description":"boat on shore","t": 90 ,"pitch": 10, "d": 4 },
+      { "name":"mailbox", "p":[378.89,281.27,0] ,"description":"submission box in newsroom", "d": 4},
+      { "name":"gaminghouseexit", "p":[335.3,301.57,50] ,"t": -90 ,"description":"gaminghouse exit", "d": 4 },
+      { "name":"battlefieldexit", "p":[337.96,301.8,50] ,"t": 90 ,"description":"battlefiedl exit" , "d": 4},
+      { "name":"acropolisexit", "p":[336.84,299.7,50] ,"t": 180 ,"description":"acropolis exit" , "d": 4},
+      { "name":"guide", "ignore":true, "p":[406.56,308.23,0.23] ,"t": 165 ,"description":"realestate", "d": 4},
+      { "name":"clock", "p":[407.8,307.76,0.5] ,"t": 175 ,"description":"realestate", "d": 4},
+
+
+      {"name": "cypresstree", "p": [ 417.75,269.24,0.0], "s": 2, "d": 10},
+      {"name": "cypresstree", "p": [ 419.23,267.99,0.0], "d": 10},
+      {"name": "cypresstree", "p": [ 418.38,271.90,0.0], "d": 10},
+
+      { "name":"flute", "p":[439.6,280.350,0.18] ,"t": 315 ,"description":"baregroundacrop", "d": 4},
+      { "name":"bottle", "ignore":true, "p":[430.59,276.81] ,"description":"grandstoaacrop", "d": 4},
+      { "name":"sword", "ignore":true, "p":[431.96,273.68] ,"description":"grandstoaacrop", "d": 4}
+],
+"poolpositions":[{"poolsize":40, "maxdistance":20, "positions":[
+  { "name": "grass","p": [ 376, 315,0.0],  "rx": 30, "ry":30, "rt": 360, "rs":0.4, "n": 60 },
+  { "name": "grass","p": [ 359, 326,0.0],  "rx": 25, "ry":25, "rt": 360, "rs":0.4, "n": 40 },
+  { "name": "grass","p": [ 352, 343,0.0],  "rx": 10, "ry":10, "rt": 360, "rs":0.4, "n": 20},
+  { "name": "grass2","p": [ 376, 315,0.0],  "rx": 30, "ry":30, "rs":0.4, "n": 240},
+  {"name": "grass2", "p": [ 359, 326,0.0],  "rx": 25, "ry":25, "rs":0.4, "n": 160},
+  { "name": "grass2","p": [ 352, 343,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 80},
+  {"name": "grass3", "p": [ 376, 315,0.0],  "rx": 30, "ry":30, "rs":0.4, "n": 120},
+  {"name": "grass3", "p": [ 359, 326,0.0],  "rx": 25, "ry":25, "rs":0.4, "n": 80 },
+  { "name": "grass3","p": [ 352, 343,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 40 },
+  {"name": "tree", "p": [ 376, 315,0.0],  "rx": 25, "ry":25, "rs":0.4, "n": 15},
+  { "name": "tree","p": [ 359, 326,0.0],  "rx": 20, "ry":20, "rs":0.4, "n": 10},
+  { "name": "tree","p": [ 352, 343,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 5},
+
+  { "name": "tree2","p": [ 376, 315,0.0],  "rx": 25, "ry":25, "rs":0.4, "n": 15},
+  { "name": "tree2","p": [ 359, 326,0.0],  "rx": 20, "ry":20, "rs":0.4, "n": 10},
+  { "name": "tree2","p": [ 352, 343,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 5},
+
+  { "name": "grass3","p": [ 600,514,0.0],  "rx": 80, "ry":80, "rs":0.4, "n": 350},
+  { "name": "grass2","p": [ 600,514,0.0],  "rx": 80, "ry":80, "rs":0.4, "n": 784},
+  { "name": "tree",  "p": [ 600,514,0.0],  "rx": 80, "ry":80, "rs":0.4, "n": 100},
+  { "name": "grass3","p": [ 522,479,0.0],  "rx": 80, "ry":80, "rs":0.4, "n": 415},
+  { "name": "grass2","p": [ 522,479,0.0],  "rx": 80, "ry":80, "rs":0.4, "n": 829},
+  { "name": "tree2","p": [ 522,479,0.0],  "rx": 80, "ry":80, "rs":0.4, "n": 100},
+  { "name": "grass3","p": [ 442,506,0.0],  "rx": 80, "ry":80, "rs":0.4, "n": 415},
+  { "name": "grass2","p": [ 442,506,0.0],  "rx": 80, "ry":80, "rs":0.4, "n": 829},
+  { "name": "tree",  "p": [ 442,506,0.0],  "rx": 80, "ry":80, "rs":0.4, "n": 100},
+  { "name": "grass3","p": [ 317,512,0.0],  "rx": 160, "ry":160, "rs":0.4, "n": 1659},
+  { "name": "grass2","p": [ 317,512,0.0],  "rx": 160, "ry":160, "rs":0.4, "n": 3318},
+  { "name": "grass","p": [ 317,512,0.0],  "rx": 160, "ry":160, "rs":0.4, "n": 100},
+  { "name": "grass3","p": [ 107,440,0.0],  "rx": 214, "ry":214, "rs":0.4, "n": 2968},
+  { "name": "grass2","p": [ 107,440,0.0],  "rx": 214, "ry":214, "rs":0.4, "n": 5935},
+  { "name": "tree2","p": [ 107,440,0.0],  "rx": 214, "ry":214, "rs":0.4, "n": 500},
+  { "name": "grass3","p": [ 115,248,0.0],  "rx": 230, "ry":230, "rs":0.4, "n": 3428},
+  { "name": "grass2","p": [ 115,248,0.0],  "rx": 230, "ry":230, "rs":0.4, "n": 6856},
+  { "name": "grass3","p": [ 99,76,0.0],  "rx": 160, "ry":160, "rs":0.4, "n": 1659},
+  { "name": "grass2","p": [ 99,76,0.0],  "rx": 160, "ry":160, "rs":0.4, "n": 3318},
+  { "name": "tree",  "p": [ 99,76,0.0],  "rx": 160, "ry":160, "rs":0.4, "n":300},
+  { "name": "grass3","p": [ 246,162,0.0],  "rx": 160, "ry":160, "rs":0.4, "n": 1659},
+  { "name": "grass2","p": [ 246,162,0.0],  "rx": 160, "ry":160, "rs":0.4, "n": 3318},
+  { "name": "grass3","p": [ 272,74,0.0],  "rx": 100, "ry":100, "rs":0.4, "n": 648},
+  { "name": "grass2","p": [ 272,74,0.0],  "rx": 100, "ry":100, "rs":0.4, "n": 1296},
+  { "name": "grass","p":[ 272,74,0.0],  "rx": 100, "ry":100, "rs":0.4, "n": 100},
+  { "name": "grass3","p": [ 392,108,0.0],  "rx": 80, "ry":80, "rs":0.4, "n": 415},
+  { "name": "grass2","p": [ 392,108,0.0],  "rx": 80, "ry":80, "rs":0.4, "n": 829},
+  { "name": "grass3","p": [ 457,113,0.0],  "rx": 60, "ry":60, "rs":0.4, "n": 234},
+  { "name": "grass2","p": [ 457,113,0.0],  "rx": 60, "ry":60, "rs":0.4, "n": 467},
+  { "name": "grass3","p": [ 447,50,0.0],  "rx": 40, "ry":40, "rs":0.4, "n": 104},
+  { "name": "grass2","p": [ 447,50,0.0],  "rx": 40, "ry":40, "rs":0.4, "n": 207},
+  { "name": "grass3","p": [ 477,318,0.0],  "rx": 60, "ry":60, "rs":0.4, "n": 234},
+  { "name": "grass2","p": [ 477,318,0.0],  "rx": 60, "ry":60, "rs":0.4, "n": 467},
+  { "name": "grass3","p": [ 413, 260,0.0],  "rx": 16, "ry":16, "rs":0.4, "n": 180},
+  { "name": "grass2","p": [ 413, 260,0.0],  "rx": 16, "ry":16, "rs":0.4, "n": 160},
+  { "name": "grass3","p": [ 401.68, 284.28],  "rx": 10, "ry":10, "rs":0.4, "n": 30, "description": "near sheep"},
+  { "name": "grass2","p": [ 401.68, 284.28],  "rx": 10, "ry":10, "rs":0.4, "n": 20},
+  { "name": "tree2","p": [ 401.68, 284.28],  "rx": 10, "ry":10, "rs":0.4, "n": 10},
+  { "name": "grass3","p": [ 410.76, 288.64],  "rx": 10, "ry":10, "rs":0.4, "n": 30},
+  { "name": "grass2","p": [ 410.76, 288.64],  "rx": 10, "ry":10, "rs":0.4, "n": 20},
+  { "name": "tree2","p": [ 410.76, 288.64],  "rx": 10, "ry":10, "rs":0.4, "n": 10},
+  { "name": "grass3","p": [ 419.37, 293.27],  "rx": 10, "ry":10, "rs":0.4, "n": 30},
+  { "name": "grass2","p": [ 419.37, 293.27],  "rx": 10, "ry":10, "rs":0.4, "n": 20},
+  { "name": "tree2","p": [ 419.37, 293.27],  "rx": 10, "ry":10, "rs":0.4, "n": 10},
+  { "name": "grass3","p": [ 430.18, 296.88],  "rx": 10, "ry":10, "rs":0.4, "n": 30},
+  { "name": "grass2","p": [ 430.18, 296.88],  "rx": 10, "ry":10, "rs":0.4, "n": 20},
+  { "name": "tree2","p": [ 430.18, 296.88],  "rx": 10, "ry":10, "rs":0.4, "n": 10},
+  { "name": "grass3","p": [ 442.47, 314.52],  "rx": 10, "ry":10, "rs":0.4, "n": 30},
+  { "name": "grass2","p": [ 442.47, 314.52],  "rx": 10, "ry":10, "rs":0.4, "n": 20},
+  { "name": "tree2","p": [ 442.47, 314.52],  "rx": 10, "ry":10, "rs":0.4, "n": 10},
+  { "name": "grass3","p": [ 461.21, 343.37],  "rx": 10, "ry":10, "rs":0.4, "n": 30},
+  { "name": "grass2","p": [ 461.21, 343.37],  "rx": 10, "ry":10, "rs":0.4, "n": 20},
+  { "name": "tree2","p": [ 461.21, 343.37],  "rx": 10, "ry":10, "rs":0.4, "n": 10},
+  { "name": "grass3","p": [401.64, 266.91],  "rx": 10, "ry":10, "rs":0.4, "n": 30},
+  { "name": "grass2","p": [ 401.64, 266.91],  "rx": 10, "ry":10, "rs":0.4, "n": 20},
+  { "name": "tree2","p": [ 401.64, 266.91],  "rx": 10, "ry":10, "rs":0.4, "n": 10},
+  { "name": "grass3","p": [335.82, 364.70],  "rx": 10, "ry":10, "rs":0.4, "n": 30},
+  { "name": "grass2","p": [335.82, 364.70],  "rx": 10, "ry":10, "rs":0.4, "n": 20},
+  { "name": "tree2","p": [335.82, 364.70],  "rx": 10, "ry":10, "rs":0.4, "n": 10},
+  { "name": "grass3","p": [337.05, 381.76],  "rx": 10, "ry":10, "rs":0.4, "n": 30},
+  { "name": "grass2","p": [337.05, 381.76],  "rx": 10, "ry":10, "rs":0.4, "n": 20},
+  { "name": "tree2","p": [337.05, 381.76],  "rx": 10, "ry":10, "rs":0.4, "n": 10},
+  { "name": "grass3","p": [328.23, 397.76],  "rx": 10, "ry":10, "rs":0.4, "n": 30},
+  { "name": "grass2","p": [328.23, 397.76],  "rx": 10, "ry":10, "rs":0.4, "n": 20},
+  { "name": "tree2","p": [328.23, 397.76],  "rx": 10, "ry":10, "rs":0.4, "n": 10},
+  { "name": "grass3","p": [329.74, 418.88],  "rx": 10, "ry":10, "rs":0.4, "n": 30},
+  { "name": "grass2","p": [329.74, 418.88],  "rx": 10, "ry":10, "rs":0.4, "n": 20},
+  { "name": "tree2","p": [329.74, 418.88],  "rx": 10, "ry":10, "rs":0.4, "n": 10},
+  { "name": "grass3","p": [471.74, 346.81],  "rx": 10, "ry":10, "rs":0.4, "n": 30, "description": "near cannon"},
+  { "name": "grass2","p": [471.74, 346.81],  "rx": 10, "ry":10, "rs":0.4, "n": 20},
+  { "name": "tree2","p": [471.74, 346.81],  "rx": 10, "ry":10, "rs":0.4, "n": 10},
+  { "name": "grass3","p": [197.85, 111.86],  "rx": 10, "ry":10, "rs":0.4, "n": 30},
+  { "name": "grass2","p": [197.85, 111.86],  "rx": 10, "ry":10, "rs":0.4, "n": 20},
+  { "name": "tree2","p": [197.85, 111.86],  "rx": 10, "ry":10, "rs":0.4, "n": 10},
+
+  { "name": "grass3","p": [365.84, 202.90],  "rx": 10, "ry":10, "rs":0.4, "n": 30},
+  { "name": "grass2","p": [365.84, 202.90],  "rx": 10, "ry":10, "rs":0.4, "n": 20},
+  { "name": "tree2","p": [365.84, 202.90],  "rx": 10, "ry":10, "rs":0.4, "n": 10},
+  { "name": "grass3","p": [379.07, 202.06],  "rx": 10, "ry":10, "rs":0.4, "n": 30},
+  { "name": "grass2","p": [379.07, 202.06],  "rx": 10, "ry":10, "rs":0.4, "n": 20},
+  { "name": "tree2","p": [379.07, 202.06],  "rx": 10, "ry":10, "rs":0.4, "n": 10},
+  { "name": "grass3","p": [391.24, 208.2],  "rx": 10, "ry":10, "rs":0.4, "n": 30},
+  { "name": "grass2","p": [391.24, 208.2],  "rx": 10, "ry":10, "rs":0.4, "n": 20},
+  { "name": "tree2","p": [391.24, 208.2],  "rx": 10, "ry":10, "rs":0.4, "n": 10},
+  { "name": "grass3","p": [398.26, 216.13],  "rx": 10, "ry":10, "rs":0.4, "n": 30},
+  { "name": "grass2","p": [398.26, 216.13],  "rx": 10, "ry":10, "rs":0.4, "n": 20},
+  { "name": "tree2","p": [398.26, 216.13],  "rx": 10, "ry":10, "rs":0.4, "n": 10},
+  { "name": "grass3","p": [406.45, 225.86],  "rx": 10, "ry":10, "rs":0.4, "n": 30},
+  { "name": "grass2","p": [406.45, 225.86],  "rx": 10, "ry":10, "rs":0.4, "n": 20},
+  { "name": "tree2","p": [406.45, 225.86],  "rx": 10, "ry":10, "rs":0.4, "n": 10},
+  { "name": "grass3","p": [407.90, 240.98],  "rx": 10, "ry":10, "rs":0.4, "n": 30},
+  { "name": "grass2","p": [407.90, 240.98],  "rx": 10, "ry":10, "rs":0.4, "n": 20},
+  { "name": "tree2","p": [407.90, 240.98],  "rx": 10, "ry":10, "rs":0.4, "n": 10},
+  { "name": "grass3","p": [417.12, 299.68],  "rx": 5, "ry":5, "rs":0.4, "n": 15},
+  { "name": "grass2","p": [417.12, 299.68],  "rx": 5, "ry":5, "rs":0.4, "n": 10},
+  { "name": "tree2","p": [417.12, 299.68],  "rx": 5, "ry":5, "rs":0.4, "n": 5},
+  { "name": "grass3","p": [429.76, 313.28],  "rx": 5, "ry":5, "rs":0.4, "n": 15},
+  { "name": "grass2","p": [429.76, 313.28],  "rx": 5, "ry":5, "rs":0.4, "n": 10},
+  { "name": "tree2","p": [429.76, 313.28],  "rx": 5, "ry":6, "rs":0.4, "n": 5},
+  { "name": "grass3","p": [435.42, 318.78],  "rx": 5, "ry":5, "rs":0.4, "n": 15},
+  { "name": "grass2","p": [435.42, 318.78],  "rx": 5, "ry":5, "rs":0.4, "n": 10},
+  { "name": "tree2","p": [435.42, 318.78],  "rx": 5, "ry":6, "rs":0.4, "n": 5},
+  { "name": "grass3","p": [442.86, 327.91],  "rx": 5, "ry":5, "rs":0.4, "n": 15},
+  { "name": "grass2","p": [442.86, 327.91],  "rx": 5, "ry":5, "rs":0.4, "n": 10},
+  { "name": "tree2","p": [442.86, 327.91],  "rx": 5, "ry":6, "rs":0.4, "n": 5},
+  { "name": "grass3","p": [440.05, 334.83],  "rx": 5, "ry":5, "rs":0.4, "n": 15},
+  { "name": "grass2","p": [440.05, 334.83],  "rx": 5, "ry":5, "rs":0.4, "n": 10},
+  { "name": "tree2","p": [440.05, 334.83],  "rx": 5, "ry":6, "rs":0.4, "n": 5},
+  { "name": "grass3","p": [430.82, 329.20],  "rx": 5, "ry":5, "rs":0.4, "n": 15},
+  { "name": "grass2","p": [430.82, 329.20],  "rx": 5, "ry":5, "rs":0.4, "n": 10},
+  { "name": "tree2","p": [430.82, 329.20],  "rx": 5, "ry":6, "rs":0.4, "n": 5},
+  { "name": "grass3","p": [417.83, 326.62],  "rx": 5, "ry":5, "rs":0.4, "n": 15},
+  { "name": "grass2","p": [417.83, 326.62],  "rx": 5, "ry":5, "rs":0.4, "n": 10},
+  { "name": "tree2","p": [417.83, 326.62],  "rx": 5, "ry":6, "rs":0.4, "n": 5},
+  { "name": "grass3","p": [411.77, 324.70],  "rx": 5, "ry":5, "rs":0.4, "n": 15},
+  { "name": "grass2","p": [411.77, 324.70],  "rx": 5, "ry":5, "rs":0.4, "n": 10},
+  { "name": "tree2","p": [411.77, 324.70],  "rx": 5, "ry":6, "rs":0.4, "n": 5},
+  { "name": "grass3","p": [ 396.49, 315.73],  "rx": 5, "ry":5, "rs":0.4, "n": 15},
+  { "name": "grass2","p": [ 396.49, 315.73],  "rx": 5, "ry":5, "rs":0.4, "n": 10},
+  { "name": "tree2","p": [ 396.49, 315.73],  "rx": 5, "ry":6, "rs":0.4, "n": 5},
+  { "name": "grass3","p": [ 377.39, 294.78],  "rx": 5, "ry":5, "rs":0.4, "n": 15},
+  { "name": "grass2","p": [ 377.39, 294.78],  "rx": 5, "ry":5, "rs":0.4, "n": 10},
+  { "name": "tree2","p": [ 377.39, 294.78],  "rx": 5, "ry":6, "rs":0.4, "n": 5},
+  { "name": "grass3","p": [ 318.56, 391.90],  "rx": 5, "ry":5, "rs":0.4, "n": 15},
+  { "name": "grass2","p": [ 318.56, 391.90],  "rx": 5, "ry":5, "rs":0.4, "n": 10},
+  { "name": "tree2","p": [ 318.56, 391.90],  "rx": 5, "ry":6, "rs":0.4, "n": 5}
+
+
+]
+}]
+  }
+}
