@@ -119,11 +119,25 @@ In blender you can defines multple meshes in a model as follows:
  
  ![image](https://github.com/user-attachments/assets/3e4fb79b-1f38-4679-97f5-c2a4313813ad)
  
-If the mesh contains the name 'surface' then OPENWORLD treats it as a surface and 3D objects can easily be placed onto the surface using opendarts rayscaster.  The OPENWORLD function worldToLocalSurfaceObj places an object on the terrain at the point it intersects the terrain surface. Likewise a mesh with the word 'wall' in it is treated as a wall and it is po
+If the mesh contains the name 'surface' then OPENWORLD treats it as a surface and 3D objects can easily be placed onto the surface using opendarts rayscaster.  The OPENWORLD function worldToLocalSurfaceObj places an object on the terrain at the point it intersects the terrain surface. Likewise a mesh with the word 'wall' in it is treated as a wall and OPENWORLD stop a player walking through it. And a 'roof' mesh is used so OPENWORLD knows if a player is indoors and stop showing rain indoors
  
- Likewise in belnder can define a gorup with the word wall in it and openworld will allow wall detection and likewise roof detection. Roof detection is useful to know if indoors and to turn off the rain in the weather system.
 
- Terrains should be export as wavefront obj files because it keeps the mesh names which are necessary for defining the 
+Terrains should be exported as wavefront obj files since mesh names are retained. This is necessary so OPENWORLD knows which meshes are a wall, surface or roof
+
+```
+    // Example of loading terrain  openworld/examplesecondtemple/blender/terrain/temple.blend that has been exported to an obj file with path mode set to strip
+    var manager = THREE.LoadingManager();
+    var mtlLoader = THREE_JSM.MTLLoader(manager);
+    mtlLoader.setPath('assets/models/temple/');
+    var materials = await mtlLoader.loadAsync('temple.mtl');
+    await materials.preload();
+    var loader = THREE_JSM.OBJLoader(null);
+    loader.setMaterials(materials);
+    Group mesh = await loader.loadAsync('assets/models/temple/temple.obj');
+    scene.add(mesh);
+    // OPENWORLD uses groups in mesh to determine which meshes are surfaces, walls or roofs
+    OPENWORLD.Space.init(  mesh, scene);
+```
 
 <!--
    collision system with a main terrain which is used as surface, walls and roofs
