@@ -1,5 +1,5 @@
 # Open World for dart
-This gaming engine is written in flutter and based upon our existing threejs openworld repository [openworldthreejs](https://github.com/forthtemple/openworldthreejs). The gaming engine uses the [three_dart](https://github.com/Knightro63/three_dart (is more up to date then three_dart on pub.dev)) package making it easy to convert threejs code to three_dart. Because it uses flutter, games created with this engine are cross platform working on Android, iOS, web, Linux and windows. And with the flutter feature of hotloading it allows 3D objects to be added to a scene on the fly making game design easier.
+This gaming engine is written in flutter and is based upon our existing threejs openworld repository [openworldthreejs](https://github.com/forthtemple/openworldthreejs). The gaming engine uses the [three_dart](https://github.com/Knightro63/three_dart (is more up to date then three_dart on pub.dev)) package making it easy to convert threejs code to three_dart. Because it uses flutter, games created with this engine are cross platform working on Android, iOS, web, Linux and windows. And with the flutter feature of hotloading it allows 3D objects to be added to a scene on the fly making game design easier.
 
 <!--
    -converted to flutter threedart
@@ -22,24 +22,7 @@ A second game is set in Lindos, Rhodes south of Greece in 1522 just before Sulam
 ![image](https://github.com/user-attachments/assets/be650f03-b6dd-4156-9a4c-ba32e5a1edca)
 
 It is also available on <a href="https://apps.apple.com/us/app/lindos-1522/id6736712620">iTunes</a> on  <a href="https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.secondtemple">Amazon</a> and <a href='https://chatgpt.forthtemple.com/secondtemple'>web</a>
-
-<!--
-  -includes two game demos
-     -Second temple set in 72ad before roman invasion
-     https://apps.apple.com/us/app/ark-uncovered/id6593662011
-     https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.secondtemple
-     http://chatgpt.forthtemple.com/secondtemple/
-       -tasked with finding the ark so can defeat the coming enemies
-        links on itunes and android
-     -Lindos 1522 set in 1522 before sulamain invasion
-       https://apps.apple.com/us/app/lindos-1522/id6736712620
-       https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.rhodes3d
-       http://chatgpt.forthtemple.com/rhodes3d/
-        -uncover a spy to save lindos
-        links on itunes and android
-     -models are all blender 
-       -all opensource materials
--->       
+     
 The philosphy of the engine it should not be bloated and only include features that typical openworld games would require on a smartphone or desktop. For example most openworld games will have animated actors, such as a person or monster walking. Most would include models,  planes and sprites, sound, light, weather, time of day, maps, music and rooms. But not all would include, for example, a players inventory system or a combat system or a monetary system. So these less used features are excluded.
 
 <!--      
@@ -123,17 +106,24 @@ Openworld also make it easy to add sprites, planes and text.
 
 As with actors and models, the objects can be scale and placed on the surface of terrain.
 
-<!--
- on top of threedart openworld engine designed for handling:
- animated actors
-   ability for actor wield objects
-   share animations between actors with same skeleton
- Easy addition of sprites, planes and text
- sprites, planes, text   
--->
 
-*Collision detection*. 
- The openworld allows for a single terrain model to be defined. In blender you can have multiple groups in the terrain. If the group contains the name surface then it is treated as a surface and 3D objects can easily be placed onto the surface using opendarts rayscaste. Likewise in belnder can define a gorup with the word wall in it and openworld will allow wall detection and likewise roof detection. Roof detection is useful to know if indoors and to turn off the rain in the weather system.
+*Terrain and collision detection*  
+Openworld allows for a single terrain model to be defined. For example for the Second Temple game the terrain is defined in:
+
+openworld/examplesecondtemple/blender/terrain/temple.blend 
+
+![image](https://github.com/user-attachments/assets/7a1c1422-d8f5-4912-bf91-77e5107c946f)
+
+
+In blender you can defines multple meshes in a model as follows:
+ 
+ ![image](https://github.com/user-attachments/assets/3e4fb79b-1f38-4679-97f5-c2a4313813ad)
+ 
+If the mesh contains the name 'surface' then OPENWORLD treats it as a surface and 3D objects can easily be placed onto the surface using opendarts rayscaster.  The OPENWORLD function worldToLocalSurfaceObj places an object on the terrain at the point it intersects the terrain surface. Likewise a mesh with the word 'wall' in it is treated as a wall and it is po
+ 
+ Likewise in belnder can define a gorup with the word wall in it and openworld will allow wall detection and likewise roof detection. Roof detection is useful to know if indoors and to turn off the rain in the weather system.
+
+ Terrains should be export as wavefront obj files because it keeps the mesh names which are necessary for defining the 
 
 <!--
    collision system with a main terrain which is used as surface, walls and roofs
