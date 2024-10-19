@@ -102,10 +102,26 @@ The following is sample code for adding an animated actor to a scene from an act
     
 
 ```
-*Adding 3D objects - models, sprites, planes and text*  
-  Sprites and planes can be added 
+*Adding sprites, planes and text*  
+Openworld also make it easy to add sprites, planes and text.
 
+  ![image](https://github.com/user-attachments/assets/8eca92a9-a123-4563-a54e-3cdce4e9f6c6)
 
+```
+    // Load a sprite of gabriel 
+    var gabriel = await OPENWORLD.Sprite.loadSprite(
+        'assets/textures/gabriel.png', 0.5, 0.4,
+        ambient: false);
+
+    // Load a plane of coat of arms
+    var coatarms = await OPENWORLD.Plane.loadPlane(
+        "assets/textures/coatarms.png", 0.18, 0.2);
+
+    // Load a plane with the text 'Lindos News'
+    var textplane =   await OPENWORLD.Plane.makeTextPlane("Lindos News", Colors.black, backgroundopacity: 0);
+```
+
+As with actors and models, the objects can be scale and placed on the surface of terrain.
 
 <!--
  on top of threedart openworld engine designed for handling:
