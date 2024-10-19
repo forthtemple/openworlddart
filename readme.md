@@ -15,13 +15,13 @@ One game is set in Jerusalem at the Second Temple 72AD just before a roman invas
 
 <img src="https://github.com/user-attachments/assets/87d3e8a2-fd28-428f-807e-733b0f1bbef2" width="400">
 
-This game is not only available in this repository but also on <a href="https://apps.apple.com/us/app/ark-uncovered/id6593662011">iTunes</a> on  <a href="https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.secondtemple">Amazon</a> and <a href='http://chatgpt.forthtemple.com/secondtemple/'>web</a>
+This game is not only available in this repository but also on <a href="https://apps.apple.com/us/app/ark-uncovered/id6593662011">iTunes</a> on  <a href="https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.secondtemple">Amazon</a> and <a href='https://chatgpt.forthtemple.com/secondtemple/'>web</a>
 
-A second game is set in Lindos, Rhodes south of Greece in 1522 just before Sulamains invasion. Both games are available on iTunes.
+A second game is set in Lindos, Rhodes south of Greece in 1522 just before Sulamains invasion.
 
 ![image](https://github.com/user-attachments/assets/be650f03-b6dd-4156-9a4c-ba32e5a1edca)
 
-It is also available on <a href="[https://apps.apple.com/us/app/ark-uncovered/id6593662011](https://apps.apple.com/us/app/lindos-1522/id6736712620)">iTunes</a> on  <a href="[https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.secondtemple](https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.rhodes3d)">Amazon</a> and <a href='[http://chatgpt.forthtemple.com/secondtemple/](http://chatgpt.forthtemple.com/rho)'>web</a>
+It is also available on <a href="https://apps.apple.com/us/app/lindos-1522/id6736712620">iTunes</a> on  <a href="https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.secondtemple">Amazon</a> and <a href='https://chatgpt.forthtemple.com/secondtemple'>web</a>
 
 <!--
   -includes two game demos
