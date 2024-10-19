@@ -148,8 +148,7 @@ Terrains should be exported as wavefront obj files since mesh names are retained
 
 
 *Spatial features*. 
-
-Alongside using threedarts existing spatial placement of objects in a scene there also procedures to make it easy to place objects on a terrain at a certain point and also turn and scale them. All turn values are in degrees with 0 degrees being north and 90 being east. Spatial functions make it easy to hide 3D objects if the camera gets a certain distance away from an object helping to increase frame rate. There is also spatial lerping making it possible to move an object along a terrain from one point to another in a given amount of time. Similarly with turning an object it is possible to lerp. For example turn 90 degrees in 1 second such as in this example:
+Alongside using threedarts existing spatial placement of objects OPENWORLD has extra procedures to make it easy to place objects on a terrain at a certain point and also turn and scale them. All turn values are in degrees with 0 degrees being north and 90 being east. Spatial functions make it easy to hide 3D objects if the camera gets a certain distance away from an object helping to increase frame rate. There is also spatial lerping making it possible to move an object along a terrain from one point to another in a given amount of time. Similarly with turning an object it is possible to lerp. For example turn 90 degrees in 1 second such as in this example:
 
 ```
     // Example of a fountain moving south 1 unit taking 1 second to lerp and also spinning from 90 degrees to 180 degress in 1 second
@@ -181,8 +180,8 @@ OPENWORLD.Space.faceObjectAlways(knight, camera);
 
 ```
 
-*Triggers*. 
-Openworld also includes a trigger system whereby it is easy to trigger an event if for example the camera gets a certain distance from an npc for example. For example in the following example a cat actor is loaded and a distance trigger is added where if the player goes with 4 meters of the cat it meows.
+*Triggers*  
+Openworld also has a trigger system whereby its possible to trigger an event. For example a trigger for when the camera gets a certain distance from an npc. In the following example a cat has a distance trigger that causes the cat to meow when a player moves within 4 meters of the cat:
 
     Group cat = await OPENWORLD.Actor.createActor('assets/actors/cat.glb', z:0);
     cat.scale.set(0.01,0.01,0.01);
@@ -198,7 +197,19 @@ Openworld also includes a trigger system whereby it is easy to trigger an event 
       }
     });
 
-The is also a trigger if a 3D object in the scene is clicked. With the trigger you could do something like pick up a wallet.
+The is also a trigger for when a 3D object in the scene is clicked. In the following example when the minorah is clicked it is hidden:
+
+```
+    var minorah = await OPENWORLD.Model.createModel('assets/models/minorah.glb');
+    scene.add(minorah);
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(minorah, -0.33, 1.03, 0.0, 4); 
+    minorah.scale.set(0.11, 0.11, 0.11);
+    OPENWORLD.Space.objTurn(minorah, 0);
+    OPENWORLD.BaseObject.setTouchTrigger(minorah);
+    minorah.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
+       minorah.visible=false;
+    });
+```
 
 It also includes custom triggers so for example you could create a trigger when an npc dies
 
