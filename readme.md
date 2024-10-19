@@ -62,7 +62,7 @@ The following is sample code for adding an animated actor to a scene from an act
       z: actoroffset,
     );
     weaponer.scale.set(0.0025, 0.0025, 0.0025);     // Set the scale of the actor
-    OPENWORLD.Space.objTurn(weaponer, 90);          // Set angle actor is facing from north  
+    OPENWORLD.Space.objTurn(weaponer, 90);          // Set angle actor is facing from north   - east
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         weaponer, -0.12, 1.3, 0, 3); // Set the position of the actor on the surface of the terrain and hide the actor when the camera is over 3 units away
     scene.add(weaponer);
@@ -139,17 +139,25 @@ Terrains should be exported as wavefront obj files since mesh names are retained
     OPENWORLD.Space.init(  mesh, scene);
 ```
 
-<!--
-   collision system with a main terrain which is used as surface, walls and roofs
-    -eg if raining and roof above know not to show rain
-    -walls cannot walk into
-      -ray intersect
-    surface place objects on the terrain eg a rock  
--->
 
 *Spatial features*. 
-Alongside using threedarts existing spatial placement of objects in a scene also includes procuedres to make it easy to place objects on a terrain at a certain point, turn and scale objects. All turn values are in degrees iwht 0 degrees being north and 90 being east. It also has functions making it easy to hide 3d objects if the camera gets a certain disance away from an object. Also includes 3d object spatial lerping so possible to move an object along a terrain from one point to another in a given amount of time. Similarly with turning an object it is possible to lerp. Eg turn 90 degrees in 1 second. It also includes functions easy to place an object in front of a camera.
 
+Alongside using threedarts existing spatial placement of objects in a scene there also procedure to make it easy to place objects on a terrain at a certain point and also turn and scale. All turn values are in degrees with 0 degrees being north and 90 being east. It also has functions making it easy to hide 3D objects if the camera gets a certain distance away from an object. It also includes spatial lerping making it possible to move an object along a terrain from one point to another in a given amount of time. Similarly with turning an object it is possible to lerp. Eg turn 90 degrees in 1 second. It also includes functions to make it easy to place an object in front of a camera.
+
+```
+    // Example of a fountain moving south 1 unit taking 1 second to lerp and also spinning from 90 degrees to 180 degress in 1 second
+    var fountain = await OPENWORLD.Model.createModel('assets/models/fountain.glb');
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(
+        fountain, 1,1, 0.0, 7);             // Set the position of the fountain on the surface and hide if over 7 units away
+    OPENWORLD.Space.objTurn(fountain, 90);          // Set angle plane is facing east 
+    scene.add(fountain);
+
+    // Move the fountain south one unit taking 1 second to gets there - lerp the fountain
+    OPENWORLD.Space.worldToLocalSurfaceObjLerp(
+            fountain, 1,2, 0, 1);
+   // Have fountain spin from 90 degrees to 180 degress lerping for one second
+   OPENWORLD.Space.objTurnLerp(fountain, 180, 1);
+```
 <!--
     placement on surface, turn, scale
     object hide if distance way from camera
