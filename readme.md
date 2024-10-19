@@ -68,7 +68,8 @@ The following is sample code for adding an animated actor to a scene from an act
     scene.add(weaponer);
 ```
 
-By allowing for specifying new textures for cloned actors and models it allows meshes to be reused. For example create a knight model and apply a different texture to create a different knight with the same mesh. For example in Second Temple:
+It is possible to specify new textures for cloned actors and models which allows meshes to be reused and made to look different. For example for the Second Temple game a second shofar is cloned from the first and a different skin is applied:
+
 ```
     // Here the _shofar actor is cloned and the shofar2.jpg clone is applied to it create a second shofar that looks different
     _shofar2 = await OPENWORLD.Actor.copyActor(_shofar, randomduration: 0.1, texture:"assets/actors/shofar/shofar2.jpg");
@@ -166,22 +167,19 @@ Alongside using threedarts existing spatial placement of objects in a scene ther
 
 ```
 
-It is also possible to place an object in front of the camera:
+There are many other spatial functions.  For example:
 
 ```
-/// Place a sword 0.4 units in front of the camera
+// Place a sword 0.4 units in front of the camera
 OPENWORLD.Space.placeBeforeCamera(sword, 0.4 );
+// Place a sword 0.4 units in front of the camera taking 1 second to lerp to that position
+OPENWORLD.Space.placeBeforeCamera(sword, 0.4, time: 1 );
+
+// Make knight always face the camera
+OPENWORLD.Space.faceObjectAlways(knight, camera);
+
+
 ```
-<!--
-    placement on surface, turn, scale
-    object hide if distance way from camera
-    -object lerping between two points
-    -placing object in front of camera
-    -turn lerp eg if faces you isnt sudden
-
-texturing resusing mesh and changing texture  - save space
--->
-
 
 *Triggers*. 
 Openworld also includes a trigger system whereby it is easy to trigger an event if for example the camera gets a certain distance from an npc for example. For example in the following example a cat actor is loaded and a distance trigger is added where if the player goes with 4 meters of the cat it meows.
