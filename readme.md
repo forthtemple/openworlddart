@@ -211,19 +211,28 @@ The is also a trigger for when a 3D object in the scene is clicked. In the follo
     });
 ```
 
-It also includes custom triggers so for example you could create a trigger when an npc dies
+This is also custom triggers. For example its possible to create your own trigger for when an npc is struck by a player:
 
-<!--
- trigger system 
-   -if certain distance will trigger eg if go near a monster cna make attack
-   -trigger if click/touch an object
-      -eg click on a wallet on the ground
-   -custom triggers 
-      eg your own trigger for when an npc dies   
--->
+```
+  // Code when player swings sword and hits an npc triggering the struck trigger: 
+  npc.extra['customtrigger'].trigger('strucktrigger', 5);
+
+  // Code for the npc that has been struck
+  OPENWORLD.BaseObject.setCustomTrigger(journalist);
+  journalist.extra['customtrigger'].addEventListener('strucktrigger', (THREE.Event event) {
+      if (!actorIsDead(journalist2)) {
+         ...
+         ...
+
+```
+
       
-*Movement system*. 
-Uses flutter joystick (https://pub.dev/packages/flutter_joystick) used in confjuction with threejs joystick so can move using a smartphone.  Includes swiping screen to turn and swiping up and down for pitch
+*Movement system*  
+Openworld includes a flutter <a href="https://pub.dev/packages/flutter_joystick">joystick</a> widget that allows a player to control turning and movement on a smartphone.  
+
+![image](https://github.com/user-attachments/assets/dcdd75c8-8ba9-43e3-8fdf-cc7b3c559d0c)
+
+used in confjuction with threejs joystick so can move using a smartphone.  Includes swiping screen to turn and swiping up and down for pitch
 
 Also ability to use keyboard. threedart has been modified so keyboard capture can be turned off from dom and allow typing into a flutter dialog for example
 
