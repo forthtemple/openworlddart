@@ -228,18 +228,16 @@ This is also custom triggers. For example its possible to create your own trigge
 
       
 *Movement system*  
-Openworld includes a flutter <a href="https://pub.dev/packages/flutter_joystick">joystick</a> widget that allows a player to control turning and movement on a smartphone.  
+Openworld includes the flutter <a href="https://pub.dev/packages/flutter_joystick">joystick</a> widget that allows a player to control turning and movement on a smartphone.  
 
 ![image](https://github.com/user-attachments/assets/dcdd75c8-8ba9-43e3-8fdf-cc7b3c559d0c)
 
-used in confjuction with threejs joystick so can move using a smartphone.  Includes swiping screen to turn and swiping up and down for pitch
+This widget is used in confjuction with a threejs joystick/ keyboard that has been converted to dart. The joystick/keyboard can also be used with a keyboard allowing control on a desktop without the need for the joystick widget. 
 
-Also ability to use keyboard. threedart has been modified so keyboard capture can be turned off from dom and allow typing into a flutter dialog for example
+Movement also includes swiping on the screen to turn and pitch the camera.
 
-<!--
-   -with flutter joystick or keyboard on web
-     -works on keyboard or screenonly
--->
+The threedart code has been modified so that keyboard control can be switched from movement back to flutter widgets so that for example you could type text in a flutter widget.
+
 
 *Mob System*  
 System to make it easy for npcs especially actors eg an animated guard. For example can set an actor to randomly walk around a point of a given distance and frequency eg a dog walking around randomly. Also includes move to loop where can have an npc walking through a set of positions over and over eg a guard walking up and down a corridor.  Also include features to make it easy to add random chatter to an npc so for example 
