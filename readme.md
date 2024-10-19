@@ -73,7 +73,7 @@ The following is sample code for adding an animated actor to a scene from an act
     // Load an actor in assets priests.glb using animations from another actor called 'seller'
     // Actor is from blender model:  openworld/examplerhodes3d/blender/actors/weaponer.blend
     var weaponer = await OPENWORLD.Actor.createActor(
-      'assets/actors/priest/weaponer.glb',
+      'assets/actors/weaponer.glb',
       shareanimations: seller,
       action:'idle',  // Actor starts with an 'idle' animation
       z: actoroffset,
@@ -85,8 +85,25 @@ The following is sample code for adding an animated actor to a scene from an act
     scene.add(weaponer);
 ```
 
+*Models*  
+  Openworld also make it easy to include models that can be cloned and also reused with different texture. Allows saving of space where can reuse models and just apply a different skin to it. 
+
+![image](https://github.com/user-attachments/assets/b7c19259-9ead-4e7f-aac7-7ecfea18a19a)
+
+```
+    // Load a glb model from the blender model openworld/examplesecondtemple/blender/models/laver.blend
+    var laver = await OPENWORLD.Model.createModel('assets/models/laver.glb',
+        texture:"assets/models/temple/wood.jpg"  // Change the texture to be made of wood
+    );
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(
+        laver, 2.53,-0.51, 0.0, 7);             // Set the position of the laver on the surface and hide if over 7 units away
+    laver.scale.set(0.11, 0.11, 0.11);          // Set the model scale    
+    scene.add(laver);
+    
+
+```
 *Adding 3D objects - models, sprites, planes and text*  
-  Also includes models that can be cloned and also reused with different texutre. Allows saving of space where can reuse models and just apply a different skin to it. Sprites and planes can be added 
+  Sprites and planes can be added 
 
 
 
