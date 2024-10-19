@@ -40,7 +40,7 @@ It is also available on <a href="https://apps.apple.com/us/app/lindos-1522/id673
      -models are all blender 
        -all opensource materials
 -->       
-The philosphy of the engine is to not let the engine get bloated,  only including features that typical openworld games would require on a smartphone or desktop. For example most openworld games will have animated actors, such as a person or monster walking. Most would include models,  planes and sprites, sound, light, weather, time of day, maps, music and rooms. But not all would include, for example, a players inventory system or a combat system or a monetary system. Therefore these features are excluded.
+The philosphy of the engine it should not be bloated and only including features that typical openworld games would require on a smartphone or desktop. For example most openworld games will have animated actors, such as a person or monster walking. Most would include models,  planes and sprites, sound, light, weather, time of day, maps, music and rooms. But not all would include, for example, a players inventory system or a combat system or a monetary system. So these less used features are excluded.
 
 <!--      
   Engine not too bloated - only include what most openworld would want
@@ -60,7 +60,7 @@ The philosphy of the engine is to not let the engine get bloated,  only includin
       -demo  show how tailor to game eg lindos 1522 has its own combat system that is not part of openworld
 -->
 
-Alongside threedarts existing 3D functions such as loading models, lighting, texturing, shaders it includes functions specifically useful in openword games such as:
+Alongside threedarts existing 3D functions such as loading models, lighting, texturing, shaders it also includes features that are useful in openword games such as:
 
 *Adding 3D objects - animated actors, models, sprites, planes and text*  
   Easy actor animation including duration, looping, cloning existing actors, assigning new textures to cloned actor, sharing animations between actors with the same skeleton, doing one acion and then transitioning to an idling action.  Also includes models that cna be cloned and also reused with different texutre. Allows saving of space where can reuse models and just apply a different skin to it. Sprites and planes can be added 
