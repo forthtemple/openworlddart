@@ -1,5 +1,5 @@
 # Open World for dart
-hi iA gaming engine written in flutter based upon my existing threejs openworld repository [openworldthreejs](https://github.com/forthtemple/openworldthreejs). The gaming engine uses the [three_dart](https://github.com/Knightro63/three_dart (is more up to date then three_dart on pub.dev)) package making it easy to convert threejs code to three_dart. Because it uses flutter, games created with this engine are cross platform working on Android, iOS, web, Linux and windows. And with the flutter feature of hotloading it allows 3D objects to be added to a scene on the fly making game design easier.
+This gaming engine is written in flutter and based upon our existing threejs openworld repository [openworldthreejs](https://github.com/forthtemple/openworldthreejs). The gaming engine uses the [three_dart](https://github.com/Knightro63/three_dart (is more up to date then three_dart on pub.dev)) package making it easy to convert threejs code to three_dart. Because it uses flutter, games created with this engine are cross platform working on Android, iOS, web, Linux and windows. And with the flutter feature of hotloading it allows 3D objects to be added to a scene on the fly making game design easier.
 
 <!--
    -converted to flutter threedart
@@ -15,19 +15,26 @@ One game is set in Jerusalem at the Second Temple 72AD just before a roman invas
 
 <img src="https://github.com/user-attachments/assets/87d3e8a2-fd28-428f-807e-733b0f1bbef2" width="400">
 
+This game is not only available in this repository but also on <a href="https://apps.apple.com/us/app/ark-uncovered/id6593662011">iTunes</a> on  <a href="https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.secondtemple">Amazon</a> and <a href='http://chatgpt.forthtemple.com/secondtemple/'>web</a>
+
 A second game is set in Lindos, Rhodes south of Greece in 1522 just before Sulamains invasion. Both games are available on iTunes.
 
 ![image](https://github.com/user-attachments/assets/be650f03-b6dd-4156-9a4c-ba32e5a1edca)
+
+It is also available on <a href="[https://apps.apple.com/us/app/ark-uncovered/id6593662011](https://apps.apple.com/us/app/lindos-1522/id6736712620)">iTunes</a> on  <a href="[https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.secondtemple](https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.rhodes3d)">Amazon</a> and <a href='[http://chatgpt.forthtemple.com/secondtemple/](http://chatgpt.forthtemple.com/rho)'>web</a>
 
 <!--
   -includes two game demos
      -Second temple set in 72ad before roman invasion
      https://apps.apple.com/us/app/ark-uncovered/id6593662011
+     https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.secondtemple
+     http://chatgpt.forthtemple.com/secondtemple/
        -tasked with finding the ark so can defeat the coming enemies
         links on itunes and android
      -Lindos 1522 set in 1522 before sulamain invasion
        https://apps.apple.com/us/app/lindos-1522/id6736712620
        https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.rhodes3d
+       http://chatgpt.forthtemple.com/rhodes3d/
         -uncover a spy to save lindos
         links on itunes and android
      -models are all blender 
