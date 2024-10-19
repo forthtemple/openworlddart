@@ -40,7 +40,7 @@ It is also available on <a href="https://apps.apple.com/us/app/lindos-1522/id673
      -models are all blender 
        -all opensource materials
 -->       
-The philosphy of the engine it should not be bloated and only including features that typical openworld games would require on a smartphone or desktop. For example most openworld games will have animated actors, such as a person or monster walking. Most would include models,  planes and sprites, sound, light, weather, time of day, maps, music and rooms. But not all would include, for example, a players inventory system or a combat system or a monetary system. So these less used features are excluded.
+The philosphy of the engine it should not be bloated and only include features that typical openworld games would require on a smartphone or desktop. For example most openworld games will have animated actors, such as a person or monster walking. Most would include models,  planes and sprites, sound, light, weather, time of day, maps, music and rooms. But not all would include, for example, a players inventory system or a combat system or a monetary system. So these less used features are excluded.
 
 <!--      
   Engine not too bloated - only include what most openworld would want
@@ -62,10 +62,33 @@ The philosphy of the engine it should not be bloated and only including features
 
 Alongside threedarts existing 3D functions such as loading models, lighting, texturing, shaders it also includes features that are useful in openword games such as:
 
-*Adding 3D objects - animated actors, models, sprites, planes and text*  
-  Easy actor animation including duration, looping, cloning existing actors, assigning new textures to cloned actor, sharing animations between actors with the same skeleton, doing one acion and then transitioning to an idling action.  Also includes models that cna be cloned and also reused with different texutre. Allows saving of space where can reuse models and just apply a different skin to it. Sprites and planes can be added 
+*Animated actors*  
+  Easy actor animation including duration, looping, cloning existing actors, assigning new textures to cloned actor, sharing animations between actors with the same skeleton, doing one acion and then transitioning to an idling action.  
 
 ![image](https://github.com/user-attachments/assets/41a0a204-c41a-4115-9605-f8039a7d1bad)
+
+The following is sample code for adding an animated actor to a scene from an actor created in blender:
+
+``` 
+    // Load an actor in assets priests.glb using animations from another actor called 'seller'
+    // Actor is from blender model:  openworld/examplerhodes3d/blender/actors/weaponer.blend
+    var weaponer = await OPENWORLD.Actor.createActor(
+      'assets/actors/priest/weaponer.glb',
+      shareanimations: seller,
+      action:'idle',  // Actor starts with an 'idle' animation
+      z: actoroffset,
+    );
+    weaponer.scale.set(0.0025, 0.0025, 0.0025);     // Set the scale of the actor
+    OPENWORLD.Space.objTurn(weaponer, 90);          // Set angle actor is facing from north  
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(
+        weaponer, -0.12, 1.3, 0, 3); // Set the position of the actor on the surface of the terrain and hide the actor when the camera is over 3 units away
+    scene.add(weaponer);
+```
+
+*Adding 3D objects - models, sprites, planes and text*  
+  Also includes models that can be cloned and also reused with different texutre. Allows saving of space where can reuse models and just apply a different skin to it. Sprites and planes can be added 
+
+
 
 <!--
  on top of threedart openworld engine designed for handling:
