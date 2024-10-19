@@ -232,7 +232,7 @@ Openworld includes the flutter <a href="https://pub.dev/packages/flutter_joystic
 
 ![image](https://github.com/user-attachments/assets/dcdd75c8-8ba9-43e3-8fdf-cc7b3c559d0c)
 
-This widget is used in confjuction with a threejs joystick/ keyboard that has been converted to dart. The joystick/keyboard can also be used with a keyboard allowing control on a desktop without the need for the joystick widget. 
+This widget is used in conjuction with a threejs joystick/ keyboard that has been converted to dart. The joystick/keyboard can also be used with a keyboard allowing control on a desktop without the need for the joystick widget. 
 
 Movement also includes swiping on the screen to turn and pitch the camera.
 
@@ -240,7 +240,7 @@ The threedart code has been modified so that keyboard control can be switched fr
 
 
 *Mob System*  
-System to make it easy for npcs especially actors eg an animated guard. For example can set an actor to randomly walk around a point of a given distance and frequency eg a dog walking around randomly. Also includes move to loop where can have an npc walking through a set of positions over and over eg a guard walking up and down a corridor.  Also include features to make it easy to add random chatter to an npc so for example 
+Openworld has procedures specifically for npcs. For example  have  an actor randomly walk around a point of a given distance and frequency like a dog walking around randomly. There is also a procedure to move an NPC over and over again through a set of positions such as a guard walking up and down a corridor.  There are aslo procedures  to ake it easy to add random chatter to an npc so for example:
 
 <img src="https://github.com/user-attachments/assets/63442d1c-8c3c-4ecd-9d29-624e784c2182" width="256">
 
