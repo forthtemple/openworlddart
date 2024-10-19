@@ -68,8 +68,14 @@ The following is sample code for adding an animated actor to a scene from an act
     scene.add(weaponer);
 ```
 
+By allowing for specifying new textures for cloned actors and models it allows meshes to be reused. For example create a knight model and apply a different texture to create a different knight with the same mesh. For example in Second Temple:
+```
+    // Here the _shofar actor is cloned and the shofar2.jpg clone is applied to it create a second shofar that looks different
+    _shofar2 = await OPENWORLD.Actor.copyActor(_shofar, randomduration: 0.1, texture:"assets/actors/shofar/shofar2.jpg");
+```
+
 *Models*  
-  Openworld also make it easy to include models that can be cloned and also reused with different texture. Allows saving of space where can reuse models and just apply a different skin to it. 
+  Openworld also make it easy to include models that can be cloned and also reused with different texture.
 
 ![image](https://github.com/user-attachments/assets/b7c19259-9ead-4e7f-aac7-7ecfea18a19a)
 
@@ -83,8 +89,8 @@ The following is sample code for adding an animated actor to a scene from an act
     laver.scale.set(0.11, 0.11, 0.11);          // Set the model scale    
     scene.add(laver);
     
-
 ```
+
 *Adding sprites, planes and text*  
 Openworld also make it easy to add sprites, planes and text.
 
@@ -142,13 +148,13 @@ Terrains should be exported as wavefront obj files since mesh names are retained
 
 *Spatial features*. 
 
-Alongside using threedarts existing spatial placement of objects in a scene there also procedure to make it easy to place objects on a terrain at a certain point and also turn and scale. All turn values are in degrees with 0 degrees being north and 90 being east. It also has functions making it easy to hide 3D objects if the camera gets a certain distance away from an object. It also includes spatial lerping making it possible to move an object along a terrain from one point to another in a given amount of time. Similarly with turning an object it is possible to lerp. Eg turn 90 degrees in 1 second. It also includes functions to make it easy to place an object in front of a camera.
+Alongside using threedarts existing spatial placement of objects in a scene there also procedures to make it easy to place objects on a terrain at a certain point and also turn and scale them. All turn values are in degrees with 0 degrees being north and 90 being east. Spatial functions make it easy to hide 3D objects if the camera gets a certain distance away from an object helping to increase frame rate. There is also spatial lerping making it possible to move an object along a terrain from one point to another in a given amount of time. Similarly with turning an object it is possible to lerp. For example turn 90 degrees in 1 second such as in this example:
 
 ```
     // Example of a fountain moving south 1 unit taking 1 second to lerp and also spinning from 90 degrees to 180 degress in 1 second
     var fountain = await OPENWORLD.Model.createModel('assets/models/fountain.glb');
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
-        fountain, 1,1, 0.0, 7);             // Set the position of the fountain on the surface and hide if over 7 units away
+        fountain, 1,1, 0.0, 7);             // Set the position of the fountain on the surface and hide if its over 7 units away
     OPENWORLD.Space.objTurn(fountain, 90);          // Set angle plane is facing east 
     scene.add(fountain);
 
@@ -157,6 +163,14 @@ Alongside using threedarts existing spatial placement of objects in a scene ther
             fountain, 1,2, 0, 1);
    // Have fountain spin from 90 degrees to 180 degress lerping for one second
    OPENWORLD.Space.objTurnLerp(fountain, 180, 1);
+
+```
+
+It is also possible to place an object in front of the camera:
+
+```
+/// Place a sword 0.4 units in front of the camera
+OPENWORLD.Space.placeBeforeCamera(sword, 0.4 );
 ```
 <!--
     placement on surface, turn, scale
@@ -167,6 +181,7 @@ Alongside using threedarts existing spatial placement of objects in a scene ther
 
 texturing resusing mesh and changing texture  - save space
 -->
+
 
 *Triggers*. 
 Openworld also includes a trigger system whereby it is easy to trigger an event if for example the camera gets a certain distance from an npc for example. For example in the following example a cat actor is loaded and a distance trigger is added where if the player goes with 4 meters of the cat it meows.
