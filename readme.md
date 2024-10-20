@@ -559,8 +559,32 @@ The demo games include simple multi player capability. But multiplayer is not bu
 
 
 *Hotloading*  
-Demos include hotloading function where everything you put in that hotload function will be reloaded. Eg a set of grass objects 
+The demo games include a hotloading function that is called whenever the demo is hotloaded. This allows everything in hotload function being reloaded and change instantly. For example in the example below an extra grassposs position could be added for a new
 
+```
+hotload() async
+{
+
+    _hotload.clear();
+    // All the grass
+    const grassposs = [
+      [13.61, 1.54, 0.0, 4],
+      [14.41, 1.82, 0.0, 4],
+      [16.67, 1.33, 0.0, 4],
+      [14.60, 5.79, 0.0, 4],
+      [59.54, -0.12, 0, 4],
+      [58.10, 0.35, 0, 4]
+    ];
+    var grass = await OPENWORLD.Sprite.loadSprite(
+        'assets/textures/grass.png', 0.1, 0.1);
+    for (var tree in grassposs) {
+      var cyprusii = await OPENWORLD.Sprite.cloneSprite(grass);
+      OPENWORLD.Space.worldToLocalSurfaceObj(cyprusii, tree[0].toDouble(),
+          tree[1].toDouble(), tree[2].toDouble());
+      _hotload.add(cyprusii);
+    }
+}
+```
 **Blender**
 
 -demos made with blender modelling tool
