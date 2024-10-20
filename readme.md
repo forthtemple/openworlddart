@@ -470,11 +470,22 @@ In this example there are two maps and when the player is within the area of map
 -->
 
 *Music*  
-Possible to specify multiple songs to play in the game. Possible to have multiple songs as mp3 assets and specify the probability a song will play
+Openworld can play music in the background with multiple songs with different probabilities of playing. In the example below there are four song and hatikvah has a 5/8 chance of the song being chosen to play. By default there is a gap between songs of 3 minutes plus a random number between 0 and 50 second though this can be changed with 'timebetweensongs' and 'randomtimebetweensongs':
 
-<!--
-music where cna specify mutple tunes that play with a random probability
--->
+```
+    var musics = [
+      OPENWORLD.MusicItem('sounds/hatikvah.mp3', chance: 0.5),
+      OPENWORLD.MusicItem('sounds/harp.mp3', chance: 0.1),
+      OPENWORLD.MusicItem('sounds/harp2.mp3', chance: 0.1),
+      OPENWORLD.MusicItem('sounds/harp3.mp3', chance: 0.1),
+    ];
+    OPENWORLD.Musics.init(musics);
+    OPENWORLD.Musics.timebetweensongs=6*60;
+
+    // Randomness on how long before play a song
+    OPENWORLD.Musics.randomtimebetweensongs=60;
+```
+
 
 *Config file*  
 Rather than hard code all 3d object  it is possible to specify all 3D objects in a configuration file specified in assets as 'config.json'. For example vegetation where wish to define grass in many locations it is possible to define a grass object and then specify multiple positions of the grass in the game
