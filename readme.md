@@ -1,14 +1,6 @@
 # Open World for dart
 This gaming engine is written in flutter and is based upon our existing threejs openworld repository [openworldthreejs](https://github.com/forthtemple/openworldthreejs). The gaming engine uses the [three_dart](https://github.com/Knightro63/three_dart (is more up to date then three_dart on pub.dev)) package making it easy to convert threejs code to three_dart. Because it uses flutter, games created with this engine are cross platform working on Android, iOS, web, Linux and windows. And with the flutter feature of hotloading it allows 3D objects to be added to a scene on the fly making game design easier.
-
-<!--
-   -converted to flutter threedart
-     -works for ios, android and web 
-        -will add windows and linux
-     -use of hotloading
-        - can say add grass around your camera and see it straight away
-     -becauses uses threedart largely compatible with threejs so easy to port existing threejs
--->     
+   
 This gaming engine includes two demo games with full source and all resources including blender models, sound, textures being freely available in this repository.
 
 One game is set in Jerusalem at the Second Temple 72AD just before a roman invasion. 
@@ -28,11 +20,11 @@ The philosphy of the engine it should not be bloated and only include features t
 Alongside threedarts existing 3D functions such as loading models, lighting, texturing, shaders it also includes features that are useful in openword games such as:
 
 *Animated actors*  
-  Openworld has easy actor animation including duration, looping, cloning existing actors, assigning new textures to cloned actor, sharing animations between actors with the same skeleton, doing one acion and then transitioning to an idling action.  
+  Openworld has easy actor animation including duration, looping, cloning existing actors, assigning new textures to cloned actor, sharing animations between actors with the same skeleton, doing one acion and then transitioning to an idling action.  All actors  made with the Blender modelling tool and are available in '/examplesecondtemple/blender' and '/examplerhodes3d/blender'. These are then exported into the assets directory in glb format.
 
 ![image](https://github.com/user-attachments/assets/41a0a204-c41a-4115-9605-f8039a7d1bad)
 
-The following is sample code for adding an animated actor to a scene from an actor created in blender:
+The following is sample code for adding an animated actor to a scene from an actor created in blender. 
 
 ``` 
     // Load an actor in assets priests.glb using animations from another actor called 'seller'
@@ -50,6 +42,8 @@ The following is sample code for adding an animated actor to a scene from an act
     scene.add(weaponer);
 ```
 
+In for example '/examplerhodes3d/blender/actors/armourer.blend' notice it has about 20 animations while the rest have about 1. This is because all the human actors in the Lindos 1522 demo shares these animations. This makes it easy to add new animations without needing to add them to every actor.
+
 It is possible to specify new textures for cloned actors and models which allows meshes to be reused and made to look different. For example for the Second Temple game a second shofar is cloned from the first and a different skin is applied:
 
 ```
@@ -58,7 +52,7 @@ It is possible to specify new textures for cloned actors and models which allows
 ```
 
 *Models*  
-  Openworld also make it easy to include models that can be cloned and also reused with different texture.
+  Openworld also make it easy to include models that can be cloned and also reused with different texture. Like actors, models are also made with the Blender modelling tool and are available in '/examplesecondtemple/blender' and '/examplerhodes3d/blender'. These are also exported into the assets directory in glb format with blender (except for the terrain which should be exported in wavefront objformat ).
 
 ![image](https://github.com/user-attachments/assets/b7c19259-9ead-4e7f-aac7-7ecfea18a19a)
 
@@ -578,7 +572,9 @@ pos: 8.59, 1.51, t-95.00
 
 By copying and pasting the position into the hotload function, objects can be placed in the scene, hotloaded and viewed straight away.
 
+<!--
 **Blender**
+All actors and models are made with the Blender modelling tool and are available in '/examplesecondtemple/blender' and '/examplerhodes3d/blender'. These are then exported into the assets directory in glb format with blender except for the terrain which should be exported in wavefront obj format with strip applied since mesh names are preserved which is necessary in defining the terrain surface, walls and roofs.
 
 -demos made with blender modelling tool
   -mesh editing, animations, texturing in blender
@@ -658,7 +654,7 @@ The server is written in pure PHP and MySQL with no dependencies. MySQL is used 
 Now when you click on 'Connect' when browse to index.html it should connect you to the server.
 
 *Modifying game parameters*  
-Some of the game specific parameters for the server are specified in secondtemple.php. These paramaters include $MAX_DISTANCE where if it is greater than 0 will only tell players of other players that are within that distance. $CLOSET will show just the closest x number of players. 
+Some of the game specific parameters for the server are specified in secondtemple.php. These paramaters include $MAX_DISTANCE where if it is greater than 0 will only tell players of other players that are within that distance. $CLOSET will show just the closest x number of players. -->
 
 
 
