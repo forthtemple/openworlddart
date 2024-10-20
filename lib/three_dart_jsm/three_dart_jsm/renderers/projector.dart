@@ -1,5 +1,5 @@
 import 'package:openworld/three_dart/three_dart.dart';
-import 'package:flutter_gl/native-array/index.dart';
+import 'package:openworld_gl/native-array/index.dart';
 
 extension on Vector4{
   Vector4 copyFromVector3(Vector3 v){

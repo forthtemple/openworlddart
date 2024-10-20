@@ -3,7 +3,7 @@ library three_webgpu;
 import 'dart:ffi';
 import 'dart:typed_data';
 
-import 'package:flutter_gl/native-array/index.dart';
+import 'package:openworld_gl/native-array/index.dart';
 // import 'package:flutter_webgpu/flutter_webgpu.dart';
 import 'package:openworld/three_dart/extra/console.dart';
 import 'package:openworld/three_dart/three_dart.dart';

@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:bonfire/bonfire.dart';
+//import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
 
 class JoystickDirectional {
