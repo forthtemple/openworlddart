@@ -394,7 +394,6 @@ OPENWORLD.Actor.playActionThen( knight, "jump", "idle", delay: 2);
 OPENWORLD.Sound.play(path: "sounds/laugh.mp3", volume: 0.2, delay:3);
 ```
 
-
 *Persistence*  
 Openworld has persistence so data can be stored when an app is closed and all game information can be retrieved. For example remember the state of the weather:
 
@@ -406,10 +405,25 @@ Openworld has persistence so data can be stored when an app is closed and all ga
    Weather.setRain( await OPENWORLD.Persistence.get("rain",def:0));
 ```
 
-
 *Rooms*  
-Openworld allows rooms to be defined as having a central x,y point with a rectangle having distance from the point. The room can have a looping sound associated with it such an ambient shop sound. it can also ahve a random intermittent sound such as a smithy hammering something occasionly. It possible to define that the room is indoors and if in the room rain will not appear. It also possible to define a distance trigger for the room so that when you enter a room you can trigger and event such as shop keeping saying hello.
+Openworld has a room system which allows things to happen when a player enters a room such as play a background sound, determine if  the room is indoors and call a trigger when a player enters the room. Rooms are defined to have a central x,y point with a rectangle having distance from that point. Rooms not only have a looping sound associated with it but also a random intermittent sound such as a smithy hammering occasionly. If  a room is indoors then rain will not appear.  The following is an example of a room with a background sound and a random intermittent sound and is defined to be indoors if a roof is above the players head. When the player enters the room a priest says a speech:
 
+```
+    var roomBC = OPENWORLD.Room.createRoom(7.4, 1.26,               // central coordinates of the room
+             soundpath: "sounds/courtyard.mp3", volume: 0.05,       // looping background sound played when enter the room
+             randomsoundpath:"sounds/prayer.mp3", randomsoundgap:50 // prayer is played randomly every 50 seconds
+    );
+    scene.add(roomBC);
+    OPENWORLD.Room.setAutoIndoors(roomBC, true);                    // If roof is above head is 
+    OPENWORLD.Room.setDistanceTrigger(roomBC,
+        minx: 5, maxx: 9.1, miny: -0.67, maxy: 2.8);                // define the boundaries of the room - room in x axis from 5 to 9.1 and y axis is -0.67 to 2.0
+    // When enter the room
+    roomBC.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+      if (event.action) {
+         OPENWORLD.Mob.setSpeech(priest, ["Welcome to the Second Temple","Its 72AD"]);   // When enter the room the priest says a speech
+      } 
+    });
+```
 <!--
 rooms where define an area for a room and 
     can trigger entry and exit of room eg have butcher say hello when someone enters
