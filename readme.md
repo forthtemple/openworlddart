@@ -336,9 +336,45 @@ OPENWORLD.Sound.play( path: 'sounds/rain.mp3',
 ```
 
 *Object Selection*  
-Openworld allows for an object to be highlighted. When combined with a touch trigger it allows an item to be highlighted further when clicked. For example clicking on a book on a table and being able to read it:
+Openworld allows for an object to be highlighted. When combined with a touch trigger this allows for an item to be highlighted further when clicked.
 
  ![image](https://github.com/user-attachments/assets/b716eaf3-8f63-4135-a616-f6941c7b16ec)
+ 
+For example clicking on the minorah in the Second Temple and read information about it:
+
+![image](https://github.com/user-attachments/assets/b4cf5463-a2e5-4ac0-8ab9-cfb8e8125413)
+
+This code shows an example of how its possible to highlight an object and combine it with a touch trigger to 
+do something like give information when the player clicks the highlighted object:
+
+```
+    // Create a minorah in the second temple and then highlight it with setHighLight making it bluish
+    // letting the player know they can click it. Then add a touch trigger to when click on the minorah
+    // give the player information about it
+    var minorah = await OPENWORLD.Model.createModel('assets/models/minorah.glb');
+    scene.add(minorah);
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(minorah, -0.33, 1.03, 0.0, 4); 
+    minorah.scale.set(0.11, 0.11, 0.11);
+    // Highlight the minorah to show that can click it
+    OPENWORLD.BaseObject.setHighlight(minorah, scene, THREE.Color(0x0000ff), 0.25);
+    OPENWORLD.BaseObject.highlight(minorah, true,scale:1.05, opacity:0.15);
+    OPENWORLD.BaseObject.setTouchTrigger(minorah);
+    minorah.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
+      // Display information about the minorah when click it
+      OPENWORLD.BaseObject.highlight(minorah, true, scale:1.05, opacity:0.25);
+     
+      var clickevent=event.action;
+      setState(() {
+        menuposx=clickevent.clientX;
+        menuposy=clickevent.clientY-40;
+        menuitems.clear();
+        menuitems.add({"text":"The menorah is made of pure gold."});
+        ...
+        ...
+      });
+    });
+```
+
 
 *Delays*  
 Many openworld functions have a delay. For example have an actor wave his hand in 5 seconds or have cat meow in 5 seconds
