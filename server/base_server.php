@@ -7,7 +7,6 @@ define("LOG_DIED",3);     // Player removed because inactive
 define("LOG_WELCOME",4);  // Player may have same session but reentered
 
 if (!$_POST["position"]) {
-	//print("xxx");
 	exit;
 }
 

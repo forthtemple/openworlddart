@@ -166,13 +166,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_gl:
-    dependency: "direct overridden"
-    description:
-      path: "../flutter_gl-main/flutter_gl"
-      relative: true
-    source: path
-    version: "0.0.21"
   flutter_gl_macos:
     dependency: transitive
     description:
@@ -311,6 +304,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.1"
+  openworld_gl:
+    dependency: "direct main"
+    description:
+      name: openworld_gl
+      sha256: "5a0d854d2e9a95bdb43ca7e993803b06a6421f3926a6a657cd7a2e21793f5f96"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.24"
   path:
     dependency: transitive
     description:
