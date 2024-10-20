@@ -250,7 +250,19 @@ Openworld has procedures specifically for npcs. For example  have  an actor rand
   );
 ```
 
-There is also a procedure to move an NPC over and over again through a set of positions such as a guard walking up and down a corridor.  There are also procedures  to make it easy to add random chatter to an npc so for example:
+There is also a procedure to move an NPC over and over again through a set of positions such as a guard walking up and down a corridor:
+
+```
+  // Here a storeman will walk through these three points walking at 0.2m/s looping over and over
+  OPENWORLD.Mob.moveToLoop(
+            storeman,
+            [ [387.26, 285.76, 0, 0.2],
+              [386.05, 281.09, 0, 0.2],
+              [381.72, 276.86, 0, 0.2], ],
+            action: "walk". // Animation to play while walking
+       );
+```
+There are also procedures  to make it easy to add random chatter to an npc so for example:
 
 <img src="https://github.com/user-attachments/assets/63442d1c-8c3c-4ecd-9d29-624e784c2182" width="256">
 
