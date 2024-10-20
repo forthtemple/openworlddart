@@ -311,28 +311,29 @@ Also the day length can be specified. For example 1 hour to equal 24 hours. Ther
 ![image](https://github.com/user-attachments/assets/6a07df72-d097-493a-bcc2-7fd6a079955d)
 
 
-
-<!--
-time system
-   night and day - light
--->
-
 *Light*  
 Openworld includes features like specifying that a light should be switched on at night and turned off during the day. Also allows light to flicker and also to lerp turning a light on so its not sudden.
 
-<!--
-light system
-   flicker, view only night or day
--->
+```
+    var homelight= new THREE.PointLight(0xFFA500);
+    homelight.intensity = 1.0; 
+    homelight.distance = 1.2;
+    // Specify that homelight will flicker
+    OPENWORLD.Light.addFlicker(homelight);
+    // Specify that homelight will only be on at night
+    OPENWORLD.Light.addNightOnly(homelight);
+```
 
 *Sound*  
-Sound system includes a pool of flutter audioplayers which can be reused when its finished playing. The pool also allows all audioplayers to be silenced when close the game and reactivated when the game is restarted. The sound system also includes features like volume, looping, fading and also delay.
+Openworld has a sound system including a pool of flutter audioplayers which can be reused when a sound has finished playing. The pool also allows all audioplayers to be silenced when the game is closed and reactivated when the game is restarted. The sound system also includes features like volume, looping, fading and also delay.
 
-<!--
-sound system
-    -can load pool of audio taht can switch off and mute when app is deactivated
-    -typical things like volume, looping
--->
+```
+// Play the sound of rain
+OPENWORLD.Sound.play( path: 'sounds/rain.mp3',
+   fadeIn:1,  // Take 1 second to gradually fade the sound of rain in to volume 0.1
+   volume: 0.1);
+
+```
 
 *Object Selection*  
 Openworld allows for an object to be highlighted. When combined with a touch trigger it allows an item to be highlighted further when clicked. For example clicking on a book on a table and being able to read it:
