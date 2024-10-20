@@ -507,8 +507,25 @@ Rather than hard code all 3D objects in flutter it is possible to specify 3D obj
   }
 }
 ```
-It is also possible to define pool objects in the config file. For example in a forest with a thousand trees can define 50 and only show 50 at anyone time showing the closest 50 to the camera.
 
+The config file also has  pool objects. This is useful for example with a forest with thousands of trees. Its possible to show only the closest 40 trees at anyone on time instead of clone 1000 trees. In the example below a tree object is created. There are two pool positions at two different positions with 500 trees defined in each that are randomly placed within 30 units of the position of the pool object. They are randomly scaled by 0.4 (scaled randomly between 0.8 to 1.2). So the example below defines 1000 trees but only creates 40 and displays only the closest 40 to the player.
+
+```
+{"objects": [
+  {"name": "tree","object": [
+    {"type": "model", "filename":"assets/models/tree.glb","s":1.5}
+  ]},
+  ],
+
+"positions":
+{  "poolpositions":[{"poolsize":40,  "positions":[
+    { "name": "tree","p": [  -20.84, 20.39,0.0],  "rx": 30, "ry":30, "rs":0.4, "n": 500 },
+    { "name": "tree","p": [  -42.05, 11.56,0.0],  "rx": 30, "ry":30, "rs":0.4, "n": 500 },
+  ]
+}]
+  }
+}
+```
 <!--
 config json file
   -can define objects as a text file and set position for the defined object multiple times
