@@ -269,7 +269,7 @@ There is also a procedure to move an NPC over and over again through a set of po
       stopaction:"idle" // Animation when reached final point
   );
 ```
-There are also procedures  to make it easy to add random chatter to an npc so for example:
+There are also procedures to make it easy to add random chatter to an npc. For example:
 
 <img src="https://github.com/user-attachments/assets/63442d1c-8c3c-4ecd-9d29-624e784c2182" width="256">
 
@@ -294,20 +294,23 @@ Openworld has weather built into the engine and includes wind, rain, cloud and f
 <img src="https://github.com/user-attachments/assets/bd0a4334-5ca1-4d97-b179-33226fa7c2f0" width="356">
 
 ```
-// Set game to have heavy rain
-OPENWORLD.Weather.setRain(1.0);
+// Set game to have moderate cloud like in the screenshot above
+OPENWORLD.Weather.setCloud(0.5);
 ```
-<!--
- weather system
-   wind, rain, fog, cloud
--->
+
 
 *Time*     
-Time of day can be specified using a skymat shader that allows for specifying the azimuth so can generate sunsets, sunrises, noon, night. Also the day length can be specified. For example 1 hour to equal 24 hours. Therefore a full day can occur in one hour. Will change ambience  as well so at night the terrain will be dark. Also incorporated into weather so for example if its foggy at night the fog is black while during the day it is grey.
+Time of day can be specified using a skymat shader that allows for specifying the azimuth so can generate sunsets, sunrises, noon, night. 
 
 ![image](https://github.com/user-attachments/assets/814bbed1-a672-4298-8d06-ee1d7ddc7545)
 
 ![image](https://github.com/user-attachments/assets/7bdf6eba-8e67-4ab0-8a2d-d5d8d868cbf7)
+
+Also the day length can be specified. For example 1 hour to equal 24 hours. Therefore a full day can occur in one hour. Openworld can change ambience so at night the terrain will be darker than during the day. Time has been incorporated into the weather system so for example if its foggy at night the fog is black while during the day the fog will be grey:
+
+![image](https://github.com/user-attachments/assets/6a07df72-d097-493a-bcc2-7fd6a079955d)
+
+
 
 <!--
 time system
