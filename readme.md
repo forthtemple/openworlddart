@@ -533,9 +533,26 @@ config json file
 -->
 
 *Common objects*    
-Openworld includes some commonly used objects such as fire, water, flares, smoke and sky with some like the ones available in threejs. Many of these are shaders 
+Openworld includes some useful objects like fire, water, flares, smoke and sky. Most are based on those  available in threejs as shaders. 
+
+![image](https://github.com/user-attachments/assets/ab24ea2b-8149-4759-abec-f7f8eb794eca)
+
+The following is an example of fire:
+```
+    fire = new VolumetricFire(
+        2,4,2,0.5, camera);
+    await fire.init();
+
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(fire.mesh,3.29, 0.25,0.3,3);
+    scene.add(fire.mesh);
+    OPENWORLD.Updateables.add(fire);
+```
+
+The following is an example of flares:
 
 ![image](https://github.com/user-attachments/assets/ee950d2f-7ca7-4a2f-8397-6bf3a9d8269d)
+
+The following is an example of water:
 
 ![image](https://github.com/user-attachments/assets/4f4499fd-e278-4457-8810-71d83fd11289)
 
