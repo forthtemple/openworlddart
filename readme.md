@@ -377,16 +377,22 @@ do something like give information when the player clicks the highlighted object
 
 
 *Delays*  
-Many openworld functions have a delay. For example have an actor wave his hand in 5 seconds or have cat meow in 5 seconds
+There are many openworld procedures that have a delay. For example it is possible to have an actor wave his hand in 5 seconds or have cat meow in 5 seconds
 
 ```
+  // Cat meows in 5 seconds
   OPENWORLD.Sound.play(path: "sounds/meow.mp3", volume: 0.2, delay:5);
 ```
 
-The allows for a sequence of actions to possibly be performed such as have an actor spin in 1 second, jump in 2 seconds and then laugh in 3 seconds.
-
-<!--
-usage of delays eg have actor jump, then 5 seconds later play laugh sound-->
+The allows for a sequence of actions to be performed. For example have a knight spin in 1 second, jump in 2 seconds and then laugh in 3 seconds.
+```
+// Knight turns east in 1 seconds
+OPENWORLD.Space.objTurnLerp(knight, 90, 0.5, delay:1);
+// Knight jumps in 2 seconds
+OPENWORLD.Actor.playActionThen( knight, "jump", "idle", delay: 2);
+// Knight laughs in 3 seconds
+OPENWORLD.Sound.play(path: "sounds/laugh.mp3", volume: 0.2, delay:3);
+```
 
 
 *Persistence*  
