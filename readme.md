@@ -46,7 +46,7 @@ The philosphy of the engine it should not be bloated and only include features t
 Alongside threedarts existing 3D functions such as loading models, lighting, texturing, shaders it also includes features that are useful in openword games such as:
 
 *Animated actors*  
-  Easy actor animation including duration, looping, cloning existing actors, assigning new textures to cloned actor, sharing animations between actors with the same skeleton, doing one acion and then transitioning to an idling action.  
+  Openworld has easy actor animation including duration, looping, cloning existing actors, assigning new textures to cloned actor, sharing animations between actors with the same skeleton, doing one acion and then transitioning to an idling action.  
 
 ![image](https://github.com/user-attachments/assets/41a0a204-c41a-4115-9605-f8039a7d1bad)
 
@@ -147,8 +147,8 @@ Terrains should be exported as wavefront obj files since mesh names are retained
 ```
 
 
-*Spatial features*. 
-Alongside using threedarts existing spatial placement of objects OPENWORLD has extra procedures to make it easy to place objects on a terrain at a certain point and also turn and scale them. All turn values are in degrees with 0 degrees being north and 90 being east. Spatial functions make it easy to hide 3D objects if the camera gets a certain distance away from an object helping to increase frame rate. There is also spatial lerping making it possible to move an object along a terrain from one point to another in a given amount of time. Similarly with turning an object it is possible to lerp. For example turn 90 degrees in 1 second such as in this example:
+*Spatial features*  
+Alongside using threedarts existing spatial placement of objects OPENWORLD has extra procedures to make it easy to place objects on a terrain at a certain point and with procedures to turn and scale them. All turn values are in degrees with 0 degrees being north and 90 being east. Spatial functions make it easy to hide 3D objects if the camera gets a certain distance away from an object helping to increase frame rate. There is also spatial lerping making it possible to move an object along a terrain from one point to another in a given amount of time. Similarly with turning an object it is possible to lerp. For example turn 90 degrees in 1 second such as in this example:
 
 ```
     // Example of a fountain moving south 1 unit taking 1 second to lerp and also spinning from 90 degrees to 180 degress in 1 second
@@ -240,12 +240,33 @@ The threedart code has been modified so that keyboard control can be switched fr
 
 
 *Mob System*  
-Openworld has procedures specifically for npcs. For example  have  an actor randomly walk around a point of a given distance and frequency like a dog walking around randomly. There is also a procedure to move an NPC over and over again through a set of positions such as a guard walking up and down a corridor.  There are aslo procedures  to ake it easy to add random chatter to an npc so for example:
+Openworld has procedures specifically for npcs. For example  have  an actor randomly walk around a point of a given distance and frequency like a dog walking around randomly:
+
+```
+  // Here a journalist will walk a random distance of 1.5 units from where he is at a speed of 0.2m/s, walking 10% of the time
+  OPENWORLD.Mob.randomwalk(journalist, 1.5, 0.2, 0.1,
+              action: "walk",     // Animation to play while walking
+              stopaction: "idle", // Animation to play while idling
+  );
+```
+
+There is also a procedure to move an NPC over and over again through a set of positions such as a guard walking up and down a corridor.  There are also procedures  to make it easy to add random chatter to an npc so for example:
 
 <img src="https://github.com/user-attachments/assets/63442d1c-8c3c-4ecd-9d29-624e784c2182" width="256">
 
-Also add a speech so an npc can say multiple sentences
+```
+  // Here the bottleshopowner will have these three sentences randomly spoken
+  chatter=["I can see two of you.",
+          "Sometimes I have to try out my wares",
+          "Watch out for the beggar. He's a nasty piece of work"];
+  OPENWORLD.Mob.setChatter(bottleshopowner, chatter);
 
+```
+Its also possible to have an npc say a speech with one sentence spoken after the other:
+```
+  // Here the oldlady says the following 3 sentences one after the other rather than randomly
+  OPENWORLD.Mob.setSpeech(oldlady, ["I can't see very well.","Is someone there?","Try some of my pie"]);
+```
 <!--
  mob system
     ability to put text on objects eg speech for actors
