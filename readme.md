@@ -25,24 +25,6 @@ It is also available on <a href="https://apps.apple.com/us/app/lindos-1522/id673
      
 The philosphy of the engine it should not be bloated and only include features that typical openworld games would require on a smartphone or desktop. For example most openworld games will have animated actors, such as a person or monster walking. Most would include models,  planes and sprites, sound, light, weather, time of day, maps, music and rooms. But not all would include, for example, a players inventory system or a combat system or a monetary system. So these less used features are excluded.
 
-<!--      
-  Engine not too bloated - only include what most openworld would want
-    -not all have 
-       inventory
-       combat system
-       shop system
-    -but most will have terrains with a surface to walk on, walls not want to go through and roof
-       -animated objects, models, planes sprites
-       -sound
-       -light
-       -weather
-       -time of day
-       -maps
-       -music
-       -rooms
-      -demo  show how tailor to game eg lindos 1522 has its own combat system that is not part of openworld
--->
-
 Alongside threedarts existing 3D functions such as loading models, lighting, texturing, shaders it also includes features that are useful in openword games such as:
 
 *Animated actors*  
@@ -148,7 +130,7 @@ Terrains should be exported as wavefront obj files since mesh names are retained
 
 
 *Spatial features*  
-Alongside using threedarts existing spatial placement of objects OPENWORLD has extra procedures to make it easy to place objects on a terrain at a certain point and with procedures to turn and scale them. All turn values are in degrees with 0 degrees being north and 90 being east. Spatial functions make it easy to hide 3D objects if the camera gets a certain distance away from an object helping to increase frame rate. There is also spatial lerping making it possible to move an object along a terrain from one point to another in a given amount of time. Similarly with turning an object it is possible to lerp. For example turn 90 degrees in 1 second such as in this example:
+Alongside using threedarts existing spatial placement of objects OPENWORLD has extra procedures to make it easy to place objects on a terrain at a certain point and with procedures to turn and scale them. All turn angle are in degrees with 0 degrees being north and 90 being east. Spatial functions make it easy to hide 3D objects if the camera gets a certain distance away from an object helping to increase frame rate. There is also spatial lerping making it possible to move an object along a terrain from one point to another in a given amount of time. Similarly with turning an object it is possible to lerp. For example turn 90 degrees in 1 second such as in this example:
 
 ```
     // Example of a fountain moving south 1 unit taking 1 second to lerp and also spinning from 90 degrees to 180 degress in 1 second
@@ -559,7 +541,7 @@ The demo games include simple multi player capability. But multiplayer is not bu
 
 
 *Hotloading*  
-The demo games include a hotloading function that is called whenever the demo is hotloaded. This allows everything in hotload function being reloaded and change instantly. For example in the example below an extra grassposs position could be added for a new
+The demo games include a hotloading function that is called whenever a game is hotloaded. This allows everything in hotload function being reloaded and displayed instantly making placement of objects being possible on the fly. For example in the example below an extra grassposs position could be added and then hotloaded and it will be displayed straight away:
 
 ```
 hotload() async
@@ -585,6 +567,17 @@ hotload() async
     }
 }
 ```
+
+An easy way to get a world position on the terrain is from the android studio console which will every second display your location and turn:
+
+```
+pos: 8.59, 1.31, t-90.00
+pos: 8.59, 1.41, t-90.00
+pos: 8.59, 1.51, t-95.00
+```
+
+By copying and pasting the position into the hotload function, objects can be placed in the scene, hotloaded and viewed straight away.
+
 **Blender**
 
 -demos made with blender modelling tool
