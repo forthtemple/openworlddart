@@ -261,6 +261,13 @@ There is also a procedure to move an NPC over and over again through a set of po
               [381.72, 276.86, 0, 0.2], ],
             action: "walk". // Animation to play while walking
        );
+
+  // Or just move an npc through multiple points to reach a destination
+  // For example have a knight walk through the point 384.76, 252.02 to reach 383.76, 252.02
+   OPENWORLD.Mob.moveTo(knight, [ [ 384.76, 252.02], [ 383.76, 252.02]] ,
+      action:"walk",    // Animation while walking
+      stopaction:"idle" // Animation when reached final point
+  );
 ```
 There are also procedures  to make it easy to add random chatter to an npc so for example:
 
@@ -279,20 +286,17 @@ Its also possible to have an npc say a speech with one sentence spoken after the
   // Here the oldlady says the following 3 sentences one after the other rather than randomly
   OPENWORLD.Mob.setSpeech(oldlady, ["I can't see very well.","Is someone there?","Try some of my pie"]);
 ```
-<!--
- mob system
-    ability to put text on objects eg speech for actors
-       chatter
-       speech
-    random walking around point
-    movingto
--->
+
 
 *Weather*  
-Weather is added to the Openworld engine and includes wind, rain, cloud and fog. It includes lerping so it is possible gradually transition from clear sky to cloudy or rain to fog. It also includes a random weather generator where you can specify the probabity in a given day it will rain, be cloudy, be windy or foggy.
+Openworld has weather built into the engine and includes wind, rain, cloud and fog. It has lerping so it is possible gradually transition from say clear sky to cloudy or rain to fog. It also includes a random weather generator where you can specify the probabity in a given day it will rain, be cloudy, be windy or foggy.
 
 <img src="https://github.com/user-attachments/assets/bd0a4334-5ca1-4d97-b179-33226fa7c2f0" width="356">
 
+```
+// Set game to have heavy rain
+OPENWORLD.Weather.setRain(1.0);
+```
 <!--
  weather system
    wind, rain, fog, cloud
