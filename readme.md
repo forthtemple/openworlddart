@@ -488,7 +488,7 @@ Openworld can play music in the background with multiple songs with different pr
 
 
 *Config file*  
-Rather than hard code all 3d object  it is possible to specify all 3D objects in a configuration file specified in assets as 'config.json'. For example vegetation where wish to define grass in many locations it is possible to define a grass object and then specify multiple positions of the grass in the game
+Rather than hard code all 3D objects in flutter it is possible to specify 3D objects in a configuration file specified in assets as 'config.json'. For example to define vegetation such as grass in many locations a grass object can be defined and then cloned in any number of  positions. In the example below a grass model is loaded called 'grass' and three grass models are placed on the surface at different positions ("p") and different scales ("s") and different turn ("t"). All will disappear if the player is more than 4 units away ("d")
 
 ```
 {"objects": [
@@ -499,9 +499,9 @@ Rather than hard code all 3d object  it is possible to specify all 3D objects in
 
 "positions":
 {"staticpositions":[
-      {"name": "grass", "p": [412.20,307.97,0]},
-      {"name": "grass", "p": [412.50,307.27,0], "s":0.5},
-      {"name": "grass", "p": [410.50,306.27,0], "s":0.6, "t":90}
+      {"name": "grass", "p": [412.20,307.97,0], "d":4},
+      {"name": "grass", "p": [412.50,307.27,0], "s":0.5, "d":4},
+      {"name": "grass", "p": [410.50,306.27,0], "s":0.6, "t":90, "d":4}
 ]
 }]
   }
