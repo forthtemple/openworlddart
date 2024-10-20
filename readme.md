@@ -432,10 +432,37 @@ rooms where define an area for a room and
 -->
 
 *Maps*  
-Openworld has maps where it can show your position on a map. It allows multiple maps where you can have maps for say a city and then a larger map for wilderness for example. Each map is an image and all you do is specify two points per map with a pixel position and a corresponding world position. With the two points it possible to calculate the image position from the world position.
+Openworld has maps that show the players position with a marker. It is possible to have multiple maps where you can have a map for say a city and then a larger encompassing for wilderness. Each map is an image and you specify two points with a pixel position and a corresponding world position. With the two points openworld  calculates the image position from the world position through interpolation and can place a marker in the correct position:
 
 <img src="https://github.com/user-attachments/assets/816b8b2d-b8d5-4a8c-80a2-e73cb7077fc4" width="350">
 
+In this example there are two maps and when the player is within the area of map.jpg then this map is shown. If is outside this area then maplarge.jpg is shown.
+```
+    var maps = [
+      OPENWORLD.MapItem('assets/maps/maplarge.jpg',
+          worldx: -7.61,  // Point 1 with pixel position and corresponding world position
+          worldy: 17.73,
+          imagex: 301,
+          imagey: 338,
+          worldx2: 11.05,  // Point 2 with pixel position and corresponding world position
+          worldy2: -12.99,
+          imagex2: 371,
+          imagey2: 450),
+      OPENWORLD.MapItem('assets/maps/map.jpg',
+          worldx: -2.36, // Point 1 with pixel position and corresponding world position
+          worldy: 4.94,
+          imagex: 13,
+          imagey: 122,
+          worldx2: 9.52, // Point 2 with pixel position and corresponding world position
+          worldy2: -2.32,
+          imagex2: 977,
+          imagey2: 588)
+    ];
+    OPENWORLD.Maps.init(maps);
+
+    // Given the current world position get the correct map and its marker position on that map
+    var map = OPENWORLD.Maps.getMapFromWorldcoords(worldpos.x, worldpos.y);
+```
 <!--
  maps where just specify two points on a map ie pixel pos and world pos and can tranlate your position onto map
     -multipel maps and will choose the one at end so can have maps eg for a city and a global map
