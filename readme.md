@@ -42,7 +42,7 @@ The following is sample code for adding an animated actor to a scene from an act
     scene.add(weaponer);
 ```
 
-In for example '/examplerhodes3d/blender/actors/armourer.blend' notice it has about 20 animations while the rest have about 1. This is because all the human actors in the Lindos 1522 demo shares these animations. This makes it easy to add new animations without needing to add them to every actor.
+Notice in '/examplerhodes3d/blender/actors/armourer.blend' it has about 20 animations while the rest of the actor have about 1 animation. This is because all the human actors in the Lindos 1522 demo share these animations. This makes it easy to add new animations without needing to add them to every actor.
 
 It is possible to specify new textures for cloned actors and models which allows meshes to be reused and made to look different. For example for the Second Temple game a second shofar is cloned from the first and a different skin is applied:
 
