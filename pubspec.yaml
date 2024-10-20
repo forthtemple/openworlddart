@@ -16,10 +16,11 @@ dependencies:
   #flutter_gl: ^0.0.21
   typr_dart: ^0.0.2
   opentype_dart: ^0.0.1
-  #crypto: ^3.0.3
+  crypto: ^3.0.3
   audioplayers: ^6.1.0
   shared_preferences: ^2.2.3
   openworld_gl: ^0.0.23
+  archive: ^3.3.0
 dependency_overrides:
   #openworld_gl:
   #  path: ../openworld_gl/flutter_gl
