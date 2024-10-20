@@ -526,11 +526,6 @@ The config file also has  pool objects. This is useful for example with a forest
   }
 }
 ```
-<!--
-config json file
-  -can define objects as a text file and set position for the defined object multiple times
-  -pool system eg for vegetation - define say 50 trees and thousands of points and system will place vegetation in front of camera and hide those further away
--->
 
 *Common objects*    
 Openworld includes some useful objects like fire, water, flares, smoke and sky. Most are based on those  available in threejs as shaders. 
@@ -556,17 +551,12 @@ The following is an example of water:
 
 ![image](https://github.com/user-attachments/assets/4f4499fd-e278-4457-8810-71d83fd11289)
 
-<!--
-some shaders like water, fire, flares, skymat, smoke
--->
-*Multi player*. 
-Demos include multi player though not built into the gaming engine. Has a client class with sessions and player info but the actual game play is specific for each demo
-Very simple and just broadcasts a logged in players  position and turn and a player action like 'wave'. Also allows chat and whos one. The server side is written in php with mysql .  Possibly in the future could write game server in flutter 
 
-<!--
-and who, and simple actions eg way
-       also speech - php
--->
+*Multi player*  
+The demo games include simple multi player capability. But multiplayer is not built into the openworld gaming engine. This might change in the future. Openworld does have a client class with sessions and player information but the actual game play is specific for each demo. The demo multiplayer simply broadcasts a logged in players  position and turn and broadcasting a player action 'wave'. The multiplayer does provide chat and information on whos on. The server side is written in php and mysql as available in the repository in /server
+
+![image](https://github.com/user-attachments/assets/d5114ddf-57ab-46e7-a3ab-54b29215eca7)
+
 
 *Hotloading*  
 Demos include hotloading function where everything you put in that hotload function will be reloaded. Eg a set of grass objects 
