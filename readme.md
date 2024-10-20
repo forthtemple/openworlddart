@@ -396,11 +396,16 @@ OPENWORLD.Sound.play(path: "sounds/laugh.mp3", volume: 0.2, delay:3);
 
 
 *Persistence*  
-It is possible to store data in a persistent way so that when an app is closed all game information can be retrieved. For example rememeber the state of the weather.
+Openworld has persistence so data can be stored when an app is closed and all game information can be retrieved. For example remember the state of the weather:
 
-<!--
-can store data so when restart app will remember game state
--->
+```
+   // Store the rain level
+   OPENWORLD.Persistence.set("rain", 1.0);
+
+   // When restart the game set the rain back to what it was when last saved
+   Weather.setRain( await OPENWORLD.Persistence.get("rain",def:0));
+```
+
 
 *Rooms*  
 Openworld allows rooms to be defined as having a central x,y point with a rectangle having distance from the point. The room can have a looping sound associated with it such an ambient shop sound. it can also ahve a random intermittent sound such as a smithy hammering something occasionly. It possible to define that the room is indoors and if in the room rain will not appear. It also possible to define a distance trigger for the room so that when you enter a room you can trigger and event such as shop keeping saying hello.
