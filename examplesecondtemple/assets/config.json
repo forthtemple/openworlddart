@@ -1,0 +1,105 @@
+{"objects": [
+  {"name": "carcass","object": [
+    {"type": "sprite", "texture":"assets/textures/carcass.png","height":0.2, "width":0.05, "randommirroru":true, "ambient":false, "zi":0.1}
+  ]},
+  {"name": "laver","ignore":true, "object": [
+    {"type": "sprite", "texture":"assets/textures/laver.png","height":0.6, "width":0.4, "ambient": false}
+  ]},
+  {"name": "grass","object": [
+    {"type": "sprite", "texture":"assets/textures/grass.png","height":0.1, "width":0.1}
+  ]},
+  {"name": "olive","object": [
+    {"type": "sprite", "texture":"assets/textures/olive.png","height":0.6, "width":0.6}
+  ]},
+  {"name": "fishtable","object": [
+    {"type": "model", "filename":"assets/models/fishtable.glb","s":0.005, "t":90}
+  ]},
+  {"name": "clothing","object": [
+    {"type": "model", "filename":"assets/models/clothing.glb","s":0.01, "t":90}
+  ]},
+  {"name": "carcasss","object": [
+    {"type": "model", "filename":"assets/models/carcasss.glb","s":0.01, "t":90}
+  ]},
+  {"name": "vegetable","object": [
+    {"type": "model", "filename":"assets/models/vegetable.glb","s":0.005, "t":90}
+  ]},
+  {"name": "moneytable","object": [
+    {"type": "model", "filename":"assets/models/moneytable.glb","s":0.025, "t":90}
+  ]},
+  {"name": "chair","object": [
+    {"type": "model", "filename":"assets/models/chair.glb","s":0.00033, "t":90}
+  ]},
+  {"name": "table","object": [
+    {"type": "model", "filename":"assets/models/table.glb","s":0.0009, "t":90}
+  ]},
+  {"name": "oven","object": [
+    {"type": "model", "filename":"assets/models/oven.glb","s":0.05, "t":90}
+  ]},
+  {"name": "houselight","object": [
+    {"type": "pointlight", "intensity":1, "distance":1.2, "flicker":true, "nightonly":true, "color": "FFA500"}
+  ]},
+  {"name": "housefire","object": [
+    {"type": "fire", "s": 0.04, "z": 0.0, "description":"was 0.25"}
+  ]},
+  {"name": "minorah","object": [
+    {"type": "model", "filename":"assets/models/minorah.glb", "t":90}
+  ]},
+  {"name": "person", "ignore":true, "object": [
+    {"type": "model", "filename":"assets/models/person.glb","s":0.004, "t":90},
+    {"type": "plane", "ignore":true, "text":"Hi there","s":0.6, "t":90, "color": "000000", "z": 0.0, "backgroundopacity": 0}
+  ]}
+],
+"positions":
+{"staticpositions":[
+  {"name": "person","ignore":true, "p": [ -8.27, -20.06, -0.03],"d": 3, "t": 50},
+  {"name": "person","ignore":true, "p": [ -14.35, 7.26, -0.0],"d": 3, "t": 10},
+  {"name": "minorah","ignore":true, "p": [  -0.33, 1.03, 0.0],"d": 4, "s": 0.11, "t": 90},
+  {"name": "minorah","p": [ -8.3, -19.8, 0.06],"d": 3, "s": 0.035},
+  {"name": "minorah","p": [ -14.4, 7.6, 0.06],"d": 3, "t":40, "s": 0.035},
+  {"name": "housefire","p": [ -8.3, -19.9, 0.0],"d": 3},
+  {"name": "housefire","p": [ -14.4, 7.55, 0.0],"d": 3},
+  {"name": "houselight","p": [ -8.3, -19.9, 0.1],"d": 3},
+  {"name": "houselight","p": [ -14.35, 7.6, 0.1],"d": 3},
+  {"name": "oven","p": [ -8.3, -19.9, 0.0],"t":90, "d": 3},
+  {"name": "oven","p": [ -14.4, 7.55, 0.0],"t":50, "d": 3},
+  {"name": "table","p": [-8.3, -19.8, 0.0],"t":0, "d": 3},
+  {"name": "table","p": [ -14.45, 7.8, 0.0],"t":50, "d": 3, "ignore": true},
+  {"name": "chair","p": [-8.3, -20.08, 0.0],"t":0, "d": 3},
+  {"name": "chair","p": [ -14.35, 7.28, 0.0],"t":-10, "d": 3},
+  {"name": "vegetable","p": [-7.1,-10.1],"t":90, "d": 6},
+  {"name": "vegetable","p": [-7.1,-9],"t":90, "d": 6},
+  {"name": "vegetable","p": [4.2,-11], "t": 0, "d": 6},
+  {"name": "clothing","p": [-7.4,-10.1],"t":90, "d": 6},
+  {"name": "clothing","p": [-7.4,-9],"t":90, "d": 6},
+  {"name": "fishtable","p": [-7.1,-9.5],"t":90, "d": 6},
+  {"name": "fishtable","p": [3.4,-11.0], "t":0, "d": 6},
+  {"name": "moneytable","p": [1.8,-11 ],"t":90, "d": 6},
+  {"name": "laver","p": [2.53,-0.5], "d": 3, "ignore": true},
+  {"name": "carcass","p": [3.2,2.5,0.1],"description=":"near altar","d":3},
+  {"name": "carcass","p": [3.2,2.7,0.1], "description":"near altar"  ,"d":3},
+  {"name": "carcass","p": [3.2,2.9,0.1],"description":"near altar"  ,"d":3},
+  {"name": "carcass","p": [3,2.5,0.1] ,"description":"near altar"  ,"d":3},
+  {"name": "carcass","p": [3,2.7,0.1],"description":"near altar"  ,"d":3},
+  {"name": "carcass","p": [3,2.9,0.1],"description":"near altar",  "d":3},
+  {"name": "carcasss","p": [-7.4,-9.55], "t":270, "d":3}
+],
+  "poolpositions":[{"poolsize":40, "maxdistance":20, "positions":[
+    { "name": "grass","p": [ 35.13, 0.13,0.0],  "rx": 30, "ry":30, "rs":0.4, "n": 512 },
+    { "name": "grass","p": [ 29.78, 26.33,0.0],  "rx": 30, "ry":30, "rs":0.4, "n": 512 },
+    { "name": "grass","p": [  3.38, 35.85,0.0],  "rx": 20, "ry":20, "rs":0.4, "n": 256 },
+    { "name": "grass","p": [  -8.94, 35.30,0.0],  "rx": 20, "ry":20, "rs":0.4, "n": 256 },
+    { "name": "grass","p": [  -20.84, 20.39,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 60 },
+    { "name": "grass","p": [  -22.05, 11.56,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 60 },
+    { "name": "grass","p": [  -18.93, 5.61,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 60 },
+    { "name": "grass","p": [   -13.83, 4.26,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 60 },
+    { "name": "grass","p": [  -22.86, -6.75,0.0],  "rx": 20, "ry":20, "rs":0.4, "n": 256 },
+    { "name": "grass","p": [  -20.68, -23.03,0.0],  "rx": 20, "ry":20, "rs":0.4, "n": 256 },
+    { "name": "grass","p": [  -13.30, -32.13,0.0],  "rx": 20, "ry":20, "rs":0.4, "n": 256 },
+    { "name": "grass","p": [   7.51, -40.81,0.0],  "rx": 20, "ry":20, "rs":0.4, "n": 256 },
+    { "name": "grass","p": [   20.97, -31.88,0.0],  "rx": 20, "ry":20, "rs":0.4, "n": 256 }
+
+  ]
+
+  }]
+}
+}
