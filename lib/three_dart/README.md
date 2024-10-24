@@ -1,5 +1,7 @@
 # three_dart
 
+This is three_dart based upon knightro63's <a href='https://github.com/Knightro63/three_dart'>version</a> which is an update of  wasabia's version on pub.dev. Actor animations in knightro63 version works while wasabias version doesn't. This version also includes some fixes such as actor animations working in web release mode. Also allows dom keyboard capture to be turned off where needed for example typing in a flutter textfield. Also includes backwards animations. It also incorporates an updated flutter_gl version that works with the latest version of gradle.
+
 Dart 3D library. an easy to use, lightweight, cross-platform, general purpose 3D library. 
 
 three.js rewrite by Dart. 3D for Flutter. Base on [flutter_gl](https://github.com/wasabia/flutter_gl)
