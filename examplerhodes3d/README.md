@@ -1,9 +1,10 @@
 **Lindos 1522**
 
-Demo game using openworld game engine. All game logic is in lib/Rhodes3DPage.dart
+Repository and support for *Lindos 1522* game. Demonostration of the openworld game engine for iOS, Android and Web. 
 
-It's 1522 in Lindos on the southern Greek island of Rhode right before a huge invasion from Suleiman and his huge army. Help the people of Lindos uncover a spy who is giving the enemy information. Save Lindos from their 
-coming doom.
+All game logic is in lib/Rhodes3DPage.dart
+
+It's 1522 in Lindos on the southern Greek island of Rhode right before a huge invasion from Suleiman and his huge army. Help the people of Lindos uncover a spy who is giving the enemy information. Save Lindos from their coming doom.
 
 ![image](https://github.com/user-attachments/assets/c0d30f4a-c46c-43b8-b2cd-1f6171805b6e)
 
