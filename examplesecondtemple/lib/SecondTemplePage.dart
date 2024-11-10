@@ -482,7 +482,7 @@ class _State extends State<SecondTemplePage>  {
                 ]),
 
                   showfps?Text(" FPS:"+fps.toString(), style:TextStyle(fontSize:10, color:Colors.red, fontWeight: FontWeight.bold)):SizedBox.shrink(),
-                  !kIsWeb && loaded
+                  !OPENWORLD.System.isDesktop() && loaded
                       ? Container(
                    //   margin:EdgeInsets.only(top:30),
                       child:UserGuildanceAnchor(

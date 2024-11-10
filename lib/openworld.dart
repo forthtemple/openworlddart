@@ -800,6 +800,11 @@ class System {
     return DateTime.now().millisecondsSinceEpoch;
   }
 
+  static isDesktop()
+  {
+    return kIsWeb||Platform.isLinux||Platform.isWindows;
+  }
+
 }
 
 /// Procedures related to storing persistent data
@@ -1280,7 +1285,7 @@ class VirtualJoystick {
     if (You.immobileturn)
       return;
     // If close to joystick then ignore so stop big jumps
-    if (!kIsWeb&&(clientX<joysticksize||_lastClientX<joysticksize)&&(_lastClientY<joysticksize||clientY<joysticksize)) {
+    if (!System.isDesktop()&&(clientX<joysticksize||_lastClientX<joysticksize)&&(_lastClientY<joysticksize||clientY<joysticksize)) {
       print('miss '+_lastClientX.toString()+" "+ clientX.toString()+" "+_lastClientY.toString() +" "+clientY.toString());
       _lastClientX = clientX;
       _lastClientY = clientY;
@@ -1327,7 +1332,7 @@ class VirtualJoystick {
           !You.immobileturn) {
         // This is if you turn with the keyboard  left or right
         var rotamt;
-        if (!kIsWeb)
+        if (!System.isDesktop())//kIsWeb)
           rotamt = 0.15; // this is redundant because you woudln't use a keyboard on a smartphone
         else
           rotamt = 1.2;
@@ -1346,13 +1351,13 @@ class VirtualJoystick {
     targetRotationY = 0;
 
     var rotamt;
-    if (!kIsWeb) //this._ismobile)
+    if (!System.isDesktop())//kIsWeb) //this._ismobile)
       rotamt = 150;
     else
       rotamt = 300;
 
     // For smartphones joystick left and right turns you left and right while on web will slide you left and right
-    var joystickturn = !kIsWeb;//true;
+    var joystickturn = !System.isDesktop();//kIsWeb;//true;
 
     // This is for the keyboard
     if (this._active) {
