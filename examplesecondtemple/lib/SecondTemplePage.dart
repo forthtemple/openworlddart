@@ -12,7 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:openworld_gl/flutter_gl.dart';
+import 'package:openworld_gl/openworld_gl.dart';
 import 'package:flutter_joystick/flutter_joystick.dart';
 import 'package:flutter_user_guildance/flutter_user_guildance.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -54,7 +54,7 @@ class SecondTemplePage extends StatefulWidget {
 class _State extends State<SecondTemplePage>  {
   UserGuidanceController userGuidanceController = UserGuidanceController();
 
-  late FlutterGlPlugin three3dRender;
+  late OpenworldGlPlugin three3dRender;
   THREE.WebGLRenderer? renderer;
 
   int? fboId;
@@ -185,7 +185,7 @@ class _State extends State<SecondTemplePage>  {
     width = screenSize!.width;
     height = screenSize!.height;
 
-    three3dRender = FlutterGlPlugin();
+    three3dRender = OpenworldGlPlugin();
 
     Map<String, dynamic> _options = {
       "antialias": true,
@@ -195,13 +195,28 @@ class _State extends State<SecondTemplePage>  {
       "dpr": dpr
     };
 
+    print("begin initialize");
     await three3dRender.initialize(options: _options);
 
     setState(() {});
 
     // TODO web wait dom ok!!!
-    Future.delayed(const Duration(milliseconds: 100), () async {
-      await three3dRender.prepareContext();
+   // Future.delayed(const Duration(milliseconds: 100), () async {
+      Timer(Duration(milliseconds:  100), () async {
+
+      print("begin prepare context");
+     // try {
+        await three3dRender.prepareContext();
+     // } on Exception catch (exception) {
+     //   print('never reached');
+//
+        //   ... // only executed if error is of type Exception
+      //} catch (error) {
+    //  ... // executed for errors of all types other than Exception
+      //print('errr!');
+      //}
+
+      print("done prepare context");
 
       initScene();
     });
@@ -295,7 +310,9 @@ class _State extends State<SecondTemplePage>  {
                           : Container();
                     } else {
                       return three3dRender.isInitialized
-                          ? Texture(textureId: three3dRender.textureId!)
+                          ?
+                    Texture(textureId: three3dRender.textureId!)
+
                           : Container();
                     }
                   })):
@@ -960,6 +977,7 @@ class _State extends State<SecondTemplePage>  {
       "canvas": three3dRender.element
     };
     renderer = THREE.WebGLRenderer(_options);
+   // print("dpr"+dpr.toString()); 1.0
     renderer!.setPixelRatio(dpr);
     renderer!.setSize(width, height, false);
 
@@ -2286,6 +2304,7 @@ class _State extends State<SecondTemplePage>  {
 
     // Initialize the time with the sunsphere, skymat and ambience so that can change these based upon the time of day giving a realistic sky
     print("init time");
+  //  OPENWORLD.Time.init( null,null ,ambience);
     OPENWORLD.Time.init(sunSphere, skyMat, ambience);
 
     // Load the terrain that everything is place on top of
@@ -4102,8 +4121,8 @@ class _State extends State<SecondTemplePage>  {
     animate();
 
     _timer = new Timer.periodic(new Duration(milliseconds: poll), (_) {
-      clientInterval(); // for the client connection
-      heartbeat();
+  //    clientInterval(); // for the client connection
+   //   heartbeat();
       //userGuidanceController.show(subIndex:1);
     });
 

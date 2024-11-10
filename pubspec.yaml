@@ -9,6 +9,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  openworld_gl:
+    git:
+      #    #url: 'https://github.com/wasabia/flutter_gl'
+      url: 'https://github.com/forthtemple/openworld_gl.git'
   http: ^1.1.0
   universal_html: ^2.2.4
   ffi: ^2.1.0
@@ -19,11 +23,11 @@ dependencies:
   crypto: ^3.0.3
   audioplayers: ^6.1.0
   shared_preferences: ^2.2.3
-  openworld_gl: ^0.0.23
+  #openworld_gl: ^0.0.23
   archive: ^3.3.0
 dependency_overrides:
   #openworld_gl:
-  #  path: ../openworld_gl/flutter_gl
+  #  path: ../openworld_gl/openworld_gl
 dev_dependencies:
   flutter_test:
     sdk: flutter

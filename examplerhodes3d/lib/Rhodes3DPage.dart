@@ -13,7 +13,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:openworld_gl/flutter_gl.dart';
+import 'package:openworld_gl/openworld_gl.dart';
 import 'package:flutter_joystick/flutter_joystick.dart';
 import 'package:flutter_user_guildance/flutter_user_guildance.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -64,7 +64,7 @@ late audioplayers.AudioPlayer roomdefaultsound22;
 class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin */ {
   UserGuidanceController userGuidanceController = UserGuidanceController();
 
-  late FlutterGlPlugin three3dRender;
+  late OpenworldGlPlugin three3dRender;
   THREE.WebGLRenderer? renderer;
 
   int? fboId;
@@ -228,7 +228,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     print("width" + width.toString() + " height" +
         height.toString()); // 896.0 height414.0
 
-    three3dRender = FlutterGlPlugin();
+    three3dRender = OpenworldGlPlugin();
 
     Map<String, dynamic> _options = {
       "antialias": true,

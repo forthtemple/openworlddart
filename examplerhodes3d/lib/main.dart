@@ -2,6 +2,8 @@
 import 'dart:ui';
 
 
+import 'package:window_manager/window_manager.dart';
+
 import 'theme.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -12,8 +14,12 @@ import 'Rhodes3DPage.dart';
 import 'package:openworld/openworld.dart' as OPENWORLD;
 
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await WindowManager.instance.ensureInitialized();
+  windowManager.waitUntilReadyToShow().then((_) async {
+    await windowManager.setTitle(gamename);
+  });
   runApp(MyApp());
 }
 

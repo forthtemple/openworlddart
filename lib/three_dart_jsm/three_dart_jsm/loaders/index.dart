@@ -3,7 +3,7 @@ library jsm_loader;
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:archive/archive.dart';
-import 'package:openworld_gl/flutter_gl.dart';
+import 'package:openworld_gl/openworld_gl.dart';
 import 'package:openworld/three_dart/three_dart.dart';
 
 import 'package:openworld/three_dart/three_dart.dart' as THREE;

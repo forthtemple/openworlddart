@@ -2,7 +2,7 @@ library three_objects;
 
 import 'dart:convert';
 
-import 'package:openworld_gl/flutter_gl.dart';
+import 'package:openworld_gl/openworld_gl.dart';
 import 'package:openworld/three_dart/three3d/constants.dart';
 import 'package:openworld/three_dart/three3d/core/index.dart';
 import 'package:openworld/three_dart/three3d/materials/index.dart';

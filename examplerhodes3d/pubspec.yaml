@@ -64,14 +64,15 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   win32: ^5.5.4
   archive: ^3.6.1
-  openworld_gl: ^0.0.23
+  #openworld_gl: ^0.0.23
+  window_manager: ^0.4.3
 dependency_overrides:
   openworld:
     path: ../
   #flutter_gl:
   #  path: ../../flutter_gl-main/flutter_gl
-  #openworld_gl:
-  #  path: ../../openworld_gl/flutter_gl
+  openworld_gl:
+    path: ../../openworld_gl/openworld_gl
 dev_dependencies:
   flutter_test:
     sdk: flutter

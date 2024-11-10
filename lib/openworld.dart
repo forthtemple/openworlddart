@@ -898,8 +898,12 @@ class Sound {
         else {
           //print('getduration'+player.toString()+" path"+path.toString());
           var dur= await sound.getDuration();//.setUrl(path);
-          duration=dur!.inMilliseconds/1000.0;
-          durations[path]=duration;
+          if (dur!=null) {
+            duration = dur!.inMilliseconds / 1000.0;
+          } else
+            duration=-1;
+          durations[path] = duration;
+
         }
 
       }

@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:openworld/three_dart/three3d/math/index.dart';
 import 'package:openworld/three_dart/three3d/utils.dart';
 import 'package:openworld/three_dart/three_dart.dart';
-import 'package:openworld_gl/flutter_gl.dart';
+import 'package:openworld_gl/openworld_gl.dart';
 import 'package:openworld/three_dart/extra/console.dart';
 
 part './WebGLAnimation.dart';

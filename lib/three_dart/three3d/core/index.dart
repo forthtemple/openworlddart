@@ -2,7 +2,7 @@ library three_core;
 
 import 'dart:convert';
 
-import 'package:openworld_gl/flutter_gl.dart';
+import 'package:openworld_gl/openworld_gl.dart';
 import 'package:openworld/three_dart/extra/console.dart';
 import 'package:openworld/three_dart/three_dart.dart';
 import 'package:openworld/three_dart/three3d/utils.dart';

@@ -1,7 +1,7 @@
 library three_geometries;
 
 
-import 'package:openworld_gl/flutter_gl.dart';
+import 'package:openworld_gl/openworld_gl.dart';
 import 'package:openworld/three_dart/three_dart.dart';
 
 part 'BoxGeometry.dart';

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart' hide Matrix4;
 import 'package:openworld/three_dart/three3d/core/index.dart';
 import 'package:openworld/three_dart/three_dart.dart';
 import 'package:openworld/three_dart_jsm/extra/dom_like_listenable.dart';
-import 'package:openworld_gl/flutter_gl.dart';
+import 'package:openworld_gl/openworld_gl.dart';
 
 part './common.dart';
 part './TrackballControls.dart';

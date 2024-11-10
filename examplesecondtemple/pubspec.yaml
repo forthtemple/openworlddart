@@ -34,10 +34,10 @@ dependencies:
   #three_dart_jsm:
   #  git:
   #    url: 'https://github.com/Knightro63/three_dart_jsm.git'
-  #flutter_gl:
-  #  git:
+  openworld_gl:
+    git:
   #    #url: 'https://github.com/wasabia/flutter_gl'
-  #    url: 'https://github.com/forthtemple/openworld_gl.git'
+      url: 'https://github.com/forthtemple/openworld_gl.git'
   #    path: ./flutter_gl
   # universal_ui: ^0.0.8
   #flutter_gl: ^0.0.21
@@ -64,12 +64,13 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   win32: ^5.5.4
   archive: ^3.6.1
-  openworld_gl: ^0.0.23
+  window_manager: ^0.4.3
+  #openworld_gl: ^0.0.23
 dependency_overrides:
   openworld:
     path: ../
   #openworld_gl:
-  #  path: ../../openworld_gl2/openworld_gl/flutter_gl
+  #  path: ../../openworld_gl/openworld_gl
 
 dev_dependencies:
   flutter_test:

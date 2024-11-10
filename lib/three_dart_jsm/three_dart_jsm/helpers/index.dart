@@ -1,6 +1,6 @@
 library jsm_helpers;
 
-import 'package:openworld_gl/flutter_gl.dart';
+import 'package:openworld_gl/openworld_gl.dart';
 import 'package:openworld/three_dart/three_dart.dart';
 
 import '../math/index.dart';

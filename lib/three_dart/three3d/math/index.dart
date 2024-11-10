@@ -2,7 +2,7 @@ library three_math;
 
 import 'dart:math' as math;
 
-import 'package:openworld_gl/flutter_gl.dart';
+import 'package:openworld_gl/openworld_gl.dart';
 import 'package:openworld/three_dart/three3d/core/index.dart';
 import 'package:openworld/three_dart/three3d/dart_helpers.dart';
 import '../constants.dart';
