@@ -1,6 +1,6 @@
 name: openworld
 description: Openworld gaming engine using three_dart
-version: 0.0.2
+version: 0.0.5
 homepage: https://github.com/forthtemple/openworlddart
 
 environment:
