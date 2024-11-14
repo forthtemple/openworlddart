@@ -681,7 +681,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
                                     color: Colors.red,
                                     fontWeight: FontWeight.bold)) : SizedBox
                                 .shrink(),
-                            !kIsWeb && loaded
+                            !OPENWORLD.System.isDesktop() && loaded
                                 ? Container(
                               //   margin:EdgeInsets.only(top:30),
                                 child: UserGuildanceAnchor(

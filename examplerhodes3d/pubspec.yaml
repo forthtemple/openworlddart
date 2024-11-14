@@ -72,7 +72,7 @@ dependency_overrides:
   #flutter_gl:
   #  path: ../../flutter_gl-main/flutter_gl
   openworld_gl:
-    path: ../../openworld_gl/openworld_gl
+    path: ../../openworld_gl
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -141,3 +141,7 @@ flutter_icons:
   image_path: "icons/rhodes3dicon.png"
   android: "ic_launcheri"
   ios: true
+  windows:
+    generate: true
+    image_path: "icons/rhodes3dicon.png"
+    icon_size: 48

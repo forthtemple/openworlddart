@@ -1,0 +1,53 @@
+name: rhodes3d # you probably want to 'snapcraft register <name>'
+base: core22 # the base snap is the execution environment for this snap
+version: '0.1' # just for humans, typically '1.2+git' or '1.3.2'
+summary: Explore Lindos # 79 char long summary
+description: |
+  It's 1522 in Lindos on the southern Greek island of Rhode right before a huge invasion from Suleiman and his huge army. Help the people of Lindos uncover a spy who is giving the enemy information. Save Lindos from their coming doom.
+icon: snap/gui/rhodes3d.png
+website: https://github.com/forthtemple/openworlddart/blob/main/examplerhodes3d/README.md
+source-code: https://github.com/forthtemple/openworlddart/blob/main/examplerhodes3d/README.md
+
+grade: stable #devel # # # must be '' to release into candidate/stable channels
+confinement: strict #devmode # # # use 'strict' once you have the right plugs and slots
+
+apps:
+  rhodes3d:
+    command: rhodes3d
+    extensions: [gnome]
+    plugs:
+      - opengl 
+
+parts:
+  rhodes3d:
+    source: .
+    #source: ../../openworlddart/examplesecondtemple/
+    source-type: local
+    plugin: flutter
+    flutter-target: lib/main.dart
+    build-packages:
+      - libgstreamer1.0-dev
+      - libgstreamer-plugins-base1.0-dev
+      - libglew-dev
+      #- libglew-2.2
+      #- libblas-dev 
+      #- liblapack-dev
+      - libatlas-base-dev
+    stage-packages:
+      - libgstreamer1.0-0
+      - libgstreamer-plugins-base1.0-0
+      - libglew2.2
+      - libatlas3-base
+      #- liblapack3
+      #- libblas3
+    organize:
+      usr/lib/*-linux-gnu/blas/*: usr/lib/
+      usr/lib/*-linux-gnu/lapack/*: usr/lib/
+      usr/lib/*-linux-gnu/atlas/*: usr/lib/
+#layout:
+   #/usr/lib/x86_64-linux-gnu/libGLEW.so.2.2:
+   #  bind: $SNAP_DATA/usr/lib/x86_64-linux-gnu/libGLEW.so.2.2
+  #/usr/lib/x86_64-linux-gnu/libGLEW.so:
+  #  bind: $SNAP_DATA/usr/lib/x86_64-linux-gnu/libGLEW.so     
+  #/usr/lib/x86_64-linux-gnu/libGLEW.so:
+  #  bind: $SNAP_DATA/usr/lib/x86_64-linux-gnu/libGLEW.so     

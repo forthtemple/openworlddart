@@ -4121,8 +4121,8 @@ class _State extends State<SecondTemplePage>  {
     animate();
 
     _timer = new Timer.periodic(new Duration(milliseconds: poll), (_) {
-  //    clientInterval(); // for the client connection
-   //   heartbeat();
+      clientInterval(); // for the client connection
+      heartbeat();
       //userGuidanceController.show(subIndex:1);
     });
 

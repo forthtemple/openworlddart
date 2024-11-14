@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Lindos 1522
+Comment=Explore the Lindos
+Exec=secondtemple 
+Icon=${SNAP}/meta/gui/rhodes3d.png
+Terminal=false
+Type=Application
+Categories=Games; # Adjust accordingly your snap category.

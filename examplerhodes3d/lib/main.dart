@@ -1,7 +1,9 @@
 
+import 'dart:io';
 import 'dart:ui';
 
 
+import 'package:flutter/foundation.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'theme.dart';
@@ -16,10 +18,14 @@ import 'package:openworld/openworld.dart' as OPENWORLD;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await WindowManager.instance.ensureInitialized();
-  windowManager.waitUntilReadyToShow().then((_) async {
-    await windowManager.setTitle(gamename);
-  });
+  if (!kIsWeb&&(Platform.isLinux||Platform.isWindows)) {
+
+    await WindowManager.instance.ensureInitialized();
+    windowManager.waitUntilReadyToShow().then((_) async {
+      await windowManager.setTitle(gamename);
+    });
+  }
+
   runApp(MyApp());
 }
 
