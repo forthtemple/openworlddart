@@ -7,7 +7,7 @@ One game is set in Jerusalem at the Second Temple 72AD just before a roman invas
 
 <img src="https://github.com/user-attachments/assets/87d3e8a2-fd28-428f-807e-733b0f1bbef2" width="400">
 
-This game is not only available in this repository but also on <a href="https://apps.apple.com/us/app/ark-uncovered/id6593662011">iTunes</a> on  <a href="https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.secondtemple">Amazon</a> and <a href='https://chatgpt.forthtemple.com/secondtemple/'>web</a>  and <a href='https://www.youtube.com/watch?v=v63XYmFEgj8'>Youtube</a>
+This game is not only available in this repository but also on <a href="https://apps.apple.com/us/app/ark-uncovered/id6593662011">iTunes</a> on  <a href="https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.secondtemple">Amazon</a> (Android) and <a href='https://chatgpt.forthtemple.com/secondtemple/'>web</a>, <a href="https://snapcraft.io/secondtemple">snap</a> (Linux)  <a href='https://www.youtube.com/watch?v=v63XYmFEgj8'>Youtube</a>
 
 A second game is set in Lindos, Rhodes south of Greece in 1522 just before Sulamains invasion.
 
