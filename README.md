@@ -1,6 +1,57 @@
 # Open World for dart
 This gaming engine is written in flutter and is based upon our existing threejs openworld repository [openworldthreejs](https://github.com/forthtemple/openworldthreejs). The gaming engine uses the [three_dart](https://github.com/Knightro63/three_dart (is more up to date then three_dart on pub.dev)) package making it easy to convert threejs code to three_dart. This package is available on <a href="https://pub.dev/packages/openworld">pubdev</a>. Because it uses flutter, games created with this engine are cross platform working on Android, iOS, web, windows and Linux. And with the flutter feature of hotloading it allows 3D objects to be added to a scene on the fly making game design easier.
-   
+
+### Import
+
+```
+import 'package:openworld_gl/openworld_gl.dart';
+import 'package:openworld/three_dart/three3d/objects/index.dart';
+import 'package:openworld/three_dart/three_dart.dart' as THREE;
+import 'package:openworld/three_dart_jsm/three_dart_jsm.dart' as THREE_JSM;
+import 'package:openworld/shaders/SkyShader.dart';
+mport 'package:openworld/openworld.dart' as OPENWORLD;
+```
+
+### Usage
+
+```
+    // Example of adding skydome to openworld
+    var skyGeo = THREE.SphereGeometry(-1000, 32, 15);
+
+    var skyMat = new THREE.ShaderMaterial(SkyShader);
+
+    var sky = THREE.Mesh(skyGeo, skyMat);
+
+    scene.add(sky);
+
+    skyMat.uniforms = {
+      'turbidity': {'value': 10.0},
+      'reileigh': {'value': 2.0},
+      'mieCoefficient': {'value': 0.005},
+      'mieDirectionalG': {'value': 0.8},
+      'luminance': {'value': 1.0},
+      'inclination': {'value': 0},
+      'azimuth': {'value': 0},
+      'opacity': {'value': 1.0},
+      'sunPosition': {'value': THREE.Vector3(0, 100, 0)}
+    };
+
+    // Add Sun
+    var sunSphere = THREE.Mesh(THREE.SphereGeometry(20000, 16, 8),
+        THREE.MeshBasicMaterial({'color': THREE.Color.fromHex(0xffffff)}));
+    sunSphere.position.y = -700000;
+    sunSphere.visible = true;
+    var sunlight = new THREE.SpotLight(0x888888);//ffffff);
+    sunlight.intensity = 0.4;
+    sunlight.penumbra = 1;
+    sunSphere.add(sunlight);
+
+    scene.add(sunSphere);
+
+    // Openworld will change sky depending on time of day
+    OPENWORLD.Time.init(sunSphere, skyMat, ambience);
+
+```   
 This gaming engine includes two demo games with full source and all resources including blender models, sound, textures being freely available in this repository.
 
 One game is set in Jerusalem at the Second Temple 72AD just before a roman invasion. 
