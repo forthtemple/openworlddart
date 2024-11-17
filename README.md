@@ -9,7 +9,7 @@ import 'package:openworld/three_dart/three3d/objects/index.dart';
 import 'package:openworld/three_dart/three_dart.dart' as THREE;
 import 'package:openworld/three_dart_jsm/three_dart_jsm.dart' as THREE_JSM;
 import 'package:openworld/shaders/SkyShader.dart';
-mport 'package:openworld/openworld.dart' as OPENWORLD;
+import 'package:openworld/openworld.dart' as OPENWORLD;
 ```
 
 ### Usage
