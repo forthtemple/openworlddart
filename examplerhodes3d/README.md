@@ -1,6 +1,6 @@
 **Lindos 1522**
 
-Repository and support for *Lindos 1522* game. Demonostration of the openworld game engine for iOS, Android and Web. 
+Repository and support for *Lindos 1522* game. Demonostration of the openworld game engine for iOS, macos, Android, Linux and Web. 
 
 All game logic is in lib/Rhodes3DPage.dart
 
