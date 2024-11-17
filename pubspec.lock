@@ -2,7 +2,7 @@
 # See https://dart.dev/tools/pub/glossary#lockfile
 packages:
   archive:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: archive
       sha256: cb6a278ef2dbb298455e1a713bda08524a175630ec643a242c399c932a0a1f7d
@@ -114,7 +114,7 @@ packages:
     source: hosted
     version: "1.18.0"
   crypto:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: crypto
       sha256: ec30d999af904f33454ba22ed9a86162b35e52b44ac4807d1d93c288041d7d27
@@ -166,38 +166,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_gl_macos:
-    dependency: transitive
-    description:
-      name: flutter_gl_macos
-      sha256: "62aa244d4aa9127115df651baec070893718dd27571c8dbca5374dbcb9fd4849"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.5"
-  flutter_gl_platform_interface:
-    dependency: transitive
-    description:
-      name: flutter_gl_platform_interface
-      sha256: "03062491fac26d0fda80703e4a01894ecc4fec4f7e5cec131ef021fbf46b2fda"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.4"
-  flutter_gl_web:
-    dependency: transitive
-    description:
-      name: flutter_gl_web
-      sha256: "005dc72618ee14659dff7dfe72d6b1fce0efdda745cfebfe4618ce7ac2044af9"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.5"
-  flutter_gl_windows:
-    dependency: transitive
-    description:
-      name: flutter_gl_windows
-      sha256: cd9259fb8178863de9e667129f73447fa174447a3c4abd16defa07af648850e4
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.4"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -305,13 +273,26 @@ packages:
     source: hosted
     version: "0.0.1"
   openworld_gl:
-    dependency: "direct main"
+    dependency: "direct overridden"
     description:
-      name: openworld_gl
-      sha256: "5a0d854d2e9a95bdb43ca7e993803b06a6421f3926a6a657cd7a2e21793f5f96"
-      url: "https://pub.dev"
-    source: hosted
+      path: "../openworld_gl"
+      relative: true
+    source: path
     version: "0.0.24"
+  openworld_gl_macos:
+    dependency: transitive
+    description:
+      path: "../openworld_gl_macos"
+      relative: true
+    source: path
+    version: "0.0.5"
+  openworld_gl_platform_interface:
+    dependency: transitive
+    description:
+      path: "../openworld_gl_platform_interface"
+      relative: true
+    source: path
+    version: "0.0.4"
   path:
     dependency: transitive
     description:

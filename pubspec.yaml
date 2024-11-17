@@ -1,6 +1,6 @@
 name: openworld
 description: Openworld gaming engine using three_dart
-version: 0.0.5
+version: 0.0.1
 homepage: https://github.com/forthtemple/openworlddart
 
 environment:
@@ -11,7 +11,7 @@ dependencies:
     sdk: flutter
   #openworld_gl:
   #  git:
-      #    #url: 'https://github.com/wasabia/flutter_gl'
+  #    #    #url: 'https://github.com/wasabia/flutter_gl'
   #    url: 'https://github.com/forthtemple/openworld_gl.git'
   http: ^1.1.0
   universal_html: ^2.2.4
@@ -23,11 +23,11 @@ dependencies:
   crypto: ^3.0.3
   audioplayers: ^6.1.0
   shared_preferences: ^2.2.3
-  openworld_gl: ^0.0.25
+  #openworld_gl: ^0.0.23
   archive: ^3.3.0
 dependency_overrides:
-  #openworld_gl:
-  #  path: ../openworld_gl/openworld_gl
+  openworld_gl:
+    path: ../openworld_gl/openworld_gl
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
@@ -39,7 +38,7 @@ import 'package:openworld/three_dart_jsm/three_dart_jsm/controls/index.dart';
 import 'package:openworld/three_dart_jsm/extra/dom_like_listenable.dart';
 import 'package:http/http.dart';
 
-String gamename='Second Temple';
+String gamename = 'Second Temple';
 
 class SecondTemplePage extends StatefulWidget {
 
@@ -51,7 +50,7 @@ class SecondTemplePage extends StatefulWidget {
   createState() => _State();
 }
 
-class _State extends State<SecondTemplePage>  {
+class _State extends State<SecondTemplePage> {
   UserGuidanceController userGuidanceController = UserGuidanceController();
 
   late OpenworldGlPlugin three3dRender;
@@ -88,7 +87,7 @@ class _State extends State<SecondTemplePage>  {
   late THREE.Object3D model;
 
   static GlobalKey<DomLikeListenableState> _globalKey =
-      GlobalKey<DomLikeListenableState>();
+  GlobalKey<DomLikeListenableState>();
 
   OPENWORLD.VirtualJoystick? _joystick;
   int pointerdowntick = -1;
@@ -111,11 +110,11 @@ class _State extends State<SecondTemplePage>  {
 
   late Group _priest;
   late Group _horse;
-  bool horseriding=false;   // This is your own horse
+  bool horseriding = false; // This is your own horse
   late audioplayers.AudioPlayer horseridingclop;
-  bool horseridingcloploaded=false;
-  var horsespeed=20.0/4;//25.0/4;
-  var defaultspeed=8.0/4; //2m/s
+  bool horseridingcloploaded = false;
+  var horsespeed = 20.0 / 4; //25.0/4;
+  var defaultspeed = 8.0 / 4; //2m/s
 
   late Group _cow;
 
@@ -157,27 +156,25 @@ class _State extends State<SecondTemplePage>  {
   late int mapheight;
 
   bool hasprayer = false;
-  bool priestblessing=false;
+  bool priestblessing = false;
 
   bool hidewidgets = false; // useful if want to do screenshots without controls etc showing
-  bool showfps=false ;  // show frames per second
-  int fps=-1;
-  int framedelay=40;
+  bool showfps = false; // show frames per second
+  int fps = -1;
+  int framedelay = 40;
 
   double menuposx = -1;
   double menuposy = -1;
   late THREE.Object3D menuobj;
   List menuitems = [];
-  double defaultcameraoffset = 0.15;//35;
-  double horsecameraoffset= 0.15+0.2*0.5;
+  double defaultcameraoffset = 0.15; //35;
+  double horsecameraoffset = 0.15 + 0.2 * 0.5;
 
-  double convscale=0.0025/ 0.006;
+  double convscale = 0.0025 / 0.006;
 
   @override
   void initState() {
-
     super.initState();
-
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -201,18 +198,17 @@ class _State extends State<SecondTemplePage>  {
     setState(() {});
 
     // TODO web wait dom ok!!!
-   // Future.delayed(const Duration(milliseconds: 100), () async {
-      Timer(Duration(milliseconds:  100), () async {
-
+    // Future.delayed(const Duration(milliseconds: 100), () async {
+    Timer(Duration(milliseconds: 100), () async {
       print("begin prepare context");
-     // try {
-        await three3dRender.prepareContext();
-     // } on Exception catch (exception) {
-     //   print('never reached');
+      // try {
+      await three3dRender.prepareContext();
+      // } on Exception catch (exception) {
+      //   print('never reached');
 //
-        //   ... // only executed if error is of type Exception
+      //   ... // only executed if error is of type Exception
       //} catch (error) {
-    //  ... // executed for errors of all types other than Exception
+      //  ... // executed for errors of all types other than Exception
       //print('errr!');
       //}
 
@@ -220,8 +216,6 @@ class _State extends State<SecondTemplePage>  {
 
       initScene();
     });
-
-
   }
 
   initSize(BuildContext context) {
@@ -234,7 +228,7 @@ class _State extends State<SecondTemplePage>  {
     screenSize = mqd.size;
     dpr = mqd.devicePixelRatio;
 
-    print("screen"+screenSize!.width.toString());
+    print("screen" + screenSize!.width.toString()+" dpr"+dpr.toString());
     initPlatformState();
   }
 
@@ -251,12 +245,11 @@ class _State extends State<SecondTemplePage>  {
     return Scaffold(
       // appBar: AppBar(
       //  title: Text('voor'), //widget.fileName),
-     // ),
+      // ),
       body:
-          DomLikeListenable(
+      DomLikeListenable(
         key: _globalKey,
         builder: (BuildContext context) {
-
           initSize(context);
           return _build(context);
         },
@@ -265,7 +258,6 @@ class _State extends State<SecondTemplePage>  {
   }
 
   Widget _build(BuildContext context) {
-
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
@@ -274,14 +266,15 @@ class _State extends State<SecondTemplePage>  {
     //print("width"+width.toString());
     return
       UserGuidance(
-        controller: userGuidanceController,
-        opacity: 0.5,
+          controller: userGuidanceController,
+          opacity: 0.5,
           tipBuilder: (context, data) {
             if (data != null) {
               return TipWidget(
                 child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 250.0),
-                    child: Text("${data.tag}",style:TextStyle(color:Colors.black))),
+                    child: Text(
+                        "${data.tag}", style: TextStyle(color: Colors.black))),
                 data: data,
               );
             }
@@ -289,591 +282,745 @@ class _State extends State<SecondTemplePage>  {
             return null;
           },
 
-        child:
-        Scaffold(
+          child:
+          Scaffold(
             // resizeToAvoidBottomInset: true,
 
-            body: Container(
-      child: Stack(
-        children: [
-          //  Text("hi"),
-          Container(
-              child: loaded? Container(
-                  width: width,
-                  height: height,
-                  color: Colors.black,
-                  child: Builder(builder: (BuildContext context) {
-                    if (kIsWeb) {
-                      return three3dRender.isInitialized
-                          ? HtmlElementView(
-                              viewType: three3dRender.textureId!.toString())
-                          : Container();
-                    } else {
-                      return three3dRender.isInitialized
-                          ?
-                    Texture(textureId: three3dRender.textureId!)
-
-                          : Container();
-                    }
-                  })):
-                  Stack(
-                  children:[
-                  Center(child:Image.asset("icons/ark2.jpg", fit: BoxFit.cover,)),//house2.jpg"),
-
-
-                 Center(child:Container(
-
-                    child: Center( child:Padding(padding:EdgeInsets.all(20),
-                    child:ListView(
-                        shrinkWrap: true,
-                        children:[
-                    Center(child:SizedBox(width:400,child:Container(padding:EdgeInsets.all(15),
-                              decoration:BoxDecoration(
-                              border: Border.all(width: 1 ,color: Colors.transparent), //color is transparent so that it does not blend with the actual color specified
-                              borderRadius: const BorderRadius.all(const Radius.circular(10.0)),
-                              color: Colors.black//.withOpacity(0.2) // Specifies the background color and the opacity
-                          ),
-                          child:Row(
-                              children:[Text(gamename//Welcome to Second Temple.\n"
-
-                      //  "Its 72AD before destruction of jeruaslem by the romans.\n"
-                      //  "Can you find the ark before this great calamity?"
-                        ,textAlign:TextAlign.center,style:TextStyle(fontSize:20, color:Colors.white, fontWeight: FontWeight.bold)),
-                                Text("  is" ,style:TextStyle(fontSize:18, color:Colors.white)),
-                                SizedBox(width:25),
-                                WidgetAnimator(
-                                  //    atRestEffect: WidgetRestingEffects.pulse(), //WidgetRestingEffects.swing(),
-                                    atRestEffect:WidgetRestingEffects.size(),//WidgetRestingEffects.swing(),
-                                    //  incomingEffect: WidgetTransitionEffects.incomingSlideInFromBottom(),
-
-                                    child:Text("Loading"
-                                        ,textAlign:TextAlign.center,style:TextStyle(fontSize:20, color:Colors.yellow, fontWeight: FontWeight.bold)))
-                    ])))),
-                      SizedBox(height:15),
-
-                    ]
-                    )
-                    )),
-                    )
-
-                 )])
-          ),
-          menuposx >= 0 ? Positioned(
-              top: menuposy,
-              left: menuposx,
-
-              child: Column(
+              body: Container(
+                child: Stack(
                   children: [
-                    for (var item in menuitems)
-                      item.containsKey('text') &&
-                          item.containsKey('command') ? TextButton(
-                        child: Text(item['text']),
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStateProperty.all(
-                              Colors.black.withOpacity(0.5)),
-                        ),
-                        onPressed: () {
-                          menuobj.extra['touchtrigger'].triggermenu(
-                              item['command']);
-                        },
-                      ) : item.containsKey('text')||item.containsKey('iconpath') ? // when just text
-                      Row( children:[
-                        item.containsKey('text')?Text(item['text']):SizedBox.shrink(),
-                        item.containsKey('iconpath')?Image.asset(
-                          item['iconpath'],
-                          width: 50,
-                        ):SizedBox.shrink()
-                      ])
-                          :
-                      IconButton(
-                        tooltip: item['tooltip'] ?? '',
-                        iconSize: 20,
-                        icon: item['icon'],
-                        //const Icon(menuicon),//Icons.get_app),
-                        style: IconButton.styleFrom(
-                          shape: CircleBorder(),
-                          padding: EdgeInsets.all(5),
-                          backgroundColor: Colors.green.withOpacity(
-                              0.4), // <-- Button color
-                          foregroundColor: Colors
-                              .white, // <-- Splash color
-                        ),
-                        onPressed: () {
-                          print('get it'+item.toString());//['command']);
-                          if (item.containsKey('command')) {
-                            menuobj.extra['touchtrigger'].triggermenu(
-                                item['command']);
-                          } else {
-                            menuobj.extra['touchtrigger'].triggermenu(
-                                null);
-                          }
+                    //  Text("hi"),
+                    Container(
+                        child: loaded ? Container(
+                            width: width,
+                            height: height,
+                            color: Colors.black,
+                            child: Builder(builder: (BuildContext context) {
+                              if (kIsWeb) {
+                                return three3dRender.isInitialized
+                                    ? HtmlElementView(
+                                    viewType: three3dRender.textureId!
+                                        .toString())
+                                    : Container();
+                              } else {
+                                return three3dRender.isInitialized
+                                    ?
+                                Texture(textureId: three3dRender.textureId!)
 
-                        },
-                      ),
+                                    : Container();
+                              }
+                            })) :
+                        Stack(
+                            children: [
+                              Center(child: Image.asset(
+                                "icons/ark2.jpg", fit: BoxFit.cover,)),
+                              //house2.jpg"),
 
 
+                              Center(child: Container(
 
-                  ]
-              )
+                                child: Center(child: Padding(
+                                    padding: EdgeInsets.all(20),
+                                    child: ListView(
+                                        shrinkWrap: true,
+                                        children: [
+                                          Center(child: SizedBox(width: 400,
+                                              child: Container(
+                                                  padding: EdgeInsets.all(15),
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          width: 1,
+                                                          color: Colors
+                                                              .transparent),
+                                                      //color is transparent so that it does not blend with the actual color specified
+                                                      borderRadius: const BorderRadius
+                                                          .all(
+                                                          const Radius.circular(
+                                                              10.0)),
+                                                      color: Colors
+                                                          .black //.withOpacity(0.2) // Specifies the background color and the opacity
+                                                  ),
+                                                  child: Row(
+                                                      children: [
+                                                        Text(gamename
+                                                            //Welcome to Second Temple.\n"
 
-          ) : SizedBox.shrink(),
-          loaded&&!hidewidgets&&mapshow && mapx != -1
-              ? Stack(children: [
-            WidgetZoom(
-                heroAnimationTag: 'tag',
-                zoomWidget: Image.asset(
-                    mapfile, //'assets/maps/map.jpg',
-                    fit: BoxFit.scaleDown,
-                    height:
-                    1 * MediaQuery.of(context).size.height)),
-            Positioned(
-              //1.4
-              left: mapx *
-                  (1 *
-                      mapwidth *
-                      MediaQuery.of(context).size.height) /
-                  mapheight -
-                  40,
-              top: mapy *
-                  (1 * MediaQuery.of(context).size.height) -
-                  40,
-              child: Transform(
-    alignment: FractionalOffset.center,
-    transform: Matrix4.rotationZ(
-      THREE.MathUtils.degToRad(OPENWORLD.Camera.turn).toDouble(),
-    ),child:Image.asset('assets/maps/marker.png',
-                  height:
-                  80),
-            ))
-          ])
-              : SizedBox.shrink(),
+                                                            //  "Its 72AD before destruction of jeruaslem by the romans.\n"
+                                                            //  "Can you find the ark before this great calamity?"
+                                                            ,
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: TextStyle(
+                                                                fontSize: 20,
+                                                                color: Colors
+                                                                    .white,
+                                                                fontWeight: FontWeight
+                                                                    .bold)),
+                                                        Text("  is",
+                                                            style: TextStyle(
+                                                                fontSize: 18,
+                                                                color: Colors
+                                                                    .white)),
+                                                        SizedBox(width: 25),
+                                                        WidgetAnimator(
+                                                          //    atRestEffect: WidgetRestingEffects.pulse(), //WidgetRestingEffects.swing(),
+                                                            atRestEffect: WidgetRestingEffects
+                                                                .size(),
+                                                            //WidgetRestingEffects.swing(),
+                                                            //  incomingEffect: WidgetTransitionEffects.incomingSlideInFromBottom(),
 
-          !hidewidgets?Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /* hasloadedimage? Image.memory(
+                                                            child: Text(
+                                                                "Loading"
+                                                                ,
+                                                                textAlign: TextAlign
+                                                                    .center,
+                                                                style: TextStyle(
+                                                                    fontSize: 20,
+                                                                    color: Colors
+                                                                        .yellow,
+                                                                    fontWeight: FontWeight
+                                                                        .bold)))
+                                                      ])))),
+                                          SizedBox(height: 15),
+
+                                        ]
+                                    )
+                                )),
+                              )
+
+                              )
+                            ])
+                    ),
+                    menuposx >= 0 ? Positioned(
+                        top: menuposy,
+                        left: menuposx,
+
+                        child: Column(
+                            children: [
+                              for (var item in menuitems)
+                                item.containsKey('text') &&
+                                    item.containsKey('command') ? TextButton(
+                                  child: Text(item['text']),
+                                  style: ButtonStyle(
+                                    backgroundColor: WidgetStateProperty.all(
+                                        Colors.black.withOpacity(0.5)),
+                                  ),
+                                  onPressed: () {
+                                    menuobj.extra['touchtrigger'].triggermenu(
+                                        item['command']);
+                                  },
+                                ) : item.containsKey('text') ||
+                                    item.containsKey('iconpath')
+                                    ? // when just text
+                                Row(children: [
+                                  item.containsKey('text')
+                                      ? Text(item['text'])
+                                      : SizedBox.shrink(),
+                                  item.containsKey('iconpath') ? Image.asset(
+                                    item['iconpath'],
+                                    width: 50,
+                                  ) : SizedBox.shrink()
+                                ])
+                                    :
+                                IconButton(
+                                  tooltip: item['tooltip'] ?? '',
+                                  iconSize: 20,
+                                  icon: item['icon'],
+                                  //const Icon(menuicon),//Icons.get_app),
+                                  style: IconButton.styleFrom(
+                                    shape: CircleBorder(),
+                                    padding: EdgeInsets.all(5),
+                                    backgroundColor: Colors.green.withOpacity(
+                                        0.4), // <-- Button color
+                                    foregroundColor: Colors
+                                        .white, // <-- Splash color
+                                  ),
+                                  onPressed: () {
+                                    print('get it' +
+                                        item.toString()); //['command']);
+                                    if (item.containsKey('command')) {
+                                      menuobj.extra['touchtrigger'].triggermenu(
+                                          item['command']);
+                                    } else {
+                                      menuobj.extra['touchtrigger'].triggermenu(
+                                          null);
+                                    }
+                                  },
+                                ),
+
+
+                            ]
+                        )
+
+                    ) : SizedBox.shrink(),
+                    loaded && !hidewidgets && mapshow && mapx != -1
+                        ? Stack(children: [
+                      WidgetZoom(
+                          heroAnimationTag: 'tag',
+                          zoomWidget: Image.asset(
+                              mapfile, //'assets/maps/map.jpg',
+                              fit: BoxFit.scaleDown,
+                              height:
+                              1 * MediaQuery
+                                  .of(context)
+                                  .size
+                                  .height)),
+                      Positioned(
+                        //1.4
+                          left: mapx *
+                              (1 *
+                                  mapwidth *
+                                  MediaQuery
+                                      .of(context)
+                                      .size
+                                      .height) /
+                              mapheight -
+                              40,
+                          top: mapy *
+                              (1 * MediaQuery
+                                  .of(context)
+                                  .size
+                                  .height) -
+                              40,
+                          child: Transform(
+                            alignment: FractionalOffset.center,
+                            transform: Matrix4.rotationZ(
+                              THREE.MathUtils.degToRad(OPENWORLD.Camera.turn)
+                                  .toDouble(),
+                            ), child: Image.asset('assets/maps/marker.png',
+                              height:
+                              80),
+                          ))
+                    ])
+                        : SizedBox.shrink(),
+
+                    !hidewidgets ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          /* hasloadedimage? Image.memory(
                       tryimage,
                      // width: 600.0,
                     //  height: 240.0,
                      // fit: BoxFit.cover,
                     ):SizedBox.shrink(),*/
-                Stack(children: [
-                  Align(alignment:Alignment.bottomLeft, child:Container(color: Colors.black.withOpacity(0.1), margin:EdgeInsets.only(top:7),
-                      child:Padding(padding:EdgeInsets.only(top:0, right:5, bottom:5, left:7), child:Text(roomname)))),
+                          Stack(children: [
+                            Align(alignment: Alignment.bottomLeft,
+                                child: Container(
+                                    color: Colors.black.withOpacity(0.1),
+                                    margin: EdgeInsets.only(top: 7),
+                                    child: Padding(padding: EdgeInsets.only(
+                                        top: 0, right: 5, bottom: 5, left: 7),
+                                        child: Text(roomname)))),
 
-              // Place widget 1/3 middle of screen for swipe guidance
-              Column(
-              children:[
-                SizedBox(height:MediaQuery.of(context).size.height/3),
-              Row(mainAxisAlignment:MainAxisAlignment.start,
-                  children:[
+                            // Place widget 1/3 middle of screen for swipe guidance
+                            Column(
+                                children: [
+                                  SizedBox(height: MediaQuery
+                                      .of(context)
+                                      .size
+                                      .height / 3),
+                                  Row(mainAxisAlignment: MainAxisAlignment
+                                      .start,
+                                      children: [
 
-                SizedBox(width:MediaQuery.of(context).size.width/3),
-              UserGuildanceAnchor(
-              step: 7,
-              tag: "←Swipe screen left to turn left\n"
-                  "Swipe right to turn right→ \n"
-                  "↑ Swipe up to look up \n"
-                  "↓ Swipe down to look down ",
-              child:Container(width:10,height:10)//,color:Colors.black)
-              )
-              ])
-                ]),
+                                        SizedBox(width: MediaQuery
+                                            .of(context)
+                                            .size
+                                            .width / 3),
+                                        UserGuildanceAnchor(
+                                            step: 7,
+                                            tag: (OPENWORLD.System.isDesktop()
+                                                ? ("←  → Key to slide left & right\n"+
+                                                "↑ Key forward  ↓ back  \n"):
+                                            ("←Swipe screen left to turn left\n"+
+                                                "Swipe right to turn right→ \n"))+
+                                                "↑ Swipe up to look up \n"
+                                                "↓ Swipe down to look down ",
+                                            child: Container(width: 10,
+                                                height: 10) //,color:Colors.black)
+                                        )
+                                      ])
+                                ]),
 
-                  showfps?Text(" FPS:"+fps.toString(), style:TextStyle(fontSize:10, color:Colors.red, fontWeight: FontWeight.bold)):SizedBox.shrink(),
-                  !OPENWORLD.System.isDesktop() && loaded
-                      ? Container(
-                   //   margin:EdgeInsets.only(top:30),
-                      child:UserGuildanceAnchor(
-                          step: 1,
-                          tag: "Move up for going forward.\n"
-                              "Move  down to go backwards\n"
-                              "Move left/right to turn left/right",
-                          child:Joystick(
-                          base: JoystickBase(
-                            decoration: JoystickBaseDecoration(
-                              color: Colors.transparent,
-                              drawOuterCircle: false,
-                            ),
-                            arrowsDecoration: JoystickArrowsDecoration(
-                                color: Colors.blue, enableAnimation: false),
-                          ),
-                          listener: (details) {
-                            // print("oo"+details.x.toString()+" "+details.y.toString());
-                            if (this.loaded)
-                              this
-                                  ._joystick
-                                  ?.onStickChange(details.x, details.y);
-                          },
+                            showfps ? Text(" FPS:" + fps.toString(),
+                                style: TextStyle(fontSize: 10,
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold)) : SizedBox
+                                .shrink(),
+                            !OPENWORLD.System.isDesktop() && loaded
+                                ? Container(
+                              //   margin:EdgeInsets.only(top:30),
+                                child: UserGuildanceAnchor(
+                                    step: 1,
+                                    tag: "Move up for going forward.\n"
+                                        "Move  down to go backwards\n"
+                                        "Move left/right to turn left/right",
+                                    child: Joystick(
+                                      base: JoystickBase(
+                                        decoration: JoystickBaseDecoration(
+                                          color: Colors.transparent,
+                                          drawOuterCircle: false,
+                                        ),
+                                        arrowsDecoration: JoystickArrowsDecoration(
+                                            color: Colors.blue,
+                                            enableAnimation: false),
+                                      ),
+                                      listener: (details) {
+                                        // print("oo"+details.x.toString()+" "+details.y.toString());
+                                        if (this.loaded)
+                                          this
+                                              ._joystick
+                                              ?.onStickChange(
+                                              details.x, details.y);
+                                      },
 
-                          onStickDragEnd: () {
-                            if (this.loaded) this._joystick?.onStickUp();
-                            //this._joystick.onStickDown();
-                          },
-                        )))
-                      : SizedBox.shrink(),
-
-                ]),
-
-                Column(
-                    //crossAxisAlignment: CrossAxisAlignment.start,
-                    // mainAxisAlignment: MainAxisAlignment.start,
-                    // mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      loaded?Container(
-                        width:500,
-
-                          decoration: BoxDecoration(
-                             // border: Border.all(color: Colors.blueAccent)
-                          ),
-                          child:Row(
-                          children: [
-                            Spacer(),
-
-                            hasprayer
-                                ? IconButton(
-                              tooltip:"Say a prayer",
-                              icon: Image.asset('assets/textures/torah.png',
-                                  width: 40, height: 40),
-                              //     iconSize: 20,
-                              onPressed: () {
-                                prayer();
-                              },
-                            )
+                                      onStickDragEnd: () {
+                                        if (this.loaded) this._joystick
+                                            ?.onStickUp();
+                                        //this._joystick.onStickDown();
+                                      },
+                                    )))
                                 : SizedBox.shrink(),
-                            priestblessing?IconButton(
-                              tooltip:"Priest blessing",
-                              icon: Image.asset('icons/blessing.png',
 
-                                  width: 20, height: 20),
-                              //     iconSize: 20,
-                              onPressed: () {
-                                // userGuidanceController.show();
-                                Fluttertoast.showToast(
-                                    msg: "The priest has blessed you",
-                                    toastLength: Toast.LENGTH_LONG);
-                              },
-                              style: IconButton.styleFrom(
-                                shape: CircleBorder(),
-                                padding: EdgeInsets.all(5),
-                                backgroundColor: Colors.black.withOpacity(0.2), // <-- Button color
-                                foregroundColor: Colors.white, // <-- Splash color
-                              ),
-                            ):SizedBox.shrink(),
-                            (horseriding)&&!OPENWORLD.You.immobile?IconButton(
-                              tooltip: horseriding?"Dismount":"Call horse",
-                              icon: Image.asset(
-                                  'icons/horse.png',
-                                  width: 40, height: 40),
-                              iconSize: 20,
-                              style: IconButton.styleFrom(
-                                shape: CircleBorder(),
-                                padding: EdgeInsets.all(0),
-                                backgroundColor: Colors.black
-                                    .withOpacity(0.2),
-                                // <-- Button color
-                                foregroundColor: Colors
-                                    .white, // <-- Splash color
-                              ),
-                              color: Colors.white,
-                              onPressed: () {
-                                dismount();
+                          ]),
 
-                              },
-                            ):SizedBox.shrink(),
+                          Column(
+                            //crossAxisAlignment: CrossAxisAlignment.start,
+                            // mainAxisAlignment: MainAxisAlignment.start,
+                            // mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                loaded ? Container(
+                                    width: 500,
 
-                            UserGuildanceAnchor(
-                              step: 5,
-                              tag: "Guide to tell you about this place",
-                              child:IconButton(
-                              tooltip:"Call a guide",
-                              icon: Image.asset('icons/guide.png',
+                                    decoration: BoxDecoration(
+                                      // border: Border.all(color: Colors.blueAccent)
+                                    ),
+                                    child: Row(
+                                        children: [
+                                          Spacer(),
 
-                                  width: 20, height: 20),
-                              //     iconSize: 20,
-                              onPressed: () {
-                                callGuide();
-                              },
-                         style: IconButton.styleFrom(
-                           shape: CircleBorder(),
-                           padding: EdgeInsets.all(5),
-                           backgroundColor: Colors.black.withOpacity(0.2), // <-- Button color
-                           foregroundColor: Colors.white, // <-- Splash color
-                         ),
-                            )),
-                            loaded &&!kIsWeb&&
-                                CLIENT.Connection.connect_state ==
-                                    CLIENT.Connection.CS_NONE
-                                ?  UserGuildanceAnchor(
-                                step: 4,
-                                tag: "Play online",
-                                child:IconButton(
-                              tooltip:"Connect to a game",
-                              iconSize: 20,
-                              icon: const Icon(Icons.link),
-                              style:IconButton.styleFrom(
-                                shape: CircleBorder(),
-                                padding: EdgeInsets.all(5),
-                                backgroundColor: Colors.green.withOpacity(0.4), // <-- Button color
-                                foregroundColor: Colors.white, // <-- Splash color
-                              ),
-                              onPressed: () {
+                                          hasprayer
+                                              ? IconButton(
+                                            tooltip: "Say a prayer",
+                                            icon: Image.asset(
+                                                'assets/textures/torah.png',
+                                                width: 40, height: 40),
+                                            //     iconSize: 20,
+                                            onPressed: () {
+                                              prayer();
+                                            },
+                                          )
+                                              : SizedBox.shrink(),
+                                          priestblessing ? IconButton(
+                                            tooltip: "Priest blessing",
+                                            icon: Image.asset(
+                                                'icons/blessing.png',
 
+                                                width: 20, height: 20),
+                                            //     iconSize: 20,
+                                            onPressed: () {
+                                              // userGuidanceController.show();
+                                              Fluttertoast.showToast(
+                                                  msg: "The priest has blessed you",
+                                                  toastLength: Toast
+                                                      .LENGTH_LONG);
+                                            },
+                                            style: IconButton.styleFrom(
+                                              shape: CircleBorder(),
+                                              padding: EdgeInsets.all(5),
+                                              backgroundColor: Colors.black
+                                                  .withOpacity(0.2),
+                                              // <-- Button color
+                                              foregroundColor: Colors
+                                                  .white, // <-- Splash color
+                                            ),
+                                          ) : SizedBox.shrink(),
+                                          (horseriding) &&
+                                              !OPENWORLD.You.immobile
+                                              ? IconButton(
+                                            tooltip: horseriding
+                                                ? "Dismount"
+                                                : "Call horse",
+                                            icon: Image.asset(
+                                                'icons/horse.png',
+                                                width: 40, height: 40),
+                                            iconSize: 20,
+                                            style: IconButton.styleFrom(
+                                              shape: CircleBorder(),
+                                              padding: EdgeInsets.all(0),
+                                              backgroundColor: Colors.black
+                                                  .withOpacity(0.2),
+                                              // <-- Button color
+                                              foregroundColor: Colors
+                                                  .white, // <-- Splash color
+                                            ),
+                                            color: Colors.white,
+                                            onPressed: () {
+                                              dismount();
+                                            },
+                                          )
+                                              : SizedBox.shrink(),
 
-                                  getName();
+                                          UserGuildanceAnchor(
+                                              step: 5,
+                                              tag: "Guide to tell you about this place",
+                                              child: IconButton(
+                                                tooltip: "Call a guide",
+                                                icon: Image.asset(
+                                                    'icons/guide.png',
 
+                                                    width: 20, height: 20),
+                                                //     iconSize: 20,
+                                                onPressed: () {
+                                                  callGuide();
+                                                },
+                                                style: IconButton.styleFrom(
+                                                  shape: CircleBorder(),
+                                                  padding: EdgeInsets.all(5),
+                                                  backgroundColor: Colors.black
+                                                      .withOpacity(0.2),
+                                                  // <-- Button color
+                                                  foregroundColor: Colors
+                                                      .white, // <-- Splash color
+                                                ),
+                                              )),
+                                          loaded && !kIsWeb &&
+                                              CLIENT.Connection.connect_state ==
+                                                  CLIENT.Connection.CS_NONE
+                                              ? UserGuildanceAnchor(
+                                              step: 4,
+                                              tag: "Play online",
+                                              child: IconButton(
+                                                tooltip: "Connect to a game",
+                                                iconSize: 20,
+                                                icon: const Icon(Icons.link),
+                                                style: IconButton.styleFrom(
+                                                  shape: CircleBorder(),
+                                                  padding: EdgeInsets.all(5),
+                                                  backgroundColor: Colors.green
+                                                      .withOpacity(0.4),
+                                                  // <-- Button color
+                                                  foregroundColor: Colors
+                                                      .white, // <-- Splash color
+                                                ),
+                                                onPressed: () {
+                                                  getName();
+                                                },
+                                              )) : SizedBox.shrink(),
 
-                              },
-                            )):SizedBox.shrink(),
+                                          UserGuildanceAnchor(
+                                              step: 3,
+                                              tag: "Display map of where you are",
+                                              child: IconButton(
+                                                tooltip: "Show a map",
+                                                iconSize: 20,
+                                                icon: const Icon(
+                                                    Icons.place_rounded),
+                                                style: IconButton.styleFrom(
+                                                  shape: CircleBorder(),
+                                                  padding: EdgeInsets.all(5),
+                                                  backgroundColor: Colors.black
+                                                      .withOpacity(0.2),
+                                                  // <-- Button color
 
-                          UserGuildanceAnchor(
-                              step: 3,
-                              tag: "Display map of where you are",
-                              child:IconButton(
-                          tooltip:"Show a map",
-                          iconSize: 20,
-                          icon: const Icon(Icons.place_rounded),
-                          style:IconButton.styleFrom(
-                            shape: CircleBorder(),
-                            padding: EdgeInsets.all(5),
-                            backgroundColor: Colors.black.withOpacity(0.2), // <-- Button color
+                                                  foregroundColor: Colors
+                                                      .white, // <-- Splash color
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    mapshow = !mapshow;
+                                                  });
+                                                },
+                                              )),
+                                          loaded &&
+                                              CLIENT.Connection.connect_state ==
+                                                  CLIENT.Connection
+                                                      .CS_CONNECTED &&
+                                              showdisconnect ? Row(children: [
+                                            SizedBox(height: 30,
+                                                child: VerticalDivider(
+                                                    thickness: 2,
+                                                    width: 10,
+                                                    color: Colors.black
+                                                        .withOpacity(0.3))),
+                                            IconButton(
+                                              alignment: Alignment.center,
+                                              tooltip: "Whos On",
+                                              //  icon: Icon(FontAwesomeIcons.peopleGroup),//Icons.people),
+                                              icon: Icon(Icons.people),
+                                              iconSize: 20,
+                                              style: IconButton.styleFrom(
+                                                shape: CircleBorder(),
+                                                padding: EdgeInsets.all(0),
+                                                backgroundColor: Colors.black
+                                                    .withOpacity(0.2),
+                                                // <-- Button color
+                                                foregroundColor: Colors
+                                                    .white, // <-- Splash color
+                                              ),
+                                              color: Colors.white,
+                                              onPressed: () {
+                                                CLIENT.You.actions["who"] =
+                                                true;
+                                              },
+                                            ),
+                                            IconButton(
+                                              // alignment: Alignment.topRight,
+                                              tooltip: "Speak",
+                                              icon: Icon(
+                                                  FontAwesomeIcons.bullhorn),
+                                              //Icons.people),
+                                              iconSize: 20,
+                                              style: IconButton.styleFrom(
+                                                shape: CircleBorder(),
+                                                padding: EdgeInsets.all(0),
+                                                backgroundColor: Colors.black
+                                                    .withOpacity(0.2),
+                                                // <-- Button color
+                                                foregroundColor: Colors
+                                                    .white, // <-- Splash color
+                                              ),
+                                              color: Colors.white,
+                                              onPressed: () {
+                                                msg();
+                                              },
+                                            ),
+                                            IconButton(
+                                              // alignment: Alignment.topRight,
+                                              tooltip: "Wave",
+                                              icon: Icon(Icons.waving_hand),
+                                              iconSize: 20,
+                                              style: IconButton.styleFrom(
+                                                shape: CircleBorder(),
+                                                padding: EdgeInsets.all(0),
+                                                backgroundColor: Colors.black
+                                                    .withOpacity(0.2),
+                                                // <-- Button color
+                                                foregroundColor: Colors
+                                                    .white, // <-- Splash color
+                                              ),
+                                              color: Colors.white,
+                                              onPressed: () {
+                                                CLIENT.You.action = "wave";
+                                              },
+                                            ),
+                                            loaded &&
+                                                CLIENT.Connection
+                                                    .connect_state ==
+                                                    CLIENT.Connection
+                                                        .CS_CONNECTED &&
+                                                showdisconnect ? IconButton(
+                                              tooltip: "Disconnect",
+                                              iconSize: 25,
+                                              icon: const Icon(Icons.link_off),
+                                              style: IconButton.styleFrom(
+                                                shape: CircleBorder(),
+                                                padding: EdgeInsets.all(5),
+                                                backgroundColor: Colors.red
+                                                    .withOpacity(0.4),
+                                                // <-- Button color
+                                                foregroundColor: Colors
+                                                    .white, // <-- Splash color
+                                              ),
+                                              onPressed: () {
+                                                print("disconnect");
+                                                disconnect();
+                                              },
+                                            ) : SizedBox.shrink(),
+                                            SizedBox(height: 30,
+                                                child: VerticalDivider(
+                                                    thickness: 2,
+                                                    width: 10,
+                                                    color: Colors.black
+                                                        .withOpacity(0.3))),
+                                            //  SizedBox(width:15),
+                                          ]) : SizedBox.shrink(),
+                                          IconButton(
+                                            iconSize: 20,
+                                            tooltip: "Settings",
+                                            icon: const Icon(Icons.settings),
+                                            style: IconButton.styleFrom(
+                                              shape: CircleBorder(),
+                                              padding: EdgeInsets.all(0),
+                                              backgroundColor: Colors.black
+                                                  .withOpacity(0.2),
+                                              // <-- Button color
+                                              foregroundColor: Colors
+                                                  .white, // <-- Splash color
+                                            ),
+                                            onPressed: () async {
+                                              setState(() {
+                                                // loaded=true;
+                                                _globalKey.currentState?.pause =
+                                                true;
+                                              });
+                                              await settings(context);
+                                            },
+                                          ),
+                                          IconButton(
+                                            iconSize: 20,
+                                            tooltip: "Settings",
+                                            icon: const Icon(Icons.help),
+                                            style: IconButton.styleFrom(
+                                              shape: CircleBorder(),
+                                              padding: EdgeInsets.all(0),
+                                              backgroundColor: Colors.black
+                                                  .withOpacity(0.2),
+                                              // <-- Button color
+                                              foregroundColor: Colors
+                                                  .white, // <-- Splash color
+                                            ),
+                                            onPressed: () {
+                                              help(context);
+                                            },
+                                          ),
+                                          IconButton(
+                                            // alignment: Alignment.topRight,
+                                            tooltip: "Exit game",
+                                            icon: Icon(Icons.close),
+                                            iconSize: 20,
+                                            style: IconButton.styleFrom(
+                                              shape: CircleBorder(),
+                                              padding: EdgeInsets.all(0),
+                                              backgroundColor: Colors.black
+                                                  .withOpacity(0.2),
+                                              // <-- Button color
+                                              foregroundColor: Colors
+                                                  .white, // <-- Splash color
+                                            ),
+                                            color: Colors.white,
+                                            onPressed: () {
+                                              close();
+                                            },
+                                          ),
+                                        ])) : SizedBox.shrink(),
 
-                            foregroundColor: Colors.white, // <-- Splash color
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              mapshow = !mapshow;
-                            });
-
-                          },
-                        )),
-                            loaded &&
                                 CLIENT.Connection.connect_state ==
                                     CLIENT.Connection.CS_CONNECTED &&
-                                showdisconnect?Row(children:[
-                              SizedBox(height:30,child:VerticalDivider(thickness:2, width: 10, color:Colors.black.withOpacity(0.3))),
-                              IconButton(
-                                alignment: Alignment.center,
-                                tooltip:"Whos On",
-                                //  icon: Icon(FontAwesomeIcons.peopleGroup),//Icons.people),
-                                icon: Icon(Icons.people),
-                                iconSize: 20,
-                                style:IconButton.styleFrom(
-                                  shape: CircleBorder(),
-                                  padding: EdgeInsets.all(0),
-                                  backgroundColor: Colors.black.withOpacity(0.2), // <-- Button color
-                                  foregroundColor: Colors.white, // <-- Splash color
-                                ),
-                                color: Colors.white,
-                                onPressed: () {
-                                  CLIENT.You.actions["who"] = true;
-                                },
-                              ),
-                              IconButton(
-                                // alignment: Alignment.topRight,
-                                tooltip:"Speak",
-                                icon: Icon(FontAwesomeIcons.bullhorn),//Icons.people),
-                                iconSize: 20,
-                                style:IconButton.styleFrom(
-                                  shape: CircleBorder(),
-                                  padding: EdgeInsets.all(0),
-                                  backgroundColor: Colors.black.withOpacity(0.2), // <-- Button color
-                                  foregroundColor: Colors.white, // <-- Splash color
-                                ),
-                                color: Colors.white,
-                                onPressed: () {
-                                  msg();
-                                },
-                              ),
-                              IconButton(
-                                // alignment: Alignment.topRight,
-                                tooltip:"Wave",
-                                icon: Icon(Icons.waving_hand),
-                                iconSize: 20,
-                                style:IconButton.styleFrom(
-                                  shape: CircleBorder(),
-                                  padding: EdgeInsets.all(0),
-                                  backgroundColor: Colors.black.withOpacity(0.2), // <-- Button color
-                                  foregroundColor: Colors.white, // <-- Splash color
-                                ),
-                                color: Colors.white,
-                                onPressed: () {
-                                  CLIENT.You.action = "wave";
-                                },
-                              ),
-                              loaded &&
-                                  CLIENT.Connection.connect_state ==
-                                      CLIENT.Connection.CS_CONNECTED &&
-                                  showdisconnect?IconButton(
-                                tooltip:"Disconnect",
-                                iconSize: 25,
-                                icon: const Icon(Icons.link_off),
-                                style:IconButton.styleFrom(
-                                  shape: CircleBorder(),
-                                  padding: EdgeInsets.all(5),
-                                  backgroundColor: Colors.red.withOpacity(0.4), // <-- Button color
-                                  foregroundColor: Colors.white, // <-- Splash color
-                                ),
-                                onPressed: () {
-                                  print("disconnect");
-                                  disconnect();
+                                    CLIENT.You.name != ""
+                                    ? Align(alignment: Alignment.topRight,
+                                    child: Container(
+                                        width: 300,
+                                        color: Colors.black.withOpacity(0.3),
+                                        padding: EdgeInsets.only(left: 7,
+                                            right: 7,
+                                            top: 5),
+                                        child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment
+                                                .start,
+                                            children: [
+                                              Row(children: [
+                                                Text("You are: "),
+                                                Text(CLIENT.You.name,
+                                                    style: TextStyle(
+                                                        color: OPENWORLD
+                                                            .ColorLib
+                                                            .colorFromText(
+                                                            CLIENT.You.name)))
+                                              ]),
+                                              Text(
+                                                  "People on:" +
+                                                      num_players.toString()),
+                                              whos.length > 0
+                                                  ? Text("Players on:")
+                                                  : SizedBox.shrink(),
+                                              for (var name in whos)
+                                                Text(name,
+                                                    style: TextStyle(
+                                                        color: OPENWORLD
+                                                            .ColorLib
+                                                            .colorFromText(
+                                                            name)))
 
-                                },
-                              ):SizedBox.shrink(),
-                              SizedBox(height:30,child:VerticalDivider(thickness:2, width: 10, color:Colors.black.withOpacity(0.3))),
-                            //  SizedBox(width:15),
-                            ]):SizedBox.shrink(),
-                        IconButton(
-                          iconSize: 20,
-                          tooltip:"Settings",
-                          icon: const Icon(Icons.settings),
-                          style:IconButton.styleFrom(
-                            shape: CircleBorder(),
-                            padding: EdgeInsets.all(0),
-                            backgroundColor: Colors.black.withOpacity(0.2), // <-- Button color
-                            foregroundColor: Colors.white, // <-- Splash color
-                          ),
-                          onPressed: () async {
-                            setState(() {
-                              // loaded=true;
-                              _globalKey.currentState?.pause =
-                              true;
-                            });
-                            await settings(context);
-                          },
-                        ),
-                            IconButton(
-                              iconSize: 20,
-                              tooltip:"Settings",
-                              icon: const Icon(Icons.help),
-                              style:IconButton.styleFrom(
-                                shape: CircleBorder(),
-                                padding: EdgeInsets.all(0),
-                                backgroundColor: Colors.black.withOpacity(0.2), // <-- Button color
-                                foregroundColor: Colors.white, // <-- Splash color
-                              ),
-                              onPressed: () {
-                                help(context);
-                              },
-                            ),
-                            IconButton(
-                              // alignment: Alignment.topRight,
-                              tooltip:"Exit game",
-                              icon: Icon(Icons.close),
-                              iconSize: 20,
-                              style:IconButton.styleFrom(
-                                shape: CircleBorder(),
-                                padding: EdgeInsets.all(0),
-                                backgroundColor: Colors.black.withOpacity(0.2), // <-- Button color
-                                foregroundColor: Colors.white, // <-- Splash color
-                              ),
-                              color: Colors.white,
-                              onPressed: () {
-                                close();
-                              },
-                            ),
-                      ])):SizedBox.shrink(),
+                                            ])))
+                                    : SizedBox.shrink(),
+                                prompttext != "" ? Text(prompttext,
+                                    style: TextStyle(fontSize: 17,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white)) : SizedBox
+                                    .shrink(),
+                                _canfly && !horseriding && loaded
+                                    ? WidgetAnimator(
+                                  //    atRestEffect: WidgetRestingEffects.pulse(), //WidgetRestingEffects.swing(),
+                                    atRestEffect: WidgetRestingEffects.pulse(),
+                                    //duration:Duration(seconds:1)),
+                                    child: Column(children: [
+                                      IconButton(
+                                        icon: Image.asset('icons/arrow.png'),
+                                        iconSize: 50,
+                                        onPressed: () {
+                                          flyup();
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: Image.asset('icons/wings.png'),
+                                        iconSize: 50,
+                                        onPressed: () {},
+                                      ),
+                                      IconButton(
+                                        icon: Transform.scale(
+                                            scaleY: -1,
+                                            child: Image.asset(
+                                                'icons/arrow.png')),
+                                        iconSize: 50,
+                                        onPressed: () {
+                                          flydown();
+                                        },
+                                      ),
+                                    ]))
+                                    : SizedBox.shrink(),
+                                msglines.length > 0 ? Container(
+                                    color: Colors.black.withOpacity(0.3),
+                                    width: 300,
+                                    padding: EdgeInsets.only(
+                                        left: 7, right: 7, top: 5),
+                                    child: Column(
+                                        mainAxisAlignment: MainAxisAlignment
+                                            .start,
+                                        crossAxisAlignment: CrossAxisAlignment
+                                            .start,
+                                        children: [
+                                          for (var item in msglines)
+                                            Row(children: [
+                                              Text(item['msg'],
+                                                  style: TextStyle(
+                                                      color: (item['usename'] !=
+                                                          "")
+                                                          ? OPENWORLD.ColorLib
+                                                          .colorFromText(
+                                                          item['usename'])
+                                                          : Colors.white)
+                                              )
+                                            ]
+                                            )
 
-                      CLIENT.Connection.connect_state ==
-                                  CLIENT.Connection.CS_CONNECTED &&
-                              CLIENT.You.name != ""
-                          ?  Align(alignment:Alignment.topRight,
-                          child:Container(
-                          width:300,
-                          color: Colors.black.withOpacity(0.3),
-                          padding:EdgeInsets.only(left:7, right:7, top:5),
-                          child:Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                  Row(children:[
-                                    Text("You are: "),
-                                    Text(CLIENT.You.name, style:TextStyle(color:OPENWORLD.ColorLib.colorFromText(CLIENT.You.name)))
-                                   ]),
-                                  Text(
-                                      "People on:" +
-                                      num_players.toString()),
-                                  whos.length > 0
-                                      ? Text("Players on:")
-                                      : SizedBox.shrink(),
-                                  for (var name in whos)
-                                    Text(name,
-                                        style: TextStyle(
-                                            color: OPENWORLD.ColorLib.colorFromText(
-                                                name)))
+                                        ])
 
-                                ])))
-                          : SizedBox.shrink(),
-                      prompttext != "" ? Text(prompttext, style:TextStyle(fontSize:17, fontWeight:FontWeight.bold, color:Colors.white) ) : SizedBox.shrink(),
-                      _canfly&&!horseriding&&loaded
-                          ? WidgetAnimator(
-                        //    atRestEffect: WidgetRestingEffects.pulse(), //WidgetRestingEffects.swing(),
-                          atRestEffect: WidgetRestingEffects.pulse(),//duration:Duration(seconds:1)),
-                          child:Column(children: [
-                              IconButton(
-                                icon: Image.asset('icons/arrow.png'),
-                                iconSize: 50,
-                                onPressed: () {
-                                  flyup();
-                                },
-                              ),
-                              IconButton(
-                                icon: Image.asset('icons/wings.png'),
-                                iconSize: 50,
-                                onPressed: () {},
-                              ),
-                              IconButton(
-                                icon: Transform.scale(
-                                    scaleY: -1,
-                                    child: Image.asset('icons/arrow.png')),
-                                iconSize: 50,
-                                onPressed: () {
-                                  flydown();
-                                },
-                              ),
-                            ]))
-                          : SizedBox.shrink(),
-                      msglines.length>0?Container(
-                          color: Colors.black.withOpacity(0.3),
-                          width:300,
-                          padding:EdgeInsets.only(left:7, right:7, top:5),
-                          child: Column(
-                              mainAxisAlignment:MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                            for (var item in msglines)
-                              Row( children:[
-                                 Text(item['msg'],
-                                  style: TextStyle(
-                                      color: (item['usename'] != "")
-                                          ? OPENWORLD.ColorLib.colorFromText(
-                                              item['usename'])
-                                          : Colors.white)
-                                )]
-                              )
-
-                          ])
-
-                      ):SizedBox.shrink(),
+                                ) : SizedBox.shrink(),
 
 
-                    ])
-              ]):SizedBox.shrink()
-        ],
-      ),
-    )));
+                              ])
+                        ]) : SizedBox.shrink()
+                  ],
+                ),
+              )));
   }
 
   render() {
-    int _t = DateTime.now().millisecondsSinceEpoch;
+    int _t = DateTime
+        .now()
+        .millisecondsSinceEpoch;
 
 
     final _gl = three3dRender.gl;
 
     renderer!.render(scene, camera);
 
-    int _t1 = DateTime.now().millisecondsSinceEpoch;
+    int _t1 = DateTime
+        .now()
+        .millisecondsSinceEpoch;
 
     if (verbose) {
       print("render cost: ${_t1 - _t} ");
@@ -890,53 +1037,55 @@ class _State extends State<SecondTemplePage>  {
     }
 
 
-    var delta=clock.getDelta();
-    if (delta>0.2) {
-      print("delta too long"+delta.toString()+" "+camera.far.toString());
+    var delta = clock.getDelta();
+    if (delta > 0.2) {
+      print("delta too long" + delta.toString() + " " + camera.far.toString());
     }
     if (this._joystick != null) this._joystick?.update(delta);
 
     OPENWORLD.Space.update(delta);
-    OPENWORLD.Light.update();  // must be before space update otherwise night only will override hide
+    OPENWORLD.Light
+        .update(); // must be before space update otherwise night only will override hide
     OPENWORLD.BaseObject.update(delta);
     OPENWORLD.Texture.update(delta);
 
     if (prevlocalx != camera.position.x || prevlocalz != camera.position.z) {
 
-        /*if (OPENWORLD.You.drag<1)
+      /*if (OPENWORLD.You.drag<1)
           OPENWORLD.You.drag*=1.1;
         else if (OPENWORLD.You.drag>1)
           OPENWORLD.You.drag=1;*/
 
-        // Wall detection - if hit wall put player back to where they were
-        // calculate objects intersecting the picking ray
-        var distintersect = OPENWORLD.Space.distanceWall(prevlocalx, prevlocaly, prevlocalz);
+      // Wall detection - if hit wall put player back to where they were
+      // calculate objects intersecting the picking ray
+      var distintersect = OPENWORLD.Space.distanceWall(
+          prevlocalx, prevlocaly, prevlocalz);
 
-        if (distintersect >= 0) {
-          var dostop = distintersect >= 0 && distintersect < 0.4;
-          if (dostop) {
-            print("wall intersect");
-            camera.position.x = prevlocalx;
-            camera.position.z = prevlocalz;
-          } else {
+      if (distintersect >= 0) {
+        var dostop = distintersect >= 0 && distintersect < 0.4;
+        if (dostop) {
+          print("wall intersect");
+          camera.position.x = prevlocalx;
+          camera.position.z = prevlocalz;
+        } else {
 
-          }
-        } else if (disposed == -2) {
-          // what is this for?
-          prevlocalx = -1;
         }
+      } else if (disposed == -2) {
+        // what is this for?
+        prevlocalx = -1;
+      }
 
-        // Increase speed if riding a horse
-        var usespeed;
-        if (horseriding)
-          usespeed=horsespeed;
-        else
-          usespeed=defaultspeed;
-        OPENWORLD.You.speed = usespeed;
+      // Increase speed if riding a horse
+      var usespeed;
+      if (horseriding)
+        usespeed = horsespeed;
+      else
+        usespeed = defaultspeed;
+      OPENWORLD.You.speed = usespeed;
 
-        // Show pool objects based upon current camera position
-        var worldpos = OPENWORLD.You.getWorldPos();
-        OPENWORLD.Config.showPoolsObjects(worldpos.x, worldpos.y);
+      // Show pool objects based upon current camera position
+      var worldpos = OPENWORLD.You.getWorldPos();
+      OPENWORLD.Config.showPoolsObjects(worldpos.x, worldpos.y);
 
 
       if (horseriding) {
@@ -945,27 +1094,27 @@ class _State extends State<SecondTemplePage>  {
           print("exit horse");
           horseriding = false;
           horseridingclop.stop();
-          var worldpos=OPENWORLD.You.getWorldPos();
+          var worldpos = OPENWORLD.You.getWorldPos();
 
-          var newhorsepos=OPENWORLD.Math.vectorMoveFoward(worldpos.x, worldpos.y, OPENWORLD.You.getMoveDir(), -1.5);  // Move it back so isn't half in the temple
-          OPENWORLD.Space.worldToLocalSurfaceObj(_horse, newhorsepos.x, newhorsepos.y, 0);
+          var newhorsepos = OPENWORLD.Math.vectorMoveFoward(
+              worldpos.x, worldpos.y, OPENWORLD.You.getMoveDir(),
+              -1.5); // Move it back so isn't half in the temple
+          OPENWORLD.Space.worldToLocalSurfaceObj(
+              _horse, newhorsepos.x, newhorsepos.y, 0);
           OPENWORLD.Camera.cameraoffset = defaultcameraoffset;
           // if (OPENWORLD.You.indoors()) {
-          OPENWORLD.Sound.play( path: 'sounds/horse.mp3', volume: 0.5);
+          OPENWORLD.Sound.play(path: 'sounds/horse.mp3', volume: 0.5);
           OPENWORLD.BaseObject.reenableDistanceTrigger(_horse);
         } else {
           // Move the horse you are riding on
-          OPENWORLD.Camera.cameraoffset = horsecameraoffset;// 0.15;
+          OPENWORLD.Camera.cameraoffset = horsecameraoffset; // 0.15;
           OPENWORLD.Space.worldToLocalSurfaceObj(
               _horse, worldpos.x, worldpos.y, 0);
           OPENWORLD.Space.objTurnLerp(_horse, OPENWORLD.Camera.turn, 0.5);
-
         }
-      }// else
-      OPENWORLD.You.update();  // To get move dir
+      } // else
+      OPENWORLD.You.update(); // To get move dir
     }
-
-
   }
 
   initRenderer() {
@@ -977,7 +1126,7 @@ class _State extends State<SecondTemplePage>  {
       "canvas": three3dRender.element
     };
     renderer = THREE.WebGLRenderer(_options);
-   // print("dpr"+dpr.toString()); 1.0
+    // print("dpr"+dpr.toString()); 1.0
     renderer!.setPixelRatio(dpr);
     renderer!.setSize(width, height, false);
 
@@ -991,7 +1140,6 @@ class _State extends State<SecondTemplePage>  {
       renderer!.setRenderTarget(renderTarget);
 
       sourceTexture = renderer!.getRenderTargetGLTexture(renderTarget);
-
     }
   }
 
@@ -1004,7 +1152,6 @@ class _State extends State<SecondTemplePage>  {
   /// Useful if want to add 3D objects on the fly and see the objects appear almost instantly
   hotload() async
   {
-
     _hotload.clear();
 
     // Display the flaming brands
@@ -1014,7 +1161,8 @@ class _State extends State<SecondTemplePage>  {
     var sliceSpacing = 0.5;
 
     Group brand = Group();
-    var brandm= await OPENWORLD.Model.createModel('assets/models/brand/brand.glb');
+    var brandm = await OPENWORLD.Model.createModel(
+        'assets/models/brand/brand.glb');
 
 
     brandm.scale.set(0.01, 0.01, 0.01);
@@ -1030,7 +1178,7 @@ class _State extends State<SecondTemplePage>  {
     brandm.children[0].material = mat;
     brand.add(brandm);
 
-    var brandblue= Group();
+    var brandblue = Group();
     brandblue.add(brandm.clone());
 
     var brandfire = new VolumetricFire(
@@ -1047,7 +1195,8 @@ class _State extends State<SecondTemplePage>  {
     OPENWORLD.Updateables.add(brandfire);
 
     var brandfireblue = new VolumetricFire(
-        fireWidth, fireHeight, fireDepth, sliceSpacing, camera, color:THREE.Color(0x6666ff));
+        fireWidth, fireHeight, fireDepth, sliceSpacing, camera,
+        color: THREE.Color(0x6666ff));
     await brandfireblue.init();
 
     brandfireblue.mesh.scale.x = 0.04; //0.05;
@@ -1059,7 +1208,7 @@ class _State extends State<SecondTemplePage>  {
     OPENWORLD.Updateables.add(brandfireblue);
 
 
-    var lightdistance=3;
+    var lightdistance = 3;
 
     const brandposs = [
 
@@ -1099,13 +1248,13 @@ class _State extends State<SecondTemplePage>  {
       [-6.29, -13.21, 0, 10],
       [-5.36, -20.24, 0, 10],
       [-7.87, -9.17, 0, 10], // west wall market
-      [3.50, -11.43,0,10], //2.70, -11.56,0,10]   // stoa market
-      [1.44, -11.44,0,10]
+      [3.50, -11.43, 0, 10], //2.70, -11.56,0,10]   // stoa market
+      [1.44, -11.44, 0, 10]
     ];
 
     // var brandpos=OPENWORLD.Config.getPositionByName('brand');//_config['objectpositions'][0]['positions'];
     for (var brandpos in brandposs) {
-      if (brandpos[0]<9.7) {
+      if (brandpos[0] < 9.7) {
         var brandii = brand.clone(true);
         // brandii = makeBrand(brandii, true);
 
@@ -1134,23 +1283,22 @@ class _State extends State<SecondTemplePage>  {
             brandpos[3]
                 .toDouble()); //9.60, -2.12, 0.0, 4); //7.0, 2.0, 0.0,2); //3.7);
         _hotload.add(brandii);
-        var brandlightii = makeBrandLight(true,true);
+        var brandlightii = makeBrandLight(true, true);
         OPENWORLD.Space.worldToLocalSurfaceObjHide(
             brandlightii, brandpos[0].toDouble(),
             brandpos[1].toDouble(),
             brandpos[2].toDouble(), lightdistance); //7.0, 2.0, 0.0,2); //3.7);
         _hotload.add(brandlightii);
-
       }
     }
 
     // brands that shine even during the day
     var brandposnohide = [
-      [4.80, -14.74, 0, 5]  // pool
+      [4.80, -14.74, 0, 5] // pool
     ];
     for (var brandpos in brandposnohide) {
       var brandii = brand.clone(true);
-     // brandii = makeBrand(brandii, false);
+      // brandii = makeBrand(brandii, false);
       OPENWORLD.Space.worldToLocalSurfaceObjHide(
           brandii,
           brandpos[0].toDouble(),
@@ -1159,13 +1307,12 @@ class _State extends State<SecondTemplePage>  {
           brandpos[3]
               .toDouble());
       _hotload.add(brandii);
-      var brandlightii= makeBrandLight(false,false);
+      var brandlightii = makeBrandLight(false, false);
       OPENWORLD.Space.worldToLocalSurfaceObjHide(
-          brandlightii,  brandpos[0].toDouble(),
+          brandlightii, brandpos[0].toDouble(),
           brandpos[1].toDouble(),
-          brandpos[2].toDouble(),lightdistance);
+          brandpos[2].toDouble(), lightdistance);
       _hotload.add(brandlightii);
-
     }
 
     // All the grass
@@ -1337,13 +1484,13 @@ class _State extends State<SecondTemplePage>  {
           cyprusii, tree[0].toDouble(), tree[1].toDouble(), tree[2].toDouble());
 
       // Only show trees if are within the room you're in
-      if (OPENWORLD.Room.pointInRoom(roomOlives, tree[0],tree[1]))
+      if (OPENWORLD.Room.pointInRoom(roomOlives, tree[0], tree[1]))
         OPENWORLD.Room.addRoomObject(roomOlives, cyprusii);
-      else if (OPENWORLD.Room.pointInRoom(roomSouth, tree[0],tree[1]))
+      else if (OPENWORLD.Room.pointInRoom(roomSouth, tree[0], tree[1]))
         OPENWORLD.Room.addRoomObject(roomSouth, cyprusii);
-      else if (OPENWORLD.Room.pointInRoom(roomWest, tree[0],tree[1]))
+      else if (OPENWORLD.Room.pointInRoom(roomWest, tree[0], tree[1]))
         OPENWORLD.Room.addRoomObject(roomWest, cyprusii);
-      else if (OPENWORLD.Room.pointInRoom(roomNorth, tree[0],tree[1]))
+      else if (OPENWORLD.Room.pointInRoom(roomNorth, tree[0], tree[1]))
         OPENWORLD.Room.addRoomObject(roomNorth, cyprusii);
       _hotload.add(cyprusii);
     }
@@ -1454,19 +1601,18 @@ class _State extends State<SecondTemplePage>  {
     var cyprus = await OPENWORLD.Sprite.loadSprite(
         'assets/models/temple/cyprus.png', 0.4, 1.4);
     for (var tree in cyprusposs) {
-
       var cyprusii = await OPENWORLD.Sprite.cloneSprite(cyprus);
       OPENWORLD.Space.worldToLocalSurfaceObj(cyprusii, tree[0].toDouble(),
           tree[1].toDouble(), tree[2].toDouble()); //24.11, -2.65,0.0); //3.42);
 
       // Only show trees if are within the room you're in
-      if (OPENWORLD.Room.pointInRoom(roomOlives, tree[0],tree[1]))
+      if (OPENWORLD.Room.pointInRoom(roomOlives, tree[0], tree[1]))
         OPENWORLD.Room.addRoomObject(roomOlives, cyprusii);
-      else if (OPENWORLD.Room.pointInRoom(roomSouth, tree[0],tree[1]))
+      else if (OPENWORLD.Room.pointInRoom(roomSouth, tree[0], tree[1]))
         OPENWORLD.Room.addRoomObject(roomSouth, cyprusii);
-      else if (OPENWORLD.Room.pointInRoom(roomWest, tree[0],tree[1]))
+      else if (OPENWORLD.Room.pointInRoom(roomWest, tree[0], tree[1]))
         OPENWORLD.Room.addRoomObject(roomWest, cyprusii);
-      else if (OPENWORLD.Room.pointInRoom(roomNorth, tree[0],tree[1]))
+      else if (OPENWORLD.Room.pointInRoom(roomNorth, tree[0], tree[1]))
         OPENWORLD.Room.addRoomObject(roomNorth, cyprusii);
 
       _hotload.add(cyprusii);
@@ -1503,69 +1649,73 @@ class _State extends State<SecondTemplePage>  {
           tree[2].toDouble()); //24.11, -2.65,0.0); //3.42);
       _hotload.add(cyprusii);
     }
-
   }
 
   // Display text on a model eg the minorah
-  addMsgToObj(obj,msg, {scale:0.3, z:20})
-  {
-    OPENWORLD.Mob.setText(obj,msg,textcolor:Colors.blue,scale:scale,z:z, backgroundopacity:0);//, fontfamily: "Roboto");
+  addMsgToObj(obj, msg, {scale: 0.3, z: 20}) {
+    OPENWORLD.Mob.setText(obj, msg, textcolor: Colors.blue,
+        scale: scale,
+        z: z,
+        backgroundopacity: 0); //, fontfamily: "Roboto");
   }
 
   help(BuildContext context) {
     showDialog(
       context: context,
-     // barrierDismissible: false, // user must tap button!
+      // barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return StatefulBuilder(
             builder: (context, setState) {
               return AlertDialog(
                 backgroundColor: Colors.black.withOpacity(0.5),
-                titlePadding:EdgeInsets.only(left:25,right:25),
-                contentPadding:EdgeInsets.only(left:25,right:25),
-                actionsPadding: EdgeInsets.only(left:25,right:25),
-                title: const Text('Info', style:TextStyle(fontSize: 22)),
+                titlePadding: EdgeInsets.only(left: 25, right: 25),
+                contentPadding: EdgeInsets.only(left: 25, right: 25),
+                actionsPadding: EdgeInsets.only(left: 25, right: 25),
+                title: const Text('Info', style: TextStyle(fontSize: 22)),
                 content: SingleChildScrollView(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      //crossAxisAlignment:CrossAxisAlignment.
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        //crossAxisAlignment:CrossAxisAlignment.
 
-                      children: [
+                        children: [
 
-                       // SizedBox(height:10),
-                        Text(gamename, style:TextStyle(fontSize:22)),  //fontWeight:FontWeight.bold,
-                        Text("Find the ark and save Israel!", style:TextStyle(fontSize:15)),
-                        SizedBox(height: 10),
-                        GestureDetector(
-                            onTap:(){
-                               launchUrl(Uri.parse("https://forthtemple.com/arkcover/"));
-                            },
-                            child:
-                            Column(children:[Image.asset(
+                          // SizedBox(height:10),
+                          Text(gamename, style: TextStyle(fontSize: 22)),
+                          //fontWeight:FontWeight.bold,
+                          Text("Find the ark and save Israel!",
+                              style: TextStyle(fontSize: 15)),
+                          SizedBox(height: 10),
+                          GestureDetector(
+                              onTap: () {
+                                launchUrl(Uri.parse(
+                                    "https://forthtemple.com/arkcover/"));
+                              },
+                              child:
+                              Column(children: [Image.asset(
                                 'icons/forthtemple.png',
                                 //height: 240
-                            ),
-                              SizedBox(height: 25),
-                              Text("Forth Temple Ltd",
-                                  style: TextStyle(
-                                      fontSize: 17.0, fontWeight: FontWeight.bold)),
-                              Text("All Rights Reserved",
-                                  style: TextStyle(fontSize: 17.0)),])),
-                        // Divider(color: Colors.black),
-                        SizedBox(height: 55),
+                              ),
+                                SizedBox(height: 25),
+                                Text("Forth Temple Ltd",
+                                    style: TextStyle(
+                                        fontSize: 17.0,
+                                        fontWeight: FontWeight.bold)),
+                                Text("All Rights Reserved",
+                                    style: TextStyle(fontSize: 17.0)),
+                              ])),
+                          // Divider(color: Colors.black),
+                          SizedBox(height: 55),
 
 
-
-                      ])
+                        ])
                 ),
                 actions: <Widget>[
-                
+
                   TextButton(
                     child: const Text('Ok'),
                     onPressed: () {
                       Navigator.of(context).pop();
-                    
                     },
                   ),
 
@@ -1579,122 +1729,121 @@ class _State extends State<SecondTemplePage>  {
 
 
   settings(BuildContext context) {
-    bool soundon=!OPENWORLD.Sound.mute;
-    bool musicon=!OPENWORLD.Musics.mute;
+    bool soundon = !OPENWORLD.Sound.mute;
+    bool musicon = !OPENWORLD.Musics.mute;
     TextEditingController _textFieldController = TextEditingController();
-    bool reset=false;
+    bool reset = false;
     showDialog(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (context, setState) {
-        return AlertDialog(
-          backgroundColor: Colors.black.withOpacity(0.5),
-          title: const Text('Settings'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Row(
-                    children:[
-                      Checkbox(
+            builder: (context, setState) {
+              return AlertDialog(
+                backgroundColor: Colors.black.withOpacity(0.5),
+                title: const Text('Settings'),
+                content: SingleChildScrollView(
+                  child: ListBody(
+                    children: <Widget>[
+                      Row(
+                          children: [
+                            Checkbox(
 
-                        value: soundon,
-                        onChanged: (value) {
-                          setState(() {
-                            soundon = value!;
-                          });
-                        },
-                      ),
-                      Text('Sound On')]),
-                Row(
-            children:[
-                Checkbox(
-                 // tristate: true,
-                  value: musicon,
-                  onChanged: (value) {
-                    setState(() {
-                      musicon = value!;
-
-                    });
-                  },
+                              value: soundon,
+                              onChanged: (value) {
+                                setState(() {
+                                  soundon = value!;
+                                });
+                              },
+                            ),
+                            Text('Sound On')]),
+                      Row(
+                          children: [
+                            Checkbox(
+                              // tristate: true,
+                              value: musicon,
+                              onChanged: (value) {
+                                setState(() {
+                                  musicon = value!;
+                                });
+                              },
+                            ),
+                            Text('Music On')]),
+                      Row(
+                          children: [
+                            Checkbox(
+                              value: reset,
+                              onChanged: (value) {
+                                setState(() {
+                                  reset = value!;
+                                });
+                              },
+                            ),
+                            Text('Reset Game')]),
+                      kIsWeb ? SizedBox(width: 300, child: TextField(
+                        autofocus: true,
+                        controller: _textFieldController,
+                        decoration: InputDecoration(hintText: "Coords"),
+                      )) : SizedBox.shrink()
+                    ],
+                  ),
                 ),
-                Text('Music On')]),
-                Row(
-                    children:[
-                      Checkbox(
-                        value: reset,
-                        onChanged: (value) {
-                          setState(() {
-                            reset = value!;
-                          });
-                        },
-                      ),
-                      Text('Reset Game')]),
-                kIsWeb ? SizedBox(width: 300, child: TextField(
-                  autofocus: true,
-                  controller: _textFieldController,
-                  decoration: InputDecoration(hintText: "Coords"),
-                )) : SizedBox.shrink()
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Ok'),
-              onPressed: () {
-                OPENWORLD.Persistence.set("mute",!soundon);
-                OPENWORLD.Sound.setMute(!soundon);//mute=!soundon;
-                OPENWORLD.Persistence.set("musicmute", !musicon);
-                OPENWORLD.Musics.setMute(!musicon);
-                OPENWORLD.Room.mute(!soundon);
-                if (_textFieldController.text.contains(",")) {
-                  var pos = _textFieldController.text.split(",");
-                  OPENWORLD.Space.worldToLocalSurfaceObj(
-                      camera, double.parse(pos[0]), double.parse(pos[1]),
-                      OPENWORLD.Camera.cameraoffset);
-                }
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('Cancel'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    child: const Text('Ok'),
+                    onPressed: () {
+                      OPENWORLD.Persistence.set("mute", !soundon);
+                      OPENWORLD.Sound.setMute(!soundon); //mute=!soundon;
+                      OPENWORLD.Persistence.set("musicmute", !musicon);
+                      OPENWORLD.Musics.setMute(!musicon);
+                      OPENWORLD.Room.mute(!soundon);
+                      if (_textFieldController.text.contains(",")) {
+                        var pos = _textFieldController.text.split(",");
+                        OPENWORLD.Space.worldToLocalSurfaceObj(
+                            camera, double.parse(pos[0]), double.parse(pos[1]),
+                            OPENWORLD.Camera.cameraoffset);
+                      }
 
-                Navigator.of(context).pop();
-                if (reset) {
-                  OPENWORLD.Persistence.reset();
-                  close();
-                }
-              },
-            ),
+                      Navigator.of(context).pop();
+                      if (reset) {
+                        OPENWORLD.Persistence.reset();
+                        close();
+                      }
+                    },
+                  ),
 
-          ],
+                ],
+              );
+            }
         );
-          }
-          );
       },
     );
   }
 
   // General prompt dialog
   promptDialog(title, body, initvalue) async {
-
     TextEditingController _textFieldController = TextEditingController();
-    _textFieldController.text=initvalue;
+    _textFieldController.text = initvalue;
     return showDialog(
 
       context: context,
-    //  barrierDismissible: false, // user must tap button!
+      //  barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          titlePadding:EdgeInsets.only(left:25,right:25),
-          contentPadding:EdgeInsets.only(left:25,right:25),
-          actionsPadding: EdgeInsets.only(left:25,right:25),
+          titlePadding: EdgeInsets.only(left: 25, right: 25),
+          contentPadding: EdgeInsets.only(left: 25, right: 25),
+          actionsPadding: EdgeInsets.only(left: 25, right: 25),
           insetPadding: EdgeInsets.zero,
           backgroundColor: Colors.black.withOpacity(0.5),
 
-          title: Text(title, style:TextStyle(fontSize: 20)),//'Player Name'),
+          title: Text(title, style: TextStyle(fontSize: 20)),
+          //'Player Name'),
           content: SingleChildScrollView(
             child: ListBody(
               children: [
@@ -1708,7 +1857,7 @@ class _State extends State<SecondTemplePage>  {
               ],
             ),
           ),
-          actions:[
+          actions: [
             TextButton(
               child: const Text('Cancel'),
               onPressed: () {
@@ -1718,8 +1867,7 @@ class _State extends State<SecondTemplePage>  {
             TextButton(
               child: const Text('Ok'),
               onPressed: () {
-                Navigator.of(context).pop( _textFieldController.text);
-
+                Navigator.of(context).pop(_textFieldController.text);
               },
             ),
           ],
@@ -1730,9 +1878,8 @@ class _State extends State<SecondTemplePage>  {
 
   // Dialog to chat in multiplayer
   chatDialog(title, body, initvalue) async {
-
     TextEditingController _textFieldController = TextEditingController();
-    _textFieldController.text=initvalue;
+    _textFieldController.text = initvalue;
     return showDialog(
 
       context: context,
@@ -1741,58 +1888,62 @@ class _State extends State<SecondTemplePage>  {
         return AlertDialog(
           alignment: Alignment.bottomRight,
 
-          titlePadding:EdgeInsets.only(left:25,right:25),
-          contentPadding:EdgeInsets.only(left:25,right:25),
-          actionsPadding: EdgeInsets.only(left:25,right:25),
+          titlePadding: EdgeInsets.only(left: 25, right: 25),
+          contentPadding: EdgeInsets.only(left: 25, right: 25),
+          actionsPadding: EdgeInsets.only(left: 25, right: 25),
           insetPadding: EdgeInsets.zero,
           backgroundColor: Colors.black.withOpacity(0.5),
 
-         // title: Text(title, style:TextStyle(fontSize: 20)),//'Player Name'),
+          // title: Text(title, style:TextStyle(fontSize: 20)),//'Player Name'),
           content:
-                SizedBox(width:400,height:100,child:Row(
-                  children: [
-                    //'To play '+gamename+' online enter your players name',
-                    // Text(body, style: TextStyle(fontSize: 15)),
-                    SizedBox(width:300,child:TextField(
-                      autofocus: true,
-                      controller: _textFieldController,
-                      decoration: InputDecoration(hintText: "Your message"),
-                    )),
-                    IconButton(
-                      // alignment: Alignment.topRight,
-                      icon: Icon(Icons.cancel),//Icons.people),
-                      iconSize: 20,
-                      style:IconButton.styleFrom(
-                        shape: CircleBorder(),
-                        padding: EdgeInsets.all(0),
-                        backgroundColor: Colors.black.withOpacity(0.2), // <-- Button color
-                        foregroundColor: Colors.white, // <-- Splash color
-                      ),
-                      color: Colors.white,
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    IconButton(
-                      // alignment: Alignment.topRight,
-                      //    tooltip:"Speak",
-                      icon: Icon(Icons.send),//Icons.people),
-                      iconSize: 20,
-                      style:IconButton.styleFrom(
-                        shape: CircleBorder(),
-                        padding: EdgeInsets.all(0),
-                        backgroundColor: Colors.black.withOpacity(0.2), // <-- Button color
-                        foregroundColor: Colors.white, // <-- Splash color
-                      ),
-                      color: Colors.white,
-                      onPressed: () {
-                        Navigator.of(context).pop( _textFieldController.text);
-                      },
-                    ),
+          SizedBox(width: 400, height: 100, child: Row(
+            children: [
+              //'To play '+gamename+' online enter your players name',
+              // Text(body, style: TextStyle(fontSize: 15)),
+              SizedBox(width: 300, child: TextField(
+                autofocus: true,
+                controller: _textFieldController,
+                decoration: InputDecoration(hintText: "Your message"),
+              )),
+              IconButton(
+                // alignment: Alignment.topRight,
+                icon: Icon(Icons.cancel),
+                //Icons.people),
+                iconSize: 20,
+                style: IconButton.styleFrom(
+                  shape: CircleBorder(),
+                  padding: EdgeInsets.all(0),
+                  backgroundColor: Colors.black.withOpacity(0.2),
+                  // <-- Button color
+                  foregroundColor: Colors.white, // <-- Splash color
+                ),
+                color: Colors.white,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              IconButton(
+                // alignment: Alignment.topRight,
+                //    tooltip:"Speak",
+                icon: Icon(Icons.send),
+                //Icons.people),
+                iconSize: 20,
+                style: IconButton.styleFrom(
+                  shape: CircleBorder(),
+                  padding: EdgeInsets.all(0),
+                  backgroundColor: Colors.black.withOpacity(0.2),
+                  // <-- Button color
+                  foregroundColor: Colors.white, // <-- Splash color
+                ),
+                color: Colors.white,
+                onPressed: () {
+                  Navigator.of(context).pop(_textFieldController.text);
+                },
+              ),
 
 
-                  ],
-                )),
+            ],
+          )),
 
         );
       },
@@ -1806,7 +1957,8 @@ class _State extends State<SecondTemplePage>  {
 
   // Set actor chatter with default settings
   setActorChatter(actor, chatter) {
-    OPENWORLD.Mob.setChatter(actor, chatter, start: false, z: 100, scale:0.3, width: 400);
+    OPENWORLD.Mob.setChatter(
+        actor, chatter, start: false, z: 100, scale: 0.3, width: 400);
 
     OPENWORLD.BaseObject.setDistanceTrigger(actor, dist: 1.0);
     actor.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
@@ -1827,7 +1979,7 @@ class _State extends State<SecondTemplePage>  {
   createCitizens(actorcopy, x, y, dist, num, {guards: false, chatter}) async {
     for (var i = 0; i < num; i++) {
       var citizen =
-          await OPENWORLD.Actor.copyActor(actorcopy, randomduration: 0.1);
+      await OPENWORLD.Actor.copyActor(actorcopy, randomduration: 0.1);
       var filename;
       if (!guards) {
         if (OPENWORLD.Math.random() < 0.5) {
@@ -1855,9 +2007,9 @@ class _State extends State<SecondTemplePage>  {
             citizen, "assets/actors/soldier/" + filename);
       }
 
-      if (chatter!=null)
+      if (chatter != null)
         OPENWORLD.Mob.setChatter(
-           actorcopy, chatter,
+            actorcopy, chatter,
             z: 100,
             width: 300);
       setActorSize(citizen);
@@ -1874,9 +2026,9 @@ class _State extends State<SecondTemplePage>  {
               actionduration: 0.5,
               stopaction: "idle",
               reset: true,
-            surfaceonly: true
+              surfaceonly: true
           );
-         citizen.visible = true;
+          citizen.visible = true;
         } else {
           citizen.visible = false;
         }
@@ -1890,10 +2042,10 @@ class _State extends State<SecondTemplePage>  {
     OPENWORLD.Space.faceObjectAlways(_guide, camera);
     var offset;
     if (horseriding)
-      offset=0.2;
+      offset = 0.2;
     else
-      offset=0;
-    OPENWORLD.Mob.placeBeforeCamera(_guide, 0.4, time:2, offset:offset,
+      offset = 0;
+    OPENWORLD.Mob.placeBeforeCamera(_guide, 0.4, time: 2, offset: offset,
         action: "walk", stopaction: "idle");
     new Timer(new Duration(milliseconds: (2 * 1000).floor()), () async {
       var speech;
@@ -1903,11 +2055,11 @@ class _State extends State<SecondTemplePage>  {
       else
         speech = ["Sorry, I don't have much information on this place"];
 
-      OPENWORLD.Mob.setSpeech(_guide, speech, randwait:0, z: 100, width: 300);
+      OPENWORLD.Mob.setSpeech(_guide, speech, randwait: 0, z: 100, width: 300);
     });
   }
 
-  var inprayer=false;
+  var inprayer = false;
 
   // Say the prayer given by gabriel
   // If the player is at the perpetual fire and says the prayer then the ark will appear
@@ -1923,23 +2075,23 @@ class _State extends State<SecondTemplePage>  {
     }
     print("prayer2");
 
-    OPENWORLD.Sound.play( path: 'sounds/pray5.mp3', volume: 1);
+    OPENWORLD.Sound.play(path: 'sounds/pray5.mp3', volume: 1);
 
     if (priestblessing) {
-
       var dist = OPENWORLD.Space.getDistanceBetweenObjs(_fire.mesh, camera);
-      var angletofire = OPENWORLD.Space.getAngleBetweensObjs(camera, _fire.mesh);
+      var angletofire = OPENWORLD.Space.getAngleBetweensObjs(
+          camera, _fire.mesh);
       var anglecamera = OPENWORLD.Space.getObjTurn(camera);
-      var anglediff = (OPENWORLD.Math.angleDifference(angletofire, anglecamera).abs());
-      print("desti"+dist.toString()+" "+anglediff.toString()+" "+angletofire.toString()+" "+anglecamera.toString());
-      if (dist < 2&&anglediff.abs()<90) {
-
-        Future.delayed(const Duration(milliseconds: 4*1000), () async {
-
+      var anglediff = (OPENWORLD.Math.angleDifference(angletofire, anglecamera)
+          .abs());
+      print("desti" + dist.toString() + " " + anglediff.toString() + " " +
+          angletofire.toString() + " " + anglecamera.toString());
+      if (dist < 2 && anglediff.abs() < 90) {
+        Future.delayed(const Duration(milliseconds: 4 * 1000), () async {
           print(" priest bless");
 
-          OPENWORLD.You.immobile=true;
-          OPENWORLD.You.immobileturn=true;
+          OPENWORLD.You.immobile = true;
+          OPENWORLD.You.immobileturn = true;
           OPENWORLD.BaseObject.disableDistanceTrigger(_priest);
           OPENWORLD.Mob.clearText(_priest);
 
@@ -1964,7 +2116,7 @@ class _State extends State<SecondTemplePage>  {
           scene.add(ark);
 
           OPENWORLD.Space.worldToLocalSurfaceObjLerp(ark, arkx, arky, 0.0, 6);
-          OPENWORLD.Space.faceObjectLerp(camera, ark, 1,delay:6);
+          OPENWORLD.Space.faceObjectLerp(camera, ark, 1, delay: 6);
 
           var angels = await OPENWORLD.Sprite.loadSprite(
               'assets/textures/angels.png', 1, 0.6, ambient: false);
@@ -2006,7 +2158,7 @@ class _State extends State<SecondTemplePage>  {
           OPENWORLD.Light.intensityLerp(light, 1, 6);
           light.target = ark;
 
-          if (_shofar.parent!=scene) {
+          if (_shofar.parent != scene) {
             scene.add(_shofar);
           }
           OPENWORLD.Mob.clearText(_shofar);
@@ -2016,7 +2168,7 @@ class _State extends State<SecondTemplePage>  {
           OPENWORLD.Mob.moveTo(_shofar, [[3.26, 1.03, 0, 0.3]], action: "walk",
               stopaction: "idle",
               facedir: false);
-          if (_shofar2.parent!=scene)
+          if (_shofar2.parent != scene)
             scene.add(_shofar2);
           OPENWORLD.Space.worldToLocalSurfaceObj(
               _shofar2, 3.33, -0.80 - 1, 0); //3.2, 2.1, 0,3);
@@ -2031,9 +2183,8 @@ class _State extends State<SecondTemplePage>  {
 
             print("ark add");
             scene.remove(_cow);
-            OPENWORLD.Room.clearRandomSound(roomB);  // stop cow mooing
+            OPENWORLD.Room.clearRandomSound(roomB); // stop cow mooing
             Future.delayed(const Duration(milliseconds: 4000), () async {
-
               OPENWORLD.Space.removeObjFromHide(
                   _priest); // So no longer hidden when walk from temple
               OPENWORLD.Space.worldToLocalSurfaceObj(_priest, 1.91, 1.26, 0.0);
@@ -2058,17 +2209,19 @@ class _State extends State<SecondTemplePage>  {
               Future.delayed(const Duration(milliseconds: 22 * 1000), () async {
                 // In case player has moved in the 10 seconds
                 OPENWORLD.Mob.placeBeforeCamera(
-                    _shofar, 0.4, time:1.5, action: "walk",
+                    _shofar, 0.4, time: 1.5, action: "walk",
                     stopaction: "idle",
                     offset: -0.15);
                 OPENWORLD.Space.faceObjectAlways(_shofar, camera);
                 OPENWORLD.Mob.placeBeforeCamera(
-                    _shofar2, 0.4, time:2, action: "walk",
+                    _shofar2, 0.4, time: 2, action: "walk",
                     stopaction: "idle",
                     offset: -0.4);
                 OPENWORLD.Space.faceObjectAlways(_shofar2, camera);
                 OPENWORLD.Mob.placeBeforeCamera(
-                    _priest, 0.3, time:1, action: "walk", stopaction: "armsup");
+                    _priest, 0.3, time: 1,
+                    action: "walk",
+                    stopaction: "armsup");
                 OPENWORLD.Space.faceObjectAlways(_priest, camera);
                 OPENWORLD.Mob.setSpeech(
                     _priest, [
@@ -2081,10 +2234,10 @@ class _State extends State<SecondTemplePage>  {
                   "in its hour of need"
                 ],
                     z: 90,
-                    scale:0.35,
+                    scale: 0.35,
                     width: 250);
-                OPENWORLD.You.setImmobile(false,delay:20);
-                OPENWORLD.You.setImmobileTurn(false,delay:10);
+                OPENWORLD.You.setImmobile(false, delay: 20);
+                OPENWORLD.You.setImmobileTurn(false, delay: 10);
 
                 // Have all the npcs that are chatting, chat that the ark has been found
                 for (var obj in OPENWORLD.Mob.chatterlist) {
@@ -2098,7 +2251,7 @@ class _State extends State<SecondTemplePage>  {
                     "Wish I could go to the temple and see the ark"
                   ],
                       z: 90,
-                      scale:0.3,
+                      scale: 0.3,
                       width: 300);
                   OPENWORLD.Space.faceObjectAlways(obj, camera);
                 }
@@ -2119,7 +2272,7 @@ class _State extends State<SecondTemplePage>  {
 
                 setState(() {
                   _canfly = true;
-                  OPENWORLD.Persistence.set("canfly",_canfly);
+                  OPENWORLD.Persistence.set("canfly", _canfly);
                   //  inprayer=false;
 
                 });
@@ -2130,40 +2283,38 @@ class _State extends State<SecondTemplePage>  {
       } else {
         inprayer = false;
         print("in prayer false");
-
       }
     } else {
       inprayer = false;
       print("in prayer falseii");
-
     }
-
   }
 
   // Dismount the horse
-  dismount({left})
-  {
+  dismount({left}) {
     if (horseriding) {
       var worldpos = OPENWORLD.You
           .getWorldPos();
       var dismountpos;
-      if (left==null||!left)
-        dismountpos =OPENWORLD.Math.vectorMoveFoward(worldpos.x, worldpos.y,OPENWORLD.Camera.turn, 0.52);
+      if (left == null || !left)
+        dismountpos = OPENWORLD.Math.vectorMoveFoward(
+            worldpos.x, worldpos.y, OPENWORLD.Camera.turn, 0.52);
       else {
         // For case of gabriel where want to dismount side saddle
         dismountpos = OPENWORLD.Math.vectorMoveFoward(
             worldpos.x, worldpos.y, OPENWORLD.Camera.turn, 0.1);
-        dismountpos=OPENWORLD.Math.vectorMoveFoward(dismountpos.x,dismountpos.y,OPENWORLD.Camera.turn, 0.2);
+        dismountpos = OPENWORLD.Math.vectorMoveFoward(
+            dismountpos.x, dismountpos.y, OPENWORLD.Camera.turn, 0.2);
       }
       OPENWORLD.Space
           .worldToLocalSurfaceObjLerp(
           camera,
-          dismountpos.x,//worldpos.x,
-          dismountpos.y,// worldpos.y + 0.52,
+          dismountpos.x, //worldpos.x,
+          dismountpos.y, // worldpos.y + 0.52,
           defaultcameraoffset, 1,
           delay: 1);
       horseriding = false;
-      OPENWORLD.You.speed=defaultspeed;
+      OPENWORLD.You.speed = defaultspeed;
       horseridingclop.stop();
       Future.delayed(Duration(
           milliseconds: (1000)
@@ -2171,8 +2322,7 @@ class _State extends State<SecondTemplePage>  {
         OPENWORLD.Camera
             .cameraoffset =
             defaultcameraoffset;
-        OPENWORLD.Sound.play( path: 'sounds/horse.mp3', volume: 0.5);
-
+        OPENWORLD.Sound.play(path: 'sounds/horse.mp3', volume: 0.5);
       });
     } else {
       //  callHorse();
@@ -2180,37 +2330,39 @@ class _State extends State<SecondTemplePage>  {
   }
 
   initPage() async {
-
-
     OPENWORLD.System.active = true;
     if (kIsWeb)
-      OPENWORLD.Persistence.gamename="secondtemple";  // So that if two games in web wont mix up cookies in browser
-    OPENWORLD.Time.setTime(await OPENWORLD.Persistence.get("time", def:OPENWORLD.Math.random()*24));//OPENWORLD.Math.random()*24);//);//12.0); //);
-    OPENWORLD.Time.daylength=1.0;  // Takes an hour to do 24 hours
+      OPENWORLD.Persistence.gamename =
+      "secondtemple"; // So that if two games in web wont mix up cookies in browser
+    OPENWORLD.Time.setTime(await OPENWORLD.Persistence.get("time",
+        def: OPENWORLD.Math.random() *
+            24)); //OPENWORLD.Math.random()*24);//);//12.0); //);
+    OPENWORLD.Time.daylength = 1.0; // Takes an hour to do 24 hours
 
     OPENWORLD.Room.init();
 
     // Make player faster if on smartphone
     if (!kIsWeb) {
-      defaultspeed*= 1.5; //8; //2m/s
+      defaultspeed *= 1.5; //8; //2m/s
     }
     OPENWORLD.You.speed = defaultspeed;
 
     // Set the client game url
-    _session = CLIENT.Session("https://forthtemple.com/secondtemple/serverdart/secondtemple.php");
+    _session = CLIENT.Session(
+        "https://forthtemple.com/secondtemple/serverdart/secondtemple.php");
 
     // skydome is 1000 so over 1000 isn't really necessary
     camera = THREE.PerspectiveCamera(60, width / height, 0.04, 4000);
 
-    OPENWORLD.Camera.init(camera, defaultcameraoffset,width,height);
+    OPENWORLD.Camera.init(camera, defaultcameraoffset, width, height);
 
     // Set the default font to Nanum Myeongjo
-    OPENWORLD.Texture.defaultfontfamily= 'NanumMyeongjo';
+    OPENWORLD.Texture.defaultfontfamily = 'NanumMyeongjo';
 
     camera.position.y = 999;
 
     // Set must wait 100ms when has triggered that touched an object
-    OPENWORLD.BaseObject.touchtriggerwait=0.1;
+    OPENWORLD.BaseObject.touchtriggerwait = 0.1;
 
     clock = THREE.Clock();
 
@@ -2256,7 +2408,7 @@ class _State extends State<SecondTemplePage>  {
         THREE.MeshBasicMaterial({'color': THREE.Color.fromHex(0xffffff)}));
     sunSphere.position.y = -700000;
     sunSphere.visible = true;
-    var sunlight = new THREE.SpotLight(0x888888);//ffffff);
+    var sunlight = new THREE.SpotLight(0x888888); //ffffff);
     sunlight.intensity = 0.4;
     sunlight.penumbra = 1;
     sunSphere.add(sunlight);
@@ -2299,16 +2451,19 @@ class _State extends State<SecondTemplePage>  {
     OPENWORLD.Musics.init(musics);
 
     // Change sound mute based on settings
-    OPENWORLD.Musics.setMute(await OPENWORLD.Persistence.get("musicmute", def:false));
-    OPENWORLD.Sound.setMute(await OPENWORLD.Persistence.get("mute",def:false));
+    OPENWORLD.Musics.setMute(
+        await OPENWORLD.Persistence.get("musicmute", def: false));
+    OPENWORLD.Sound.setMute(
+        await OPENWORLD.Persistence.get("mute", def: false));
 
     // Initialize the time with the sunsphere, skymat and ambience so that can change these based upon the time of day giving a realistic sky
     print("init time");
-  //  OPENWORLD.Time.init( null,null ,ambience);
+    //  OPENWORLD.Time.init( null,null ,ambience);
     OPENWORLD.Time.init(sunSphere, skyMat, ambience);
 
     // Load the terrain that everything is place on top of
-    print("load terrain");//+OPENWORLD.Space.getMesh().toString());//_mesh.toString());
+    print(
+        "load terrain"); //+OPENWORLD.Space.getMesh().toString());//_mesh.toString());
     var manager = THREE.LoadingManager();
     var mtlLoader = THREE_JSM.MTLLoader(manager);
     mtlLoader.setPath('assets/models/temple/');
@@ -2335,11 +2490,10 @@ class _State extends State<SecondTemplePage>  {
     });
 
     scene.add(mesh);
-    OPENWORLD.Space.init(  mesh, scene);
+    OPENWORLD.Space.init(mesh, scene);
 
     mesh.traverse((object) {
       if (object is Mesh && object.material is THREE.Material) {
-
         THREE.MeshPhongMaterial mat = object.material as THREE
             .MeshPhongMaterial; // as THREE.MeshPhongMaterial).alphaMap.toString()
 
@@ -2353,14 +2507,13 @@ class _State extends State<SecondTemplePage>  {
         if (object.name.contains("surface"))
           object.material = [mat, mat2];
       }
-
     });
 
     // Create the cloud object that is a plane with a cloud texture
     print("create cloud");
     var geometry = new THREE.PlaneGeometry(2000, 2000);
     var texturei =
-        await THREE.TextureLoader(null).loadAsync('assets/textures/clouds.png');
+    await THREE.TextureLoader(null).loadAsync('assets/textures/clouds.png');
     texturei.wrapS = THREE.RepeatWrapping;
     texturei.wrapT = THREE.RepeatWrapping;
     texturei.needsUpdate = true;
@@ -2369,7 +2522,7 @@ class _State extends State<SecondTemplePage>  {
     texturei.repeat.set(50, 50);
     // var material = new THREE.MeshBasicMaterial( {'color': 0xffff00, 'side': THREE.FrontSide} );
     var material =
-        THREE.MeshStandardMaterial({'map': texturei, 'transparent': true});
+    THREE.MeshStandardMaterial({'map': texturei, 'transparent': true});
 
     var clouds = new THREE.Mesh(geometry, material);
     clouds.rotateX(THREE.MathUtils.degToRad(90));
@@ -2383,17 +2536,22 @@ class _State extends State<SecondTemplePage>  {
         clouds, 'sounds/wind.mp3', 'sounds/rain.mp3'); // rainSound);
 
     // Set the weather based upon what was last saved
-    OPENWORLD.Weather.setCloud(await OPENWORLD.Persistence.get("cloud", def:0.0));//.0);
-    OPENWORLD.Weather.setWind(await OPENWORLD.Persistence.get("wind", def:0.0));
-    OPENWORLD.Weather.setRain(await OPENWORLD.Persistence.get("rain", def:0.0));
-    OPENWORLD.Weather.setFog(await OPENWORLD.Persistence.get("fog", def:0.0));
-    OPENWORLD.Weather.setRandomWeather();  // Will randomly get rain, fog, wind and cloud
+    OPENWORLD.Weather.setCloud(
+        await OPENWORLD.Persistence.get("cloud", def: 0.0)); //.0);
+    OPENWORLD.Weather.setWind(
+        await OPENWORLD.Persistence.get("wind", def: 0.0));
+    OPENWORLD.Weather.setRain(
+        await OPENWORLD.Persistence.get("rain", def: 0.0));
+    OPENWORLD.Weather.setFog(await OPENWORLD.Persistence.get("fog", def: 0.0));
+    OPENWORLD.Weather
+        .setRandomWeather(); // Will randomly get rain, fog, wind and cloud
     // Remember if player can fly
-    _canfly=await OPENWORLD.Persistence.get("canfly", def:_canfly);
+    _canfly = await OPENWORLD.Persistence.get("canfly", def: _canfly);
     // Remember if player has received a blessing
-    priestblessing=await OPENWORLD.Persistence.get("priestblessing", def:priestblessing);
+    priestblessing =
+    await OPENWORLD.Persistence.get("priestblessing", def: priestblessing);
     // Remember if player has received gabriels prayer
-    hasprayer=await OPENWORLD.Persistence.get("hasprayer", def:hasprayer);
+    hasprayer = await OPENWORLD.Persistence.get("hasprayer", def: hasprayer);
 
     // This is the start room in the court of women outside the second temple
     var roomBC = OPENWORLD.Room.createRoom(7.4, 1.26);
@@ -2416,16 +2574,16 @@ class _State extends State<SecondTemplePage>  {
     roomBC.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
       if (event.action) {
         if (mounted)
-        setState(() {
-          print("in shofar");
-          roomname = roomBC.extra['name'];
-        });
+          setState(() {
+            print("in shofar");
+            roomname = roomBC.extra['name'];
+          });
       } else {
         if (roomname == roomBC.extra['name']) {
           if (mounted)
-          setState(() {
-            roomname = "";
-          });
+            setState(() {
+              roomname = "";
+            });
         }
       }
     });
@@ -2449,38 +2607,38 @@ class _State extends State<SecondTemplePage>  {
 
     OPENWORLD.Actor.wield(_shofar, horn, "Bip01_R_Hand");
 
-     // Set the shofar to be the default size
-     setActorSize(_shofar);
+    // Set the shofar to be the default size
+    setActorSize(_shofar);
 
-     // Set the position of the shofar
-     OPENWORLD.Space.worldToLocalSurfaceObjHide(
-        _shofar, 7.7, 1.8, 0, 3,lerpopacity: 1); //7.7, 2.0, 0, 3);  //3.42);
+    // Set the position of the shofar
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(
+        _shofar, 7.7, 1.8, 0, 3, lerpopacity: 1); //7.7, 2.0, 0, 3);  //3.42);
     scene.add(_shofar);
     // Set the direction the shofar is facing
     OPENWORLD.Space.objTurn(_shofar, 180); // south
     // When player goes near the shofar and the player has gabriels prayer then remind player to say the prayer at the perpetual flame
     OPENWORLD.BaseObject.setDistanceTrigger(_shofar, dist: 1.5);
     _shofar.extra['trigger'].addEventListener('trigger',
-    (THREE.Event event) async {
-      if (event.action) {
-        if (hasprayer&&!inprayer&&!_canfly) {
-          var speech = [
-            "Say the prayer at the eternal flame"
-          ];
-          OPENWORLD.Mob.setSpeech(
-              _shofar,
-              speech,
-              z: 90,
-              //scale: 0.3,
-              width: 300);
-        }
-      }
-    });
+            (THREE.Event event) async {
+          if (event.action) {
+            if (hasprayer && !inprayer && !_canfly) {
+              var speech = [
+                "Say the prayer at the eternal flame"
+              ];
+              OPENWORLD.Mob.setSpeech(
+                  _shofar,
+                  speech,
+                  z: 90,
+                  //scale: 0.3,
+                  width: 300);
+            }
+          }
+        });
 
 
     // Define the joystick
     _joystick = OPENWORLD.VirtualJoystick();
-    _joystick?.joysticksize=200;
+    _joystick?.joysticksize = 200;
 
     var fpsControl = PointerLockControls(camera, _globalKey);
 
@@ -2491,19 +2649,19 @@ class _State extends State<SecondTemplePage>  {
       _joystick?.keyboard.onKeyChange(event, 'keydown');
     }, false);
     fpsControl.domElement.addEventListener('pointerdown', (event) {
-      pointerdowntick=OPENWORLD.System.currentMilliseconds();
+      pointerdowntick = OPENWORLD.System.currentMilliseconds();
       _joystick?.onTouchDown(event.clientX, event.clientY);
     }, false);
     fpsControl.domElement.addEventListener('pointerup', (event) {
-
       var numpoints;
-        numpoints=2;
+      numpoints = 2;
 
-      if (!OPENWORLD.BaseObject.touchup(pointerdowntick, event, scene, width, height, numpoints)) {
+      if (!OPENWORLD.BaseObject.touchup(
+          pointerdowntick, event, scene, width, height, numpoints)) {
         //   OPENWORLD.BaseObject.setHighLights(scale:1.000005,opacity:0.5);//hidehighlights();
-        OPENWORLD.BaseObject.deselectHighLights();//hidehighlights();
+        OPENWORLD.BaseObject.deselectHighLights(); //hidehighlights();
         setState(() {
-          menuposx=-1;
+          menuposx = -1;
         });
       }
     }, false);
@@ -2513,20 +2671,19 @@ class _State extends State<SecondTemplePage>  {
 
     fpsControl.domElement.addEventListener('pointerup', (event) {
       _joystick?.onTouchUp();
-
     }, false);
     fpsControl.domElement.addEventListener('pointermove', (event) {
       // this should be in openworld!!
       if (!_joystick?.getStickPressed()) {
-
         _joystick?.onTouch(
             event.clientX, event.clientY, width, height, clock.getDelta());
-
       }
     }, false);
 
     // This room is within the second temple where the priest is and includes the minorah, showbread and altar of incense
-    var roomA = OPENWORLD.Room.createRoom(0.67, 1.26,soundpath: "sounds/temple.mp3", volume: 0.4); //THREE.Object3D();
+    var roomA = OPENWORLD.Room.createRoom(
+        0.67, 1.26, soundpath: "sounds/temple.mp3",
+        volume: 0.4); //THREE.Object3D();
     OPENWORLD.Room.setIndoors(roomA, true);
     roomA.extra['name'] = 'Sanctuary';
     roomA.extra['guide'] = [
@@ -2554,15 +2711,15 @@ class _State extends State<SecondTemplePage>  {
     roomA.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
       if (event.action) {
         if (mounted)
-        setState(() {
-          roomname = roomA.extra['name'];
-        });
+          setState(() {
+            roomname = roomA.extra['name'];
+          });
       } else {
         if (roomname == roomA.extra['name']) {
           if (mounted)
-          setState(() {
-            roomname = "";
-          });
+            setState(() {
+              roomname = "";
+            });
         }
       }
     });
@@ -2570,7 +2727,7 @@ class _State extends State<SecondTemplePage>  {
     // Show make coming from altar
     var smoke = Smoke();
     var smokeGroup =
-        await smoke.createSmoke('assets/textures/smoke/clouds64.png');
+    await smoke.createSmoke('assets/textures/smoke/clouds64.png');
 
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         smokeGroup, -0.42, 1.35, 0.21, 3);
@@ -2589,160 +2746,178 @@ class _State extends State<SecondTemplePage>  {
     setActorSize(_priest);
     OPENWORLD.Space.objTurn(_priest, 90);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
-        _priest, -0.12, 1.3, 0, 3,lerpopacity: 1); //3.42);
+        _priest, -0.12, 1.3, 0, 3, lerpopacity: 1); //3.42);
     scene.add(_priest);
 
     // When go near priest say the blessing to the player
     OPENWORLD.BaseObject.setDistanceTrigger(_priest, dist: 1.0);
     var blessingsound = audioplayers.AudioPlayer();
     _priest.extra['trigger'].addEventListener('trigger',
-        (THREE.Event event) async {
-      if (event.action&&!inprayer) {
-        print("priest in");
-        print("remove shofar");
-        scene.remove(_shofar);
-        scene.remove(_shofar2);
-        scene.remove(_lightshofar);
+            (THREE.Event event) async {
+          if (event.action && !inprayer) {
+            print("priest in");
+            print("remove shofar");
+            scene.remove(_shofar);
+            scene.remove(_shofar2);
+            scene.remove(_lightshofar);
 
-        var duration = await OPENWORLD.Sound.play(sound:blessingsound,path:'sounds/blessing.mp3', volume:0.2);
-        if (duration!=null&&duration>0) {
-          Future.delayed(Duration(milliseconds: (duration*1000).round()), () async {
-            print("completed");
-            OPENWORLD.Actor.playActionThen(
-                _priest, "armsdown", "idle"); //,   durationthen:2);
+            var duration = await OPENWORLD.Sound.play(
+                sound: blessingsound, path: 'sounds/blessing.mp3', volume: 0.2);
+            if (duration != null && duration > 0) {
+              Future.delayed(
+                  Duration(milliseconds: (duration * 1000).round()), () async {
+                print("completed");
+                OPENWORLD.Actor.playActionThen(
+                    _priest, "armsdown", "idle"); //,   durationthen:2);
 
-            print("priest blessing finished");
-            print("priest hands up");
+                print("priest blessing finished");
+                print("priest hands up");
 
-            OPENWORLD.Mob.clearText(_priest);
+                OPENWORLD.Mob.clearText(_priest);
 
-            var speech = [
-              "Israel has so many enemies",
-              "If only we had the ark again",
-              "If only someone could find it",
-              "Our enemies would be no more",
-              "There are rumours among the people on where it is",
-              "Maybe listen to what the people say"
-            ];
-            if (priestblessing) {
-              if (!hasprayer)
-                speech.insert(0, "Hello again friend");
-              else if (!_canfly)
-                speech.insert(0, "Say your prayer at the perpetual flame!");
+                var speech = [
+                  "Israel has so many enemies",
+                  "If only we had the ark again",
+                  "If only someone could find it",
+                  "Our enemies would be no more",
+                  "There are rumours among the people on where it is",
+                  "Maybe listen to what the people say"
+                ];
+                if (priestblessing) {
+                  if (!hasprayer)
+                    speech.insert(0, "Hello again friend");
+                  else if (!_canfly)
+                    speech.insert(0, "Say your prayer at the perpetual flame!");
+                }
+                OPENWORLD.Mob.setSpeech(
+                    _priest,
+                    speech,
+                    z: 100,
+                    // scale: 0.3,
+                    width: 300, delay: 2);
+
+                OPENWORLD.Persistence.set("priestblessing", true);
+                setState(() {
+                  priestblessing = true;
+                });
+              });
             }
-            OPENWORLD.Mob.setSpeech(
-                _priest,
-                speech,
-                z: 100,
-               // scale: 0.3,
-                width: 300, delay: 2);
 
-            OPENWORLD.Persistence.set("priestblessing", true);
-            setState(() {
-              priestblessing = true;
-            });
-          });
-        }
-
-        OPENWORLD.Actor.playActionThen(
-            _priest, "armsup", "armsidle");
-
-      } else {
-      }
-    });
+            OPENWORLD.Actor.playActionThen(
+                _priest, "armsup", "armsidle");
+          } else {}
+        });
 
     // Show the minorah
-    var minorah = await OPENWORLD.Model.createModel('assets/models/minorah.glb');
+    var minorah = await OPENWORLD.Model.createModel(
+        'assets/models/minorah.glb');
     scene.add(minorah);
-    OPENWORLD.Space.worldToLocalSurfaceObjHide(minorah, -0.33, 1.03, 0.0, 4); // 3.2,2.5, 0.0);
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(
+        minorah, -0.33, 1.03, 0.0, 4); // 3.2,2.5, 0.0);
     minorah.scale.set(0.11, 0.11, 0.11);
     OPENWORLD.Space.objTurn(minorah, 0);
     // Add message above minorah telling player to click it for info
-    addMsgToObj(minorah,"Click Minorah",  scale:0.01, z:3.5);
+    addMsgToObj(minorah, "Click Minorah", scale: 0.01, z: 3.5);
     // Highlight the minorah to show that can click it
-    OPENWORLD.BaseObject.setHighlight(minorah, scene, THREE.Color(0x0000ff), 0.25);//, scalex:1.4, scaley:1, scalez:1.4);
-    OPENWORLD.BaseObject.highlight(minorah, true,scale:1.05, opacity:0.15);
+    OPENWORLD.BaseObject.setHighlight(minorah, scene, THREE.Color(0x0000ff),
+        0.25); //, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.highlight(minorah, true, scale: 1.05, opacity: 0.15);
     OPENWORLD.BaseObject.setTouchTrigger(minorah);
-    minorah.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
+    minorah.extra['touchtrigger'].addEventListener(
+        'trigger', (THREE.Event event) {
       // Display information about the minorah when click it
       print("touched");
-      OPENWORLD.BaseObject.highlight(minorah, true, scale:1.05, opacity:0.25);
-      var clickevent=event.action;
+      OPENWORLD.BaseObject.highlight(minorah, true, scale: 1.05, opacity: 0.25);
+      var clickevent = event.action;
       setState(() {
-        menuposx=clickevent.clientX;
-        menuposy=clickevent.clientY-40;
+        menuposx = clickevent.clientX;
+        menuposy = clickevent.clientY - 40;
         menuitems.clear();
-        menuitems.add({"text":"The menorah is made of pure gold."});
-        menuitems.add({"text":"The design was revealed to Moses by God as follows:"});
-        menuitems.add({"text":"'Make a lampstand of pure gold."});
-        menuitems.add({"text":"Hammer out its base and shaft, and make its flowerlike cups,"});
-        menuitems.add({"text":"buds and blossoms of one piece with them.'"});
-        menuobj=minorah;
+        menuitems.add({"text": "The menorah is made of pure gold."});
+        menuitems.add(
+            {"text": "The design was revealed to Moses by God as follows:"});
+        menuitems.add({"text": "'Make a lampstand of pure gold."});
+        menuitems.add({
+          "text": "Hammer out its base and shaft, and make its flowerlike cups,"
+        });
+        menuitems.add({"text": "buds and blossoms of one piece with them.'"});
+        menuobj = minorah;
       });
     });
 
     // Display and show information about showbread when clicked
-    var showbread = await OPENWORLD.Model.createModel('assets/models/showbread.glb');
+    var showbread = await OPENWORLD.Model.createModel(
+        'assets/models/showbread.glb');
     scene.add(showbread);
-    OPENWORLD.Space.worldToLocalSurfaceObjHide(showbread, -0.38, 1.61, 0.0, 4); // 3.2,2.5, 0.0);
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(
+        showbread, -0.38, 1.61, 0.0, 4); // 3.2,2.5, 0.0);
     showbread.scale.set(0.2, 0.2, 0.2);
     OPENWORLD.Space.objTurn(showbread, 0);
-    addMsgToObj(showbread,"Click showbread",  scale:0.005, z:1);
-    OPENWORLD.BaseObject.setHighlight(showbread, scene, THREE.Color(0x0000ff), 0.35);//, scalex:1.4, scaley:1, scalez:1.4);
-    OPENWORLD.BaseObject.highlight(showbread, true,scale:1.0, opacity:0.2);
+    addMsgToObj(showbread, "Click showbread", scale: 0.005, z: 1);
+    OPENWORLD.BaseObject.setHighlight(showbread, scene, THREE.Color(0x0000ff),
+        0.35); //, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.highlight(showbread, true, scale: 1.0, opacity: 0.2);
     OPENWORLD.BaseObject.setTouchTrigger(showbread);
-    showbread.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
-
+    showbread.extra['touchtrigger'].addEventListener(
+        'trigger', (THREE.Event event) {
       print("touched");
-      OPENWORLD.BaseObject.highlight(showbread, true, scale:1.05, opacity:0.35);
-      var clickevent=event.action;
+      OPENWORLD.BaseObject.highlight(
+          showbread, true, scale: 1.05, opacity: 0.35);
+      var clickevent = event.action;
       setState(() {
-        menuposx=clickevent.clientX;
-        menuposy=clickevent.clientY-40;
+        menuposx = clickevent.clientX;
+        menuposy = clickevent.clientY - 40;
         menuitems.clear();
-        menuitems.add({"text":"The showbread are cakes of bread that"});
-        menuitems.add({"text":"are always present as an offering to God."});
-        menuitems.add({"text":"The 12 cakes are baked from fine flour,"});
-        menuitems.add({"text":"arranged in two rows on a table"});
-        menuitems.add({"text":"each cake was to contain"});
-        menuitems.add({"text":"'two tenth parts of an ephah' of flour."});
-        menuitems.add({"text":"The table is made of gold"});
-        menuobj=showbread;
+        menuitems.add({"text": "The showbread are cakes of bread that"});
+        menuitems.add({"text": "are always present as an offering to God."});
+        menuitems.add({"text": "The 12 cakes are baked from fine flour,"});
+        menuitems.add({"text": "arranged in two rows on a table"});
+        menuitems.add({"text": "each cake was to contain"});
+        menuitems.add({"text": "'two tenth parts of an ephah' of flour."});
+        menuitems.add({"text": "The table is made of gold"});
+        menuobj = showbread;
       });
     });
 
     // Show and display information when altar is clicked
     var altar = await OPENWORLD.Model.createModel('assets/models/altar.glb');
     scene.add(altar);
-    OPENWORLD.Space.worldToLocalSurfaceObjHide(altar, -0.38, 1.31, 0.0, 4); // 3.2,2.5, 0.0);
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(
+        altar, -0.38, 1.31, 0.0, 4); // 3.2,2.5, 0.0);
     altar.scale.set(0.6, 0.6, 0.6);
     OPENWORLD.Space.objTurn(altar, 0);
-    OPENWORLD.BaseObject.setHighlight(altar, scene, THREE.Color(0x0000ff), 0.35);//, scalex:1.4, scaley:1, scalez:1.4);
-    OPENWORLD.BaseObject.highlight(altar, true,scale:1.0, opacity:0.2);
+    OPENWORLD.BaseObject.setHighlight(altar, scene, THREE.Color(0x0000ff),
+        0.35); //, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.highlight(altar, true, scale: 1.0, opacity: 0.2);
     OPENWORLD.BaseObject.setTouchTrigger(altar);
-    addMsgToObj(altar,"Click altar",  scale:0.002, z:0.3);
-    altar.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
-
+    addMsgToObj(altar, "Click altar", scale: 0.002, z: 0.3);
+    altar.extra['touchtrigger'].addEventListener(
+        'trigger', (THREE.Event event) {
       print("touched");
-      OPENWORLD.BaseObject.highlight(altar, true, scale:1.05, opacity:0.35);
-      var clickevent=event.action;
+      OPENWORLD.BaseObject.highlight(altar, true, scale: 1.05, opacity: 0.35);
+      var clickevent = event.action;
       setState(() {
-        menuposx=clickevent.clientX;
-        menuposy=clickevent.clientY-40;
+        menuposx = clickevent.clientX;
+        menuposy = clickevent.clientY - 40;
         menuitems.clear();
-        menuitems.add({"text":"The altar of incense is made of shittim wood"});
-        menuitems.add({"text":"and is covered in pure gold. "});
-        menuitems.add({"text":"As God said in Exodus:"});
-        menuitems.add({"text":"'Place it in front of the curtain that is over'"});
-        menuitems.add({"text":"the Ark of the Pact—in front of the cover that is"});
-        menuitems.add({"text":"over the Pact—where I will meet with you.'"});
-        menuobj=altar;
+        menuitems.add({"text": "The altar of incense is made of shittim wood"});
+        menuitems.add({"text": "and is covered in pure gold. "});
+        menuitems.add({"text": "As God said in Exodus:"});
+        menuitems.add(
+            {"text": "'Place it in front of the curtain that is over'"});
+        menuitems.add(
+            {"text": "the Ark of the Pact—in front of the cover that is"});
+        menuitems.add({"text": "over the Pact—where I will meet with you.'"});
+        menuobj = altar;
       });
     });
 
 
     // This room is between the santuary and the court of women and has the eternal flame
-    roomB = OPENWORLD.Room.createRoom(3.2, 1.26, soundpath: "sounds/fire.mp3", volume: 0.2, randomsoundpath: "sounds/moo1.mp3", randomsoundgap: 60); //THREE.Object3D();
+    roomB = OPENWORLD.Room.createRoom(3.2, 1.26, soundpath: "sounds/fire.mp3",
+        volume: 0.2,
+        randomsoundpath: "sounds/moo1.mp3",
+        randomsoundgap: 60); //THREE.Object3D();
     roomB.extra['name'] = 'Court of the Priests';
     roomB.extra['guide'] = [
       "This the Court of the Priests.",
@@ -2766,15 +2941,15 @@ class _State extends State<SecondTemplePage>  {
     roomB.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
       if (event.action) {
         if (mounted)
-        setState(() {
+          setState(() {
             roomname = roomB.extra['name'];
-        });
+          });
       } else {
         if (roomname == roomB.extra['name']) {
           if (mounted)
-          setState(() {
+            setState(() {
               roomname = "";
-          });
+            });
         }
       }
     });
@@ -2800,7 +2975,8 @@ class _State extends State<SecondTemplePage>  {
         fireWidth, fireHeight, fireDepth, sliceSpacing, camera);
     await _fire?.init();
 
-    OPENWORLD.Space.worldToLocalSurfaceObjHide(_fire?.mesh,3.29, 0.25,0.3,3);// 3.35, 0.51, 0.3,3); //3.7);
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(
+        _fire?.mesh, 3.29, 0.25, 0.3, 3); // 3.35, 0.51, 0.3,3); //3.7);
     _fire?.mesh.scale.x = 0.25;
     _fire?.mesh.scale.y = 0.25;
     _fire?.mesh.scale.z = 0.25;
@@ -2810,51 +2986,64 @@ class _State extends State<SecondTemplePage>  {
     print('added fire');
 
     // add the altar to the eternal flame and if click give information about it
-    var altargreat = await OPENWORLD.Model.createModel('assets/models/altargreat.glb');
+    var altargreat = await OPENWORLD.Model.createModel(
+        'assets/models/altargreat.glb');
     scene.add(altargreat);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         altargreat, 3.25, 0.3, 0.0, 7); // 3.2,2.5, 0.0);
     altargreat.scale.set(0.9, 0.9, 0.9);
-    OPENWORLD.Space.objTurn(altargreat,180);
-    OPENWORLD.BaseObject.setHighlight(altargreat, scene, THREE.Color(0x0000ff), 0.35);//, scalex:1.4, scaley:1, scalez:1.4);
-    OPENWORLD.BaseObject.highlight(altargreat, true,scale:1.05, opacity:0.2);
+    OPENWORLD.Space.objTurn(altargreat, 180);
+    OPENWORLD.BaseObject.setHighlight(altargreat, scene, THREE.Color(0x0000ff),
+        0.35); //, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.highlight(altargreat, true, scale: 1.05, opacity: 0.2);
     OPENWORLD.BaseObject.setTouchTrigger(altargreat);
-    altargreat.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
-
+    altargreat.extra['touchtrigger'].addEventListener(
+        'trigger', (THREE.Event event) {
       print("touched");
-      OPENWORLD.BaseObject.highlight(altargreat, true, scale:1.02, opacity:0.35);
-      var clickevent=event.action;
+      OPENWORLD.BaseObject.highlight(
+          altargreat, true, scale: 1.02, opacity: 0.35);
+      var clickevent = event.action;
       setState(() {
-        menuposx=clickevent.clientX;
-        menuposy=clickevent.clientY-40;
+        menuposx = clickevent.clientX;
+        menuposy = clickevent.clientY - 40;
         menuitems.clear();
-        menuitems.add({"text":"The Brazen altar"});
-        menuitems.add({"text":"is where burnt animal offerings were made."});
-        menuitems.add({"text":"The sacrifices were made at atonements for sins of the people."});
-        menuitems.add({"text":"The fire of the alter is kept lit at all times."});
-        menuobj=altargreat;
+        menuitems.add({"text": "The Brazen altar"});
+        menuitems.add({"text": "is where burnt animal offerings were made."});
+        menuitems.add({
+          "text": "The sacrifices were made at atonements for sins of the people."
+        });
+        menuitems.add(
+            {"text": "The fire of the alter is kept lit at all times."});
+        menuobj = altargreat;
       });
     });
 
     OPENWORLD.BaseObject.setDistanceTrigger(altargreat, dist: 0.5);
-    altargreat.extra['trigger'].addEventListener('trigger', (THREE.Event event) async {
+    altargreat.extra['trigger'].addEventListener(
+        'trigger', (THREE.Event event) async {
       if (event.action) {
-        OPENWORLD.Sound.play(delay:OPENWORLD.Math.random()*3, path: 'sounds/die.mp3', volume: 0.5);
+        OPENWORLD.Sound.play(delay: OPENWORLD.Math.random() * 3,
+            path: 'sounds/die.mp3',
+            volume: 0.5);
       }
     });
 
     // Show cow and if near the cow then play moo sound
     _cow = await OPENWORLD.Actor.createActor('assets/actors/cow/cow.glb');
     _cow.scale = THREE.Vector3(0.005, 0.005, 0.005);
-     OPENWORLD.Space.objTurn(_cow, 0);
-    OPENWORLD.Space.worldToLocalSurfaceObjHide(_cow, 3.0, 2.4, 0.0, 3,lerpopacity: 1); //3.42);
+    OPENWORLD.Space.objTurn(_cow, 0);
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(
+        _cow, 3.0, 2.4, 0.0, 3, lerpopacity: 1); //3.42);
     scene.add(_cow);
     OPENWORLD.BaseObject.setDistanceTrigger(_cow, dist: 1.0);
-    _cow.extra['trigger'].addEventListener('trigger', (THREE.Event event) async {
+    _cow.extra['trigger'].addEventListener(
+        'trigger', (THREE.Event event) async {
       if (event.action) {
         print("in cow");
         var moo = ((OPENWORLD.Math.random() * 3) + 1).floor().toString();
-        OPENWORLD.Sound.play(delay:OPENWORLD.Math.random()*10, path: 'sounds/moo' + moo + '.mp3', volume: 0.5);
+        OPENWORLD.Sound.play(delay: OPENWORLD.Math.random() * 10,
+            path: 'sounds/moo' + moo + '.mp3',
+            volume: 0.5);
         // var starttime=OPENWORLD.System.currentMilliseconds();
       }
     });
@@ -2863,33 +3052,34 @@ class _State extends State<SecondTemplePage>  {
     var laver = await OPENWORLD.Model.createModel('assets/models/laver.glb');
     scene.add(laver);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
-        laver, 2.53,-0.51, 0.0, 7); // 3.2,2.5, 0.0);
+        laver, 2.53, -0.51, 0.0, 7); // 3.2,2.5, 0.0);
     laver.scale.set(0.11, 0.11, 0.11);
-    addMsgToObj(laver,"Click Laver",  scale:0.013, z:5.5);
-    OPENWORLD.Space.objTurn(laver,0);
-    OPENWORLD.BaseObject.setHighlight(laver, scene, THREE.Color(0x0000ff), 0.35);//, scalex:1.4, scaley:1, scalez:1.4);
-    OPENWORLD.BaseObject.highlight(laver, true,scale:1.02, opacity:0.2);
+    addMsgToObj(laver, "Click Laver", scale: 0.013, z: 5.5);
+    OPENWORLD.Space.objTurn(laver, 0);
+    OPENWORLD.BaseObject.setHighlight(laver, scene, THREE.Color(0x0000ff),
+        0.35); //, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.highlight(laver, true, scale: 1.02, opacity: 0.2);
     OPENWORLD.BaseObject.setTouchTrigger(laver);
-    laver.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
-
+    laver.extra['touchtrigger'].addEventListener(
+        'trigger', (THREE.Event event) {
       print("touched");
-      OPENWORLD.BaseObject.highlight(laver, true, scale:1.02, opacity:0.35);
-      var clickevent=event.action;
+      OPENWORLD.BaseObject.highlight(laver, true, scale: 1.02, opacity: 0.35);
+      var clickevent = event.action;
       setState(() {
-        menuposx=clickevent.clientX;
-        menuposy=clickevent.clientY-40;
+        menuposx = clickevent.clientX;
+        menuposy = clickevent.clientY - 40;
         menuitems.clear();
-        menuitems.add({"text":"The bronze laver is for "});
-        menuitems.add({"text":"Aaron, his sons and their successors"});
-        menuitems.add({"text":"as priests to wash their hands and "});
-        menuitems.add({"text":"their feet before making a sacrifice"});
-        menuobj=laver;
+        menuitems.add({"text": "The bronze laver is for "});
+        menuitems.add({"text": "Aaron, his sons and their successors"});
+        menuitems.add({"text": "as priests to wash their hands and "});
+        menuitems.add({"text": "their feet before making a sacrifice"});
+        menuobj = laver;
       });
     });
 
     // Room just outside the court of women
     roomC = OPENWORLD.Room.createRoom(9.78, 1.5,
-       soundpath: "sounds/courtyard.mp3", volume: 0.05); //THREE.Object3D();
+        soundpath: "sounds/courtyard.mp3", volume: 0.05); //THREE.Object3D();
     //roomA.extra['name']='Sanctuary';
     roomC.extra['guide'] = [
       "To the west is the",
@@ -2928,7 +3118,7 @@ class _State extends State<SecondTemplePage>  {
           "Move along, no loitering near the holy sanctuary!",
           "Remember, any misbehavior will be dealt with swiftly!",
           "Pilgrims, keep your offerings secure; the temple is crowded today.",
-       //   "All traders, set up your stalls outside the temple walls!",
+          //   "All traders, set up your stalls outside the temple walls!",
           "Go to the Mount of Olives to find what is holy",
         ],
         z: 100,
@@ -2958,7 +3148,8 @@ class _State extends State<SecondTemplePage>  {
     scene.add(guard2);
     OPENWORLD.Space.objTurn(guard2, 90);
     // Have guard walk up and down over and over
-    OPENWORLD.BaseObject.setDistanceTrigger(guard2, dist: 3, ignoreifhidden: false);
+    OPENWORLD.BaseObject.setDistanceTrigger(
+        guard2, dist: 3, ignoreifhidden: false);
     guard2.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
       if (event.action) {
         guard2.visible = true;
@@ -2992,37 +3183,35 @@ class _State extends State<SecondTemplePage>  {
 
     OPENWORLD.BaseObject.setDistanceTrigger(downstairs, dist: 0.5);
     downstairs.extra['trigger'].addEventListener('trigger',
-        (THREE.Event event) {
-      if (event.action &&
-          !roomC.extra.containsKey("upstairs") &&
-          !roomC.extra.containsKey(
-              "downstairs") ) {
+            (THREE.Event event) {
+          if (event.action &&
+              !roomC.extra.containsKey("upstairs") &&
+              !roomC.extra.containsKey(
+                  "downstairs")) {
+            roomC.extra['downstairs'] = true;
+            // top of stairs
 
-        roomC.extra['downstairs'] = true;
-        // top of stairs
-
-        OPENWORLD.Space.worldToLocalSurfaceObjLerp(
-            camera, 10.49, 3.60, 0, 1);
-        OPENWORLD.Space.objTurnLerp(camera, 0.0, 0.5);
-        new Timer(new Duration(milliseconds: 1000), () {
-
-          // bottom of stairs
-          OPENWORLD.Space.worldToLocalSurfaceObjLerp(
-              camera, 10.87, 1.4, 0, 1);
-          new Timer(new Duration(milliseconds: 1000), () {
-            OPENWORLD.Space.objTurnLerp(camera, 90, 1);
-            // outside
             OPENWORLD.Space.worldToLocalSurfaceObjLerp(
-                camera, 12.62, 1.47, 0, 1);
+                camera, 10.49, 3.60, 0, 1);
+            OPENWORLD.Space.objTurnLerp(camera, 0.0, 0.5);
             new Timer(new Duration(milliseconds: 1000), () {
-              print("removed upstairs downstairs");
-              roomC.extra.remove("upstairs");
-              roomC.extra.remove("downstairs");
+              // bottom of stairs
+              OPENWORLD.Space.worldToLocalSurfaceObjLerp(
+                  camera, 10.87, 1.4, 0, 1);
+              new Timer(new Duration(milliseconds: 1000), () {
+                OPENWORLD.Space.objTurnLerp(camera, 90, 1);
+                // outside
+                OPENWORLD.Space.worldToLocalSurfaceObjLerp(
+                    camera, 12.62, 1.47, 0, 1);
+                new Timer(new Duration(milliseconds: 1000), () {
+                  print("removed upstairs downstairs");
+                  roomC.extra.remove("upstairs");
+                  roomC.extra.remove("downstairs");
+                });
+              });
             });
-          });
+          }
         });
-      }
-    });
 
     // If in mount of olives room then will go up the stair back to roomc
     var upstairs = THREE.Object3D();
@@ -3047,7 +3236,7 @@ class _State extends State<SecondTemplePage>  {
           // _space.objTurnLerp(camera,90,0.5);
 
           new Timer(new Duration(milliseconds: 1000), () {
-            OPENWORLD.Space.objTurnLerp(camera,180, 1);
+            OPENWORLD.Space.objTurnLerp(camera, 180, 1);
             // back to top outside
             OPENWORLD.Space.worldToLocalSurfaceObjLerp(
                 camera, 9.95, 3.83, 5, 1);
@@ -3059,7 +3248,6 @@ class _State extends State<SecondTemplePage>  {
               roomC.extra.remove("upstairs");
               roomC.extra.remove("downstairs");
               print("removed upstairs downstairs");
-
             });
           });
         });
@@ -3087,24 +3275,24 @@ class _State extends State<SecondTemplePage>  {
         minx: -3.47, maxx: 10.1, miny: -12.4, maxy: -2.1);
 
     roomSouthCourt.extra['trigger'].addEventListener('trigger',
-        (THREE.Event event) {
-      if (event.action) {
-        print("Royal Stoa");
-        if (mounted)
-          setState(() {
-          roomname = "Royal Stoa";
+            (THREE.Event event) {
+          if (event.action) {
+            print("Royal Stoa");
+            if (mounted)
+              setState(() {
+                roomname = "Royal Stoa";
+              });
+          } else {
+            if (mounted)
+              setState(() {
+                roomname = "";
+              });
+          }
         });
-      } else {
-        if (mounted)
-        setState(() {
-          roomname = "";
-        });
-      }
-    });
 
     setActorSize(seller);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
-        seller, 3.4, -11.1, 0, 4,lerpopacity: 1); //3.42);
+        seller, 3.4, -11.1, 0, 4, lerpopacity: 1); //3.42);
     scene.add(seller);
     // _space.objTurn(citizen4, 0);  // north
 
@@ -3137,7 +3325,7 @@ class _State extends State<SecondTemplePage>  {
 
     setActorSize(lender);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
-        lender, 1.8, -11.1, 0.0, 4,lerpopacity: 1); //3.42);
+        lender, 1.8, -11.1, 0.0, 4, lerpopacity: 1); //3.42);
     scene.add(lender);
     OPENWORLD.BaseObject.setDistanceTrigger(lender, dist: 1.0);
     OPENWORLD.Mob.setInitTurn(lender, 0);
@@ -3181,19 +3369,19 @@ class _State extends State<SecondTemplePage>  {
     OPENWORLD.Room.setDistanceTrigger(roomNorthCourt,
         minx: -3.47, maxx: 10.1, miny: 4.61, maxy: 12.46);
     roomNorthCourt.extra['trigger'].addEventListener('trigger',
-        (THREE.Event event) {
-      if (event.action) {
-        if (mounted)
-          setState(() {
-          roomname = "Court of Gentiles";
+            (THREE.Event event) {
+          if (event.action) {
+            if (mounted)
+              setState(() {
+                roomname = "Court of Gentiles";
+              });
+          } else {
+            if (mounted)
+              setState(() {
+                roomname = "";
+              });
+          }
         });
-      } else {
-        if (mounted)
-        setState(() {
-          roomname = "";
-        });
-      }
-    });
 
     createCitizens(seller, OPENWORLD.Room.getX(roomNorthCourt),
         OPENWORLD.Room.getY(roomNorthCourt), 1.5, 2);
@@ -3283,7 +3471,7 @@ class _State extends State<SecondTemplePage>  {
           "If I eat beans I have a bubble bath ",
         ],
         z: 70,
-        scale:0.4,
+        scale: 0.4,
         width: 300);
 
     // Put guards at south entrance
@@ -3334,7 +3522,8 @@ class _State extends State<SecondTemplePage>  {
 
     scene.add(guard9);
     OPENWORLD.Space.objTurn(guard9, 180);
-    OPENWORLD.BaseObject.setDistanceTrigger(guard9, dist: 5, ignoreifhidden: false);
+    OPENWORLD.BaseObject.setDistanceTrigger(
+        guard9, dist: 5, ignoreifhidden: false);
     guard9.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
       if (event.action) {
         guard9.visible = true;
@@ -3354,23 +3543,28 @@ class _State extends State<SecondTemplePage>  {
     // Put a person in house
     var person = await OPENWORLD.Model.createModel('assets/models/person.glb');
     scene.add(person);
-    OPENWORLD.Space.worldToLocalSurfaceObjHide(person, -8.27, -20.06, -0.03, 4); // 3.2,2.5, 0.0);
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(
+        person, -8.27, -20.06, -0.03, 4); // 3.2,2.5, 0.0);
     person.scale.set(0.004, 0.004, 0.004);
-    OPENWORLD.Space.objTurn(person,140);
+    OPENWORLD.Space.objTurn(person, 140);
 
     // Put a dog in the house which randomly urinates
     Group dog = await OPENWORLD.Actor.createActor('assets/actors/dog.glb',);
-    dog.scale.set(0.005*convscale,0.005*convscale,0.005*convscale);//25, 0.0025, 0.0025);
+    dog.scale.set(0.005 * convscale, 0.005 * convscale,
+        0.005 * convscale); //25, 0.0025, 0.0025);
 
-    OPENWORLD.Space.worldToLocalSurfaceObjHide(dog,-8.14, -19.86, 0, 3,lerpopacity: 1.0);
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(
+        dog, -8.14, -19.86, 0, 3, lerpopacity: 1.0);
 
-    OPENWORLD.Space.objTurn(dog,0);
+    OPENWORLD.Space.objTurn(dog, 0);
     scene.add(dog);
     OPENWORLD.BaseObject.setDistanceTrigger(dog,
-        dist: 2);//, ignoreifhidden: false);
+        dist: 2); //, ignoreifhidden: false);
     dog.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
       if (event.action) {
-        OPENWORLD.Sound.play( path: 'sounds/bark.mp3', volume: 0.1, delay:OPENWORLD.Math.random()*5);
+        OPENWORLD.Sound.play(path: 'sounds/bark.mp3',
+            volume: 0.1,
+            delay: OPENWORLD.Math.random() * 5);
         var urinate = OPENWORLD.Math.random() * 30;
         OPENWORLD.Actor.playActionThen(
             dog, "urinate", "idle", delay: urinate);
@@ -3382,11 +3576,12 @@ class _State extends State<SecondTemplePage>  {
               "Dirty dog, dont wee in here!",
               "Go outside!"
             ],
-            z: 80, //0.5
+            z: 80,
+            //0.5
             scale: 0.3,
             width: 300,
-            randwait:0,
-            delay: urinate+3);
+            randwait: 0,
+            delay: urinate + 3);
 
         OPENWORLD.Mob.setChatter(
             person,
@@ -3395,10 +3590,9 @@ class _State extends State<SecondTemplePage>  {
               //  "Stupid dog, dont wee in here"
             ],
             z: 70,
-            scale:0.3,
+            scale: 0.3,
             width: 300,
-        delay:urinate+20);
-
+            delay: urinate + 20);
       } else {
 
       }
@@ -3406,7 +3600,7 @@ class _State extends State<SecondTemplePage>  {
 
     // This is the western wall with more sellers
     roomWest = OPENWORLD.Room.createRoom(-8.3, -7.08,
-       soundpath: "sounds/courtyard.mp3", volume: 0.05); //THREE.Object3D();
+        soundpath: "sounds/courtyard.mp3", volume: 0.05); //THREE.Object3D();
 
     roomWest.extra['guide'] = [
       "We are at the western wall.",
@@ -3426,14 +3620,14 @@ class _State extends State<SecondTemplePage>  {
     roomWest.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
       if (event.action) {
         if (mounted)
-        setState(() {
-          roomname = "Western Wall";
-        });
+          setState(() {
+            roomname = "Western Wall";
+          });
       } else {
         if (mounted)
-        setState(() {
-          roomname = "";
-        });
+          setState(() {
+            roomname = "";
+          });
       }
     });
 
@@ -3443,7 +3637,7 @@ class _State extends State<SecondTemplePage>  {
 
     setActorSize(seller2);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
-        seller2, -7.23, -9.54, 0.0, 4,lerpopacity: 1); //3.42); //-7.22, -10.12
+        seller2, -7.23, -9.54, 0.0, 4, lerpopacity: 1); //3.42); //-7.22, -10.12
     scene.add(seller2);
     // OPENWORLD.Space.setDistanceTrigger(seller2, dist: 1.0);
     OPENWORLD.Mob.setInitTurn(seller2, 90);
@@ -3469,7 +3663,7 @@ class _State extends State<SecondTemplePage>  {
 
     setActorSize(seller3);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
-        seller3, -7.28, -9.01, 0.0, 4,lerpopacity: 1); //3.42);
+        seller3, -7.28, -9.01, 0.0, 4, lerpopacity: 1); //3.42);
     scene.add(seller3);
     // OPENWORLD.Space.setDistanceTrigger(seller2, dist: 1.0);
     OPENWORLD.Mob.setInitTurn(seller3, 90);
@@ -3507,14 +3701,14 @@ class _State extends State<SecondTemplePage>  {
 
     // Have cat wonder around house
     Group cat = await OPENWORLD.Actor.createActor('assets/actors/cat.glb',
-        z:0);
-    cat.scale.set(0.01*convscale,0.01*convscale,0.01*convscale);
-    OPENWORLD.Space.objTurn(cat.children[0],0);
+        z: 0);
+    cat.scale.set(0.01 * convscale, 0.01 * convscale, 0.01 * convscale);
+    OPENWORLD.Space.objTurn(cat.children[0], 0);
 
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
-        cat,-15.04, 6.73, 0, 4,lerpopacity: 1.0);
+        cat, -15.04, 6.73, 0, 4, lerpopacity: 1.0);
 
-    OPENWORLD.Space.objTurn(cat,0);
+    OPENWORLD.Space.objTurn(cat, 0);
     scene.add(cat);
 
     // Cat meows when you get near
@@ -3522,12 +3716,14 @@ class _State extends State<SecondTemplePage>  {
         dist: 3);
     cat.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
       if (event.action) {
-        OPENWORLD.Sound.play( path: 'sounds/meow.mp3', volume: 0.1, delay:OPENWORLD.Math.random()*5);
+        OPENWORLD.Sound.play(path: 'sounds/meow.mp3',
+            volume: 0.1,
+            delay: OPENWORLD.Math.random() * 5);
         OPENWORLD.Mob.randomwalk(cat, 1, 0.15, 0.1,
-            action: "walk",
-            actionduration: 0.5,
-            stopaction: "idle",
-            reset: true,
+          action: "walk",
+          actionduration: 0.5,
+          stopaction: "idle",
+          reset: true,
         );
         //  citizen.visible = true;
       } else {
@@ -3536,18 +3732,20 @@ class _State extends State<SecondTemplePage>  {
     });
 
     // Put person in second house
-    var person2 = person.clone();//await OPENWORLD.Model..createModel('assets/models/person.glb');
+    var person2 = person
+        .clone(); //await OPENWORLD.Model..createModel('assets/models/person.glb');
     scene.add(person2);
-    OPENWORLD.Space.worldToLocalSurfaceObjHide(person2, -14.35, 7.26, 0.0, 4); // 3.2,2.5, 0.0);
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(
+        person2, -14.35, 7.26, 0.0, 4); // 3.2,2.5, 0.0);
     //person2.scale.set(0.004, 0.004, 0.004);
-    OPENWORLD.Space.objTurn(person2,100);
+    OPENWORLD.Space.objTurn(person2, 100);
     OPENWORLD.Mob.setChatter(
         person2,
         ["Hello, welcome",
-        "Have you seen my pussy? I can't find it",
-        "How do like my place?"],
+          "Have you seen my pussy? I can't find it",
+          "How do like my place?"],
         z: 70,
-        scale:0.3,
+        scale: 0.3,
         width: 300);
 
 
@@ -3574,19 +3772,19 @@ class _State extends State<SecondTemplePage>  {
         minx: -6.3, maxx: -0.45, maxy: 19.3, miny: 14.6);
 
     roomAntonio.extra['trigger'].addEventListener('trigger',
-        (THREE.Event event) {
-      if (event.action) {
-        if (mounted)
-        setState(() {
-          roomname = "Antonia Fortress";
+            (THREE.Event event) {
+          if (event.action) {
+            if (mounted)
+              setState(() {
+                roomname = "Antonia Fortress";
+              });
+          } else {
+            if (mounted)
+              setState(() {
+                roomname = "";
+              });
+          }
         });
-      } else {
-        if (mounted)
-        setState(() {
-          roomname = "";
-        });
-      }
-    });
 
     var guard4 = await OPENWORLD.Actor.copyActor(guard, randomduration: 0.1);
     await OPENWORLD.Model.setTexture(guard4, "assets/actors/soldier/bodys.png");
@@ -3680,10 +3878,10 @@ class _State extends State<SecondTemplePage>  {
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         water4, 8.1, 14.8, 0.7, 7); //7.7, 1.0, 0.05);
 
-     // Pool of israel
-     if (!kIsWeb) {
-       // If smartphone use Water shader instead of WaterSimple
-      final waterGeometryi = THREE.PlaneGeometry(20.0,20.0);
+    // Pool of israel
+    if (!kIsWeb) {
+      // If smartphone use Water shader instead of WaterSimple
+      final waterGeometryi = THREE.PlaneGeometry(20.0, 20.0);
 
       final Map<String, dynamic> params = {
         'color': THREE.Color(0.25, 0.3, 0.35),
@@ -3705,44 +3903,49 @@ class _State extends State<SecondTemplePage>  {
         'clipBias': 3.0
       });
 
-      wateri.scale.set(1.6/20.0, 1.7/20, 1);// 1.7/20.0);
+      wateri.scale.set(1.6 / 20.0, 1.7 / 20, 1); // 1.7/20.0);
       OPENWORLD.Space.setTurnPitchRoll(wateri, -16, 0, 90);
       OPENWORLD.Space.worldToLocalSurfaceObjHide(
           wateri, 5.7, 19.89, 0.1, 7); //7.7, 1.0, 0.05);
       scene.add(wateri);
     } else {
-       var water5 = water1.clone(true);
-       scene.add(water5);
-       water5.scale.set(1.6, 1.0, 1.7);
-       OPENWORLD.Space.worldToLocalSurfaceObjHide(
-           water5, 5.7, 19.89, 0.1, 7); //7.7, 1.0, 0.05);
-       OPENWORLD.Space.objTurn(water5, -16);
-     }
+      var water5 = water1.clone(true);
+      scene.add(water5);
+      water5.scale.set(1.6, 1.0, 1.7);
+      OPENWORLD.Space.worldToLocalSurfaceObjHide(
+          water5, 5.7, 19.89, 0.1, 7); //7.7, 1.0, 0.05);
+      OPENWORLD.Space.objTurn(water5, -16);
+    }
 
     // Add fountain to pool of israel with information if click it
-    var fountain = await OPENWORLD.Model.createModel('assets/models/fountain.glb');
+    var fountain = await OPENWORLD.Model.createModel(
+        'assets/models/fountain.glb');
     scene.add(fountain);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
-    fountain, 5.8, 13.85, 0.0, 7); // 3.2,2.5, 0.0);
+        fountain, 5.8, 13.85, 0.0, 7); // 3.2,2.5, 0.0);
     fountain.scale.set(0.11, 0.11, 0.11);
-    addMsgToObj(fountain,"ⓘ",  scale:0.011, z:2.3);  // \u00a9 \u24D8 \u1F6C8 \u02139
-    OPENWORLD.Space.objTurn(fountain,180);
-    OPENWORLD.BaseObject.setHighlight(fountain, scene, THREE.Color(0x0000aa), 0.35);//, scalex:1.4, scaley:1, scalez:1.4);
-    OPENWORLD.BaseObject.highlight(fountain, true,scale:1.02, opacity:0.2);
+    addMsgToObj(
+        fountain, "ⓘ", scale: 0.011, z: 2.3); // \u00a9 \u24D8 \u1F6C8 \u02139
+    OPENWORLD.Space.objTurn(fountain, 180);
+    OPENWORLD.BaseObject.setHighlight(fountain, scene, THREE.Color(0x0000aa),
+        0.35); //, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.highlight(fountain, true, scale: 1.02, opacity: 0.2);
     OPENWORLD.BaseObject.setTouchTrigger(fountain);
-    fountain.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
+    fountain.extra['touchtrigger'].addEventListener(
+        'trigger', (THREE.Event event) {
       print("touched");
-      OPENWORLD.BaseObject.highlight(fountain, true, scale:1.02, opacity:0.35);
-      var clickevent=event.action;
+      OPENWORLD.BaseObject.highlight(
+          fountain, true, scale: 1.02, opacity: 0.35);
+      var clickevent = event.action;
       setState(() {
-        menuposx=clickevent.clientX;
-        menuposy=clickevent.clientY-40;
+        menuposx = clickevent.clientX;
+        menuposy = clickevent.clientY - 40;
         menuitems.clear();
-        menuitems.add({"text":"The pool of Israel or"});
-        menuitems.add({"text":"Birket Israel is a water"});
-        menuitems.add({"text":"reservoir. It  is also used"});
-        menuitems.add({"text":"to protect the northern wall from attack"});
-        menuobj=fountain;
+        menuitems.add({"text": "The pool of Israel or"});
+        menuitems.add({"text": "Birket Israel is a water"});
+        menuitems.add({"text": "reservoir. It  is also used"});
+        menuitems.add({"text": "to protect the northern wall from attack"});
+        menuobj = fountain;
       });
     });
 
@@ -3763,7 +3966,7 @@ class _State extends State<SecondTemplePage>  {
 
     OPENWORLD.Mob.setName(guard6, "Isiah");
 
-    createCitizens(seller, 5.10, 17.79,3,2);//OPENWORLD.Room.getX(roomNorth),
+    createCitizens(seller, 5.10, 17.79, 3, 2); //OPENWORLD.Room.getX(roomNorth),
 
     // Mount of olives. Has Gabriel at the top and a horse near the east entrance
     roomOlives = OPENWORLD.Room.createRoom(37, 1.26,
@@ -3779,7 +3982,8 @@ class _State extends State<SecondTemplePage>  {
     OPENWORLD.Room.setDistanceTrigger(roomOlives,
         maxy: 32, miny: -30, minx: 10.1, maxx: 80);
 
-    var guard7 = await OPENWORLD.Actor.copyActor(guard, randomduration: 0.1, texture:"assets/actors/soldier/bodys.png");
+    var guard7 = await OPENWORLD.Actor.copyActor(
+        guard, randomduration: 0.1, texture: "assets/actors/soldier/bodys.png");
 
     setActorSize(guard7);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
@@ -3810,7 +4014,8 @@ class _State extends State<SecondTemplePage>  {
         z: 100,
         width: 300);
 
-    var guard8 = await OPENWORLD.Actor.copyActor(guard, randomduration: 0.1, texture:"assets/actors/soldier/bodys2.png");
+    var guard8 = await OPENWORLD.Actor.copyActor(guard, randomduration: 0.1,
+        texture: "assets/actors/soldier/bodys2.png");
     setActorSize(guard8);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         guard8, 12.54, 1.32, 0, 4); // 9.8,1.1, 0.14,3); //3.42);
@@ -3826,10 +4031,11 @@ class _State extends State<SecondTemplePage>  {
 
     // Horse that player can ride
     _horse = await OPENWORLD.Actor.createActor('assets/actors/horse.glb');
-    OPENWORLD.Space.objTurn(_horse.children[0],0);
-    OPENWORLD.Space.objTurn(_horse,0);//OPENWORLD.Math.random()*360);
-   // 0.0025 vs 0.006
-    _horse.scale.set(0.014*convscale,0.014*convscale,0.014*convscale);//25, 0.0025, 0.0025);
+    OPENWORLD.Space.objTurn(_horse.children[0], 0);
+    OPENWORLD.Space.objTurn(_horse, 0); //OPENWORLD.Math.random()*360);
+    // 0.0025 vs 0.006
+    _horse.scale.set(0.014 * convscale, 0.014 * convscale,
+        0.014 * convscale); //25, 0.0025, 0.0025);
 
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         _horse, 12.67, 5.22, 0, 6); // 9.8,1.1, 0.14,3); //3.42);
@@ -3841,7 +4047,7 @@ class _State extends State<SecondTemplePage>  {
       //print("horse trigger");
       if (event.action) {
         if (!horseridingcloploaded) {
-          horseridingcloploaded=true;
+          horseridingcloploaded = true;
           horseridingclop = OPENWORLD.Sound.getAudioPlayer();
         }
         OPENWORLD.Sound.play(
@@ -3853,12 +4059,10 @@ class _State extends State<SecondTemplePage>  {
             delay: 2);
         setState(() {
           horseriding = true;
-
         });
-        OPENWORLD.You.speed=horsespeed;
+        OPENWORLD.You.speed = horsespeed;
 
-        OPENWORLD.Sound.play( path: 'sounds/horse.mp3', volume: 0.5);
-
+        OPENWORLD.Sound.play(path: 'sounds/horse.mp3', volume: 0.5);
       } else {
 
       }
@@ -3913,75 +4117,77 @@ class _State extends State<SecondTemplePage>  {
     torah.visible = false;
 
     // If get near gabriel who is hidden only appear if the player has got the blessing from the priest first
-    OPENWORLD.BaseObject.setDistanceTrigger(gabriel, dist: 1.6, ignoreifhidden: false);
+    OPENWORLD.BaseObject.setDistanceTrigger(
+        gabriel, dist: 1.6, ignoreifhidden: false);
     gabriel.extra['trigger'].addEventListener('trigger',
-        (THREE.Event event) async {
-      if (event.action &&
-          priestblessing) {
+            (THREE.Event event) async {
+          if (event.action &&
+              priestblessing) {
+            // Show gabriel and flares
+            gabriel.visible = true;
+            flaresobj.visible = true;
+            OPENWORLD.You.immobile = true;
+            OPENWORLD.You.immobileturn = true;
+            dismount(left: true);
+            OPENWORLD.Space.faceObjectLerp(camera, gabriel, 1, delay: 1);
+            OPENWORLD.Space.worldToLocalSurfaceObjLerp(
+                flaresobj, 59.70, 1.01, 0.8, 3); //3.42);
+            print("gabriel visible");
+            OPENWORLD.Space.worldToLocalSurfaceObjLerp(
+                gabriel, 59.20, 1.01, 0.5, 3); //3.42);
 
-        // Show gabriel and flares
-        gabriel.visible = true;
-        flaresobj.visible = true;
-        OPENWORLD.You.immobile=true;
-        OPENWORLD.You.immobileturn=true;
-        dismount(left:true);
-        OPENWORLD.Space.faceObjectLerp(camera, gabriel, 1, delay:1);
-        OPENWORLD.Space.worldToLocalSurfaceObjLerp(
-            flaresobj, 59.70, 1.01, 0.8, 3); //3.42);
-        print("gabriel visible");
-        OPENWORLD.Space.worldToLocalSurfaceObjLerp(
-            gabriel, 59.20, 1.01, 0.5, 3); //3.42);
+            // Put back shofars so can remind player to say prayer at the eternal flame
+            if (_shofar.parent != scene)
+              scene.add(_shofar);
+            if (_shofar2.parent != scene)
+              scene.add(_shofar2);
+            // Give prayer to player
+            new Timer(new Duration(milliseconds: (6 * 1000).floor()), () async {
+              var time;
+              if (!hasprayer) {
+                time = await OPENWORLD.Mob.setSpeech(
+                    gabriel,
+                    [
+                      "I see you are blessed and I see you are worthy",
+                      "Say this prayer at the perpetual fire",
+                      "in the Court of priests",
+                      "and what Israel has lost will return",
+                      "Take it now"
+                    ],
+                    z: -0.1,
+                    //0.5
+                    scale: 0.004,
+                    width: 300,
 
-        // Put back shofars so can remind player to say prayer at the eternal flame
-        if (_shofar.parent!=scene)
-          scene.add(_shofar);
-        if (_shofar2.parent!=scene)
-          scene.add(_shofar2);
-        // Give prayer to player
-        new Timer(new Duration(milliseconds: (6 * 1000).floor()), () async {
-          var time;
-          if (!hasprayer) {
-            time=await OPENWORLD.Mob.setSpeech(
-                gabriel,
-                [
-                  "I see you are blessed and I see you are worthy",
-                  "Say this prayer at the perpetual fire",
-                  "in the Court of priests",
-                  "and what Israel has lost will return",
-                  "Take it now"
-                ],
-                z: -0.1, //0.5
-                scale: 0.004,
-                width: 300,
+                    randwait: 0,
+                    delay: 8); //z:100, width:300);
+                torah.visible = true; // show prayer
+                OPENWORLD.Space.placeBeforeCamera(torah, 0.5, time: 2);
+              } else {
+                time = await OPENWORLD.Mob.setSpeech(
+                    gabriel,
+                    [
+                      "Return to the Court of Priests and",
+                      "say the prayer at the perpetual fire.",
+                      "Then what Israel has lost will finally return"
+                    ],
+                    z: -0.1,
+                    //0.5,
+                    scale: 0.004,
+                    width: 300,
+                    randwait: 0,
+                    delay: 8);
+              }
+              // Allow movement of player again after have listened to gabriel
+              OPENWORLD.You.setImmobile(false, delay: time - 5);
+              OPENWORLD.You.setImmobileTurn(false, delay: time - 20);
+            });
 
-                randwait:0,
-                delay: 8); //z:100, width:300);
-            torah.visible = true;  // show prayer
-            OPENWORLD.Space.placeBeforeCamera(torah, 0.5, time: 2);
+            OPENWORLD.Sound.play(path: 'sounds/angels.mp3', volume: 1);
           } else {
-            time=await OPENWORLD.Mob.setSpeech(
-                gabriel,
-                [
-                  "Return to the Court of Priests and",
-                  "say the prayer at the perpetual fire.",
-                  "Then what Israel has lost will finally return"
-                ],
-                z: -0.1,//0.5,
-                scale: 0.004,
-                width: 300,
-                randwait: 0,
-                delay: 8);
+
           }
-          // Allow movement of player again after have listened to gabriel
-          OPENWORLD.You.setImmobile(false,delay:time-5);
-          OPENWORLD.You.setImmobileTurn(false,delay:time-20);
         });
-
-        OPENWORLD.Sound.play( path: 'sounds/angels.mp3', volume: 1);
-      } else {
-
-      }
-    });
 
     // If go near prayer then pick it up and put in inventory
     OPENWORLD.BaseObject.setDistanceTrigger(torah, dist: 0.2);
@@ -3989,7 +4195,7 @@ class _State extends State<SecondTemplePage>  {
       if (event.action) {
         torah.visible = false;
 
-        OPENWORLD.Sound.play( path: 'sounds/bag.mp3', volume: 1);
+        OPENWORLD.Sound.play(path: 'sounds/bag.mp3', volume: 1);
 
         OPENWORLD.Persistence.set("hasprayer", true);
         setState(() {
@@ -4001,12 +4207,11 @@ class _State extends State<SecondTemplePage>  {
     });
 
     createCitizens(seller, OPENWORLD.Room.getX(roomOlives),
-        OPENWORLD.Room.getY(roomOlives), 10, 2, chatter:[
+        OPENWORLD.Room.getY(roomOlives), 10, 2, chatter: [
           "You're getting close!",
           "There is a wonderful view at the top",
           "I love walking to the top of the Mount of Olives",
           "Whats with the smoke at the top of the mountain?"]);
-
 
 
     // Show hotloaded objects - this function is called every time hotload
@@ -4020,19 +4225,23 @@ class _State extends State<SecondTemplePage>  {
 
 
     Future.delayed(const Duration(milliseconds: 5000), () {
-
+   /*setState(() {
+     width=width/2;
+   });*/
+      //three3dRender.
     });
 
     // Create the second shofar
     // Should really be in roomBC
     print("creating shofar2");
-    _shofar2 = await OPENWORLD.Actor.copyActor(_shofar, randomduration: 0.1, texture:"assets/actors/shofar/shofar2.jpg");
+    _shofar2 = await OPENWORLD.Actor.copyActor(_shofar, randomduration: 0.1,
+        texture: "assets/actors/shofar/shofar2.jpg");
 
     setActorSize(_shofar2);
 
 
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
-        _shofar2, 7.7, 0.9, 0, 3,lerpopacity: 1); //3.42);
+        _shofar2, 7.7, 0.9, 0, 3, lerpopacity: 1); //3.42);
     OPENWORLD.Space.objTurn(_shofar2, 0.0);
     scene.add(_shofar2);
 
@@ -4040,7 +4249,7 @@ class _State extends State<SecondTemplePage>  {
     _lightshofar.intensity = 1; // 0.6;
     _lightshofar.angle = 0.5;
     _lightshofar.penumbra = 0.5;
-    _lightshofar.distance=4;
+    _lightshofar.distance = 4;
 
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         _lightshofar, 7.7, 1.3, 2, 3); //3.42);
@@ -4076,7 +4285,7 @@ class _State extends State<SecondTemplePage>  {
       var y = await OPENWORLD.Persistence.get("posy");
       OPENWORLD.Space.worldToLocalSurfaceObj(
           camera, x!, y!, OPENWORLD.Camera.cameraoffset); //home temple
-      var turn=await OPENWORLD.Persistence.get("turn",def:0);
+      var turn = await OPENWORLD.Persistence.get("turn", def: 0);
 
       OPENWORLD.Camera.setTurn(turn);
     } else {
@@ -4084,30 +4293,30 @@ class _State extends State<SecondTemplePage>  {
       OPENWORLD.Space.worldToLocalSurfaceObj(
           camera, 8.59, 1.31, OPENWORLD.Camera.cameraoffset); //home temple
 
-      OPENWORLD.Camera.setTurn(-90);//Space.objTurn(camera,-90);
-      
-      if (!kIsWeb)  // Persistence doesnt work on web 
+      OPENWORLD.Camera.setTurn(-90); //Space.objTurn(camera,-90);
+
+      if (!kIsWeb) // Persistence doesnt work on web
         WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
           userGuidanceController.show();
         });
 
       //   lindos bunks camera.lookAt(_shofar.position);
-   //    OPENWORLD.Space.worldToLocalSurfaceObj(camera,  -6.79, -9.53, OPENWORLD.Camera.cameraoffset); //westwall market
+      //    OPENWORLD.Space.worldToLocalSurfaceObj(camera,  -6.79, -9.53, OPENWORLD.Camera.cameraoffset); //westwall market
       // OPENWORLD.Space.worldToLocalSurfaceObj(camera,  -2.80, 16.26, OPENWORLD.Camera.cameraoffset); //antonia fortress
 
-    //  OPENWORLD.Space.worldToLocalSurfaceObj(camera, 3.15, 1.05, OPENWORLD.Camera.cameraoffset);  //fire temple
+      //  OPENWORLD.Space.worldToLocalSurfaceObj(camera, 3.15, 1.05, OPENWORLD.Camera.cameraoffset);  //fire temple
       // OPENWORLD.Space.worldToLocalSurfaceObj(camera, 7.71, -10.59, 0.15); //fish table
       // OPENWORLD.Space.worldToLocalSurfaceObj(camera,4.76, -15.77,OPENWORLD.Camera.cameraoffset);//0.15);  pool
       // OPENWORLD.Space.worldToLocalSurfaceObj(camera,-7.14, -19.91,OPENWORLD.Camera.cameraoffset);//0.15);  house
       //  OPENWORLD.Space.worldToLocalSurfaceObj(camera,-12.69, 8.16,OPENWORLD.Camera.cameraoffset);//0.15);  house2
-   //    OPENWORLD.Space.worldToLocalSurfaceObj(camera, 3.83, 15.86, 0.15); //pool israel
-       //  OPENWORLD.Space.worldToLocalSurfaceObj(camera, 57.55, 4.91, 0.15); //mount olives
-   //   OPENWORLD.Space.worldToLocalSurfaceObj(camera, 13.71, 3.65, 0.15); //mount olives entrance
+      //    OPENWORLD.Space.worldToLocalSurfaceObj(camera, 3.83, 15.86, 0.15); //pool israel
+      //  OPENWORLD.Space.worldToLocalSurfaceObj(camera, 57.55, 4.91, 0.15); //mount olives
+      //   OPENWORLD.Space.worldToLocalSurfaceObj(camera, 13.71, 3.65, 0.15); //mount olives entrance
 
 
     }
-    var dist=OPENWORLD.Space.getDistanceBetweenObjs(camera, roomC);
-    if (dist<2) {
+    var dist = OPENWORLD.Space.getDistanceBetweenObjs(camera, roomC);
+    if (dist < 2) {
       // Only play shofar if start game near shofar - otherwise annoying if play it every time
       print("animating shofar");
       await animateShofar();
@@ -4125,7 +4334,6 @@ class _State extends State<SecondTemplePage>  {
       heartbeat();
       //userGuidanceController.show(subIndex:1);
     });
-
   }
 
   resetYou() {
@@ -4136,13 +4344,14 @@ class _State extends State<SecondTemplePage>  {
   }
 
   // Create brand
-  makeBrandLight( nightonly, blue) {
-    var group=THREE.Group();
-    var light ;
+  makeBrandLight(nightonly, blue) {
+    var group = THREE.Group();
+    var light;
     if (!blue)
-      light= new THREE.PointLight(0xFFA500); //PointLight(0xffffff)
+      light = new THREE.PointLight(0xFFA500); //PointLight(0xffffff)
     else
-      light = new THREE.PointLight(0x6cd5fb);//9ae4ff);//9999ff); //PointLight(0xffffff)
+      light = new THREE.PointLight(
+          0x6cd5fb); //9ae4ff);//9999ff); //PointLight(0xffffff)
 
     light.intensity = 1.0; // 0.6;
     light.distance = 1.2;
@@ -4157,7 +4366,6 @@ class _State extends State<SecondTemplePage>  {
   // Animate the shofars on startup
   animateShofar() async
   {
-
     OPENWORLD.Actor.playActionThen(
         _shofar, "armsup", "hornidle");
 
@@ -4166,11 +4374,11 @@ class _State extends State<SecondTemplePage>  {
         _shofar2, "armsup", "hornidle");
 
     Future.delayed(const Duration(milliseconds: 2000), () async {
-      var time=await OPENWORLD.Sound.play(path:'sounds/shofar.mp3');
+      var time = await OPENWORLD.Sound.play(path: 'sounds/shofar.mp3');
 
 
-      if (time!=null&&time>0)
-        Future.delayed(Duration(milliseconds: (time*1000).round()), () async {
+      if (time != null && time > 0)
+        Future.delayed(Duration(milliseconds: (time * 1000).round()), () async {
           print("done play");
           if (CLIENT.Connection.connect_state !=
               CLIENT.Connection
@@ -4181,13 +4389,9 @@ class _State extends State<SecondTemplePage>  {
                 _shofar, "horndown", "idle");
             OPENWORLD.Actor.playActionThen(
                 _shofar2, "horndown", "idle");
-
           }
         });
-
     });
-
-
   }
 
   // Called when you click the connect/disconnect button
@@ -4234,18 +4438,18 @@ class _State extends State<SecondTemplePage>  {
 
         // Disable DomLikeListenable so can type
         _globalKey.currentState?.pause = true;
-
       });
       var value = names[(OPENWORLD.Math.random() * names.length).floor()];
       //  FocusScope.of(context).unfocus();
-      var name=await promptDialog('Player Name','To play online enter your players name',value);
+      var name = await promptDialog(
+          'Player Name', 'To play online enter your players name', value);
 
 
       setState(() {
         // loaded=true;
         _globalKey.currentState?.pause = false;
       });
-      if ((name==null|| name == "" ) &&
+      if ((name == null || name == "") &&
           CLIENT.Connection.connect_state != CLIENT.Connection.CS_CONNECTED) {
         setState(() {
           CLIENT.Connection.connect_state = CLIENT.Connection.CS_NONE;
@@ -4254,7 +4458,6 @@ class _State extends State<SecondTemplePage>  {
         if (CLIENT.Connection.connect_state == CLIENT.Connection.CS_CONNECTED) {
           msg();
         } else {
-
           setState(() {
             prompttext = "Connecting...";
             CLIENT.You.name = name!; //$("name").value;
@@ -4268,23 +4471,19 @@ class _State extends State<SecondTemplePage>  {
                 name: "idle",
                 clampWhenFinished: true,
                 stopallactions: true
-                );
-
+            );
           }
           setState(() {
             CLIENT.Connection.connect_state = CLIENT.Connection.CS_CONNECTING;
           });
         }
       }
-
     }
   }
 
 
   // Change layout and stop polling server
   disconnect() async {
-
-
     // Tell the server you have disconnected
     if (CLIENT.Connection.connect_state == CLIENT.Connection.CS_CONNECTED) {
       //CLIENT.You.actions['disconnect'] = true;
@@ -4326,14 +4525,14 @@ class _State extends State<SecondTemplePage>  {
   // When click the close button
   // Silence sounds and hide inventory
   close() async {
-
     print("close");
-    OPENWORLD.Weather.mute(true); // so that dont get wind or rain sound when close
-    OPENWORLD.Musics.setMute(true);//stop();
+    OPENWORLD.Weather.mute(
+        true); // so that dont get wind or rain sound when close
+    OPENWORLD.Musics.setMute(true); //stop();
     OPENWORLD.Sound.setMute(true);
     OPENWORLD.Room.mute(true);
-    OPENWORLD.You.immobile=false;
-    OPENWORLD.You.immobileturn=false;
+    OPENWORLD.You.immobile = false;
+    OPENWORLD.You.immobileturn = false;
     if (horseridingcloploaded)
       horseridingclop.stop();
     if (loaded) {
@@ -4341,16 +4540,15 @@ class _State extends State<SecondTemplePage>  {
       await disconnect();
       setState(() {
         loaded = false;
-        hasprayer=false;
-        inprayer=false;
-        priestblessing=false;
-        removed_horn=false;
+        hasprayer = false;
+        inprayer = false;
+        priestblessing = false;
+        removed_horn = false;
         OPENWORLD.System.active = false;
       });
     }
 
     Navigator.pop(context);
-
   }
 
   // Once has connected to server change layout
@@ -4364,22 +4562,22 @@ class _State extends State<SecondTemplePage>  {
     // disable DomLikeListenable so can type
     _globalKey.currentState?.pause = true;
 
-    var msg=await chatDialog('Enter Message','','');
+    var msg = await chatDialog('Enter Message', '', '');
 
     // reenable DomLikeListenable so can use movement keyboard again
     _globalKey.currentState?.pause = false;
 
-    if (msg!=null&&msg != "") {
+    if (msg != null && msg != "") {
       CLIENT.You.msg.add(msg);
     }
-
   }
 
   // Play wing flap sound if can fly
   wingflap() {
     OPENWORLD.Sound.play(
-        path: 'sounds/flap' + ((OPENWORLD.Math.random() * 3).floor() + 1).toString() + '.mp3', volume: 0.1);
-
+        path: 'sounds/flap' +
+            ((OPENWORLD.Math.random() * 3).floor() + 1).toString() + '.mp3',
+        volume: 0.1);
   }
 
   // If can fly fly upwards
@@ -4388,7 +4586,8 @@ class _State extends State<SecondTemplePage>  {
       OPENWORLD.Camera.cameraoffset += 0.1;
       OPENWORLD.Space.objUpSurface(
           camera,
-          OPENWORLD.Camera.cameraoffset); //camera.position.x+=0.01; //trick to show
+          OPENWORLD.Camera
+              .cameraoffset); //camera.position.x+=0.01; //trick to show
     }
     wingflap();
   }
@@ -4399,17 +4598,18 @@ class _State extends State<SecondTemplePage>  {
       OPENWORLD.Camera.cameraoffset -= 0.1;
       OPENWORLD.Space.objUpSurface(
           camera,
-          OPENWORLD.Camera.cameraoffset); //camera.position.x+=0.01; //trick to show
+          OPENWORLD.Camera
+              .cameraoffset); //camera.position.x+=0.01; //trick to show
       wingflap();
     }
   }
 
-  var frames=0;
-  var frames10=0;
+  var frames = 0;
+  var frames10 = 0;
 
   animate() async {
     // if app in background dont keep animating
-    if (!kIsWeb&&OPENWORLD.System.appstate != AppLifecycleState.resumed) {
+    if (!kIsWeb && OPENWORLD.System.appstate != AppLifecycleState.resumed) {
       Future.delayed(const Duration(milliseconds: 1000), () {
         animate();
       });
@@ -4437,7 +4637,8 @@ class _State extends State<SecondTemplePage>  {
     if (mapshow) {
       // Get the map to display and maps pixel coordinates based on the world coordinates and show the marker where the player is
       setState(() {
-        var worldpos = OPENWORLD.You.getWorldPos();//Space.localToWorldObj(camera);
+        var worldpos = OPENWORLD.You
+            .getWorldPos(); //Space.localToWorldObj(camera);
         var map = OPENWORLD.Maps.getMapFromWorldcoords(worldpos.x, worldpos.y);
         if (map != null) {
           //  print("uu"+map.toString());
@@ -4474,12 +4675,14 @@ class _State extends State<SecondTemplePage>  {
 
     OPENWORLD.Room.update(frameTime);
 
-    if (horseriding&&ismoving) {
+    if (horseriding && ismoving) {
       // Up and down when ride horse
-      OPENWORLD.Camera.setPitch( 0.35*math.sin( clock.getElapsedTime ()*5 % (math.pi) ));
+      OPENWORLD.Camera.setPitch(
+          0.35 * math.sin(clock.getElapsedTime() * 5 % (math.pi)));
     }
 
-    Future.delayed( Duration(milliseconds: framedelay), () {  // was 40 which is 1000/40 = 25 fps
+    Future.delayed(Duration(
+        milliseconds: framedelay), () { // was 40 which is 1000/40 = 25 fps
       animate();
     });
   }
@@ -4495,20 +4698,21 @@ class _State extends State<SecondTemplePage>  {
     if (OPENWORLD.System.appstate != AppLifecycleState.resumed || !doneinterval)
       return;
 
-    doneinterval=false;
+    doneinterval = false;
     var pos = OPENWORLD.Space.localToWorldObj(camera);
-    print("pos: " + pos.x.toStringAsFixed(2) + ", " + pos.y.toStringAsFixed(2)+ ", t" + OPENWORLD.Camera.turn.toStringAsFixed(2));//+" shofar"+_shofar.toString());
-
+    print("pos: " + pos.x.toStringAsFixed(2) + ", " + pos.y.toStringAsFixed(2) +
+        ", t" + OPENWORLD.Camera.turn.toStringAsFixed(
+        2)); //+" shofar"+_shofar.toString());
 
 
     if ((CLIENT.Connection.connect_state == CLIENT.Connection.CS_CONNECTED ||
         CLIENT.Connection.connect_state == CLIENT.Connection.CS_CONNECTING)) {
       //print("in interval");
-     // var pos = OPENWORLD.Space.localToWorldObj(camera);
+      // var pos = OPENWORLD.Space.localToWorldObj(camera);
 
       var servercommands = [];
       if (CLIENT.You.actions['who'])
-         servercommands.add("who");
+        servercommands.add("who");
 
       if (CLIENT.Connection.connect_state == CLIENT.Connection.CS_CONNECTING)
         servercommands.add("connecting");
@@ -4532,10 +4736,10 @@ class _State extends State<SecondTemplePage>  {
       resetYou();
       // If over 10 seconds that got a response from server then display disconnect icon
       if (CLIENT.Connection.connect_state == CLIENT.Connection.CS_CONNECTED &&
-              lastconnection >
-                  0 /*&&
+          lastconnection >
+              0 /*&&
           OPENWORLD.System.currentMilliseconds() - lastconnection > 10000*/
-          )
+      )
         setState(() {
           showdisconnect = true;
         });
@@ -4569,7 +4773,7 @@ class _State extends State<SecondTemplePage>  {
 
         if (!removed_horn) {
           // this is causing issue when clone _shofar
-        //  await OPENWORLD.Actor.unwieldAll(_shofar);
+          //  await OPENWORLD.Actor.unwieldAll(_shofar);
           print("removed horn");
 
           removed_horn = true;
@@ -4642,22 +4846,24 @@ class _State extends State<SecondTemplePage>  {
             var _has_name;
             var player_model;
             if ((players.length) % 3 == 0) {
-              print("shofariii"+_shofar.toString());
+              print("shofariii" + _shofar.toString());
 
-              player_model = await OPENWORLD.Actor.copyActor(_shofar); //.clone();
+              player_model =
+              await OPENWORLD.Actor.copyActor(_shofar); //.clone();
 
             } else if ((players.length) % 3 == 1) {
-
-              print("shofarii"+_shofar.toString());
-              player_model = await OPENWORLD.Actor.copyActor(_shofar,texture:"assets/actors/shofar/shofar2.jpg"); //clone();
+              print("shofarii" + _shofar.toString());
+              player_model = await OPENWORLD.Actor.copyActor(_shofar,
+                  texture: "assets/actors/shofar/shofar2.jpg"); //clone();
 
             } else {
-
-              print("shofar"+_shofar.toString());
-              player_model = await OPENWORLD.Actor.copyActor(_shofar,texture:"assets/actors/shofar/shofar3.jpg"); //.clone();
+              print("shofar" + _shofar.toString());
+              player_model = await OPENWORLD.Actor.copyActor(_shofar,
+                  texture: "assets/actors/shofar/shofar3.jpg"); //.clone();
 
             }
-            player = CLIENT.Player(player_model);//THREE.AnimationMixer(player_model));
+            player = CLIENT.Player(
+                player_model); //THREE.AnimationMixer(player_model));
           }
           scene.add(player?.actor); //mixer.getRoot());
           players.add(player);
@@ -4670,8 +4876,8 @@ class _State extends State<SecondTemplePage>  {
             if (player.actor.children[kk] is THREE.Sprite)
               player.actor.remove(player.actor.children[kk]);
 
-          OPENWORLD.Mob.setName(player.actor,data[i][1]);
-          OPENWORLD.Mob.setText(player.actor, data[i][1], z:100);
+          OPENWORLD.Mob.setName(player.actor, data[i][1]);
+          OPENWORLD.Mob.setText(player.actor, data[i][1], z: 100);
           changed_sprite = true;
         }
 
@@ -4690,7 +4896,7 @@ class _State extends State<SecondTemplePage>  {
           if (dist > stopdist && !player.isWalking) {
             print('is walking');
             player.isWalking = true;
-       //     (await OPENWORLD.Actor.getAction(player.actor, name:"idle")).stop();// index: 3)).stop();
+            //     (await OPENWORLD.Actor.getAction(player.actor, name:"idle")).stop();// index: 3)).stop();
             //(await OPENWORLD.Actor.getAction(player.actor, name:"walk")).reset();//index: 4)).reset();
             // player.clipAction( player.getRoot().geometry.animations[4] ).reset();
 
@@ -4719,7 +4925,8 @@ class _State extends State<SecondTemplePage>  {
           // if player has entered the game then move them straight there
           await OPENWORLD.Actor.stopAnimations(player.actor);
 
-          (await OPENWORLD.Actor.getAction(player.actor, name:"idle")).play();//index: 3)).play();
+          (await OPENWORLD.Actor.getAction(player.actor, name: "idle"))
+              .play(); //index: 3)).play();
           OPENWORLD.Space.worldToLocalSurfaceObj(player.actor, x, y, 0);
         }
 
@@ -4737,7 +4944,6 @@ class _State extends State<SecondTemplePage>  {
       print("msgs" + msgs.toString());
       var msglinesi = [];
       for (var i = 0; i < msgs.length; i++) {
-
         if (int.parse(msgs[i][0].toString()) >= 0) {
           var usename = "";
           for (var j = 0; j < players.length; j++)
@@ -4748,10 +4954,9 @@ class _State extends State<SecondTemplePage>  {
                 .name; // if cannot find on a player must be the user himself
           //var color=colorFromName(usename);
           msglinesi.add({'usename': usename, 'msg': msgs[i][1]});
-          print("added msg for "+usename+" id"+msgs[i][0].toString());
+          print("added msg for " + usename + " id" + msgs[i][0].toString());
           //  msglines=msglines+"<span style='color:"+color+"'>"+msgs[i][1]+"</span><br>";
         } else {
-
           msglinesi.add({
             'usename': '',
             'msg': msgs[i][1]
@@ -4761,16 +4966,15 @@ class _State extends State<SecondTemplePage>  {
       setState(() {
         msglines = msglinesi;
       });
-
     }
-    doneinterval=true;
+    doneinterval = true;
   }
 
   // anything in the game that needs to be done every second
   var prevposx = -99999.0;
   var prevposy = -99999.0;
-  var heartbeattick=0;
-  var ismoving=false;
+  var heartbeattick = 0;
+  var ismoving = false;
 
   heartbeat() async {
     // So that if in background dont keep ticking
@@ -4778,16 +4982,16 @@ class _State extends State<SecondTemplePage>  {
       return;
 
     // Save player state
-    var worldpos = OPENWORLD.You.getWorldPos();//Space.localToWorldObj(camera);
+    var worldpos = OPENWORLD.You.getWorldPos(); //Space.localToWorldObj(camera);
     if (worldpos.x != prevposx || worldpos.y != prevposy) {
-      ismoving=true;
+      ismoving = true;
 
       OPENWORLD.Persistence.set("posx", worldpos.x);
       OPENWORLD.Persistence.set("posy", worldpos.y);
       prevposx = worldpos.x;
       prevposy = worldpos.y;
     } else
-      ismoving=false;
+      ismoving = false;
     if (horseriding) {
       if (ismoving)
         horseridingclop.setVolume(0.5);
@@ -4799,27 +5003,27 @@ class _State extends State<SecondTemplePage>  {
     // Save currrent time
     OPENWORLD.Persistence.set("time", OPENWORLD.Time.time);
     // Save weather
-    OPENWORLD.Persistence.set("rain",OPENWORLD.Weather.rain);
-    OPENWORLD.Persistence.set("wind",OPENWORLD.Weather.wind);
-    OPENWORLD.Persistence.set("cloud",OPENWORLD.Weather.cloud);
-    OPENWORLD.Persistence.set("fog",OPENWORLD.Weather.fog);
+    OPENWORLD.Persistence.set("rain", OPENWORLD.Weather.rain);
+    OPENWORLD.Persistence.set("wind", OPENWORLD.Weather.wind);
+    OPENWORLD.Persistence.set("cloud", OPENWORLD.Weather.cloud);
+    OPENWORLD.Persistence.set("fog", OPENWORLD.Weather.fog);
 
     if (showfps) {
       setState(() {
-        fps=frames;
+        fps = frames;
       });
     }
-   // print("fps"+frames.toString());
-    frames=0;
+    // print("fps"+frames.toString());
+    frames = 0;
     heartbeattick++;
-    if (heartbeattick % 10==0)  {
+    if (heartbeattick % 10 == 0) {
       if (showfps)
-        print("fps av "+(frames10/10).toString());
-      if (frames10<200&&framedelay>0) {
-       // framedelay--;
-      //  print("frame delay"+framedelay.toString());
+        print("fps av " + (frames10 / 10).toString());
+      if (frames10 < 200 && framedelay > 0) {
+        // framedelay--;
+        //  print("frame delay"+framedelay.toString());
       }
-      frames10=0;
+      frames10 = 0;
     }
   }
 

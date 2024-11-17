@@ -555,10 +555,13 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
                                             .width / 3),
                                         UserGuildanceAnchor(
                                             step: 4,
-                                            tag: "←Swipe screen left to turn left\n"
-                                                "Swipe right to turn right→ \n"
+                                            tag: (OPENWORLD.System.isDesktop()
+                                                ? ("←  → Key to slide left & right\n"+
+                                                "↑ Key forward  ↓ back  \n"):
+                                            ("←Swipe screen left to turn left\n"+
+                                                "Swipe right to turn right→ \n"))+
                                                 "↑ Swipe up to look up \n"
-                                                "↓ Swipe down to look down ",
+                                                    "↓ Swipe down to look down ",
                                             child: Container(width: 10,
                                                 height: 10) //,color:Colors.black)
                                         )

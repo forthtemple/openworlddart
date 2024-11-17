@@ -17,11 +17,21 @@ import 'dart:io' show Platform;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (!kIsWeb&&(Platform.isLinux||Platform.isWindows)) {
+  if (!kIsWeb&&(Platform.isLinux||Platform.isWindows||Platform.isMacOS)) {
 
     await WindowManager.instance.ensureInitialized();
     windowManager.waitUntilReadyToShow().then((_) async {
       await windowManager.setTitle(gamename);
+     // var size= await windowManager.g
+     // print("size"+size.toString());
+      final screens = PlatformDispatcher.instance.displays;
+      final fSize = screens.first.size;
+
+      await windowManager.setSize(Size(  1440,900));
+     // windowManager.setSize(Size(fSize.width, fSize.height));
+     // windowManager.setPosition(Offset(0.0,0.0));
+      await windowManager.setAlignment(Alignment.center);
+    //   print("size"+fSize.toString());
     });
   }
 

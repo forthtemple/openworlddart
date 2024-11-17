@@ -66,13 +66,14 @@ dependencies:
   archive: ^3.6.1
   #openworld_gl: ^0.0.23
   window_manager: ^0.4.3
-dependency_overrides:
   openworld:
     path: ../
   #flutter_gl:
   #  path: ../../flutter_gl-main/flutter_gl
   openworld_gl:
-    path: ../../openworld_gl
+    path: ../../openworld_gl/openworld_gl
+dependency_overrides:
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -142,6 +143,10 @@ flutter_icons:
   android: "ic_launcheri"
   ios: true
   windows:
+    generate: true
+    image_path: "icons/rhodes3dicon.png"
+    icon_size: 48
+  macos:
     generate: true
     image_path: "icons/rhodes3dicon.png"
     icon_size: 48

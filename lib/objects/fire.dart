@@ -1,11 +1,12 @@
 import 'dart:collection';
 import 'dart:core';
 
+import 'package:flutter/foundation.dart';
 import 'package:openworld/updateable.dart';
 import 'package:openworld_gl/native-array/index.dart';
 import 'package:openworld/three_dart/three_dart.dart' as THREE;
 import 'dart:math' as math;
-
+import 'dart:io' show Platform;
 // 'System.out.println("version"+ gl.getContext().getGLSLVersionString()); ',
 
 
@@ -13,12 +14,22 @@ class VolumetricFire extends Updateable {
   static THREE.Texture? nzw;
   static THREE.Texture? fireProfile;
 
-  var vs = [
+  /*var prefix=[
+    'precision mediump sampler2DArray;',
+    '#define attribute in',
+    '#define varying out',
+    '#define texture2D texture',
+    '#define gl_FragColor pc_fragColor',
+    'layout(location = 0) out highp vec4 pc_fragColor;',
+  ].join('\n')+"\n";*/
 
-    'attribute vec3 position;',
+  var vs = [
+   // "#version 410",
+
+   // 'attribute vec3 position;',
     'attribute vec3 tex;',
-    'uniform mat4 projectionMatrix;',
-    'uniform mat4 modelViewMatrix;',
+  //  'uniform mat4 projectionMatrix;',
+  //  'uniform mat4 modelViewMatrix;',
 
     'varying vec3 texOut;',
 
@@ -32,7 +43,7 @@ class VolumetricFire extends Updateable {
   ].join('\n');
 
   var fs = [
-
+  //  "#version 410",
     'precision highp float;',
 
     // Modified Blum Blum Shub pseudo-random number generator.
@@ -310,7 +321,23 @@ class VolumetricFire extends Updateable {
 
    // THREE.Material dog;
 
+   /* if (!kIsWeb&&Platform.isMacOS) {
+   //   vs="#version 410\n"+prefix+vs;
+      vs=prefix+vs;
+      fs=prefix+fs;
+      //print("is macos"+prefix);
+    } else {
+    //  print("is not macos");
+    }
     THREE.RawShaderMaterial material = new THREE.RawShaderMaterial({
+      'vertexShader': vs,
+      'fragmentShader': fs,
+      'uniforms': uniforms,
+      'side': THREE.DoubleSide,
+      'blending': THREE.AdditiveBlending,
+      'transparent': true
+    });*/
+    THREE.ShaderMaterial material = new THREE.ShaderMaterial({
       'vertexShader': vs,
       'fragmentShader': fs,
       'uniforms': uniforms,

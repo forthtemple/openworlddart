@@ -18,11 +18,18 @@ import 'package:openworld/openworld.dart' as OPENWORLD;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (!kIsWeb&&(Platform.isLinux||Platform.isWindows)) {
+  if (!kIsWeb&&(Platform.isLinux||Platform.isWindows||Platform.isMacOS)) {
 
     await WindowManager.instance.ensureInitialized();
     windowManager.waitUntilReadyToShow().then((_) async {
       await windowManager.setTitle(gamename);
+      final screens = PlatformDispatcher.instance.displays;
+      final fSize = screens.first.size;
+
+      windowManager.setSize(Size(  1440,900));
+      // windowManager.setSize(Size(fSize.width, fSize.height));
+      // windowManager.setPosition(Offset(0.0,0.0));
+      windowManager.setAlignment(Alignment.center);
     });
   }
 

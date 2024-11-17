@@ -802,8 +802,15 @@ class System {
 
   static isDesktop()
   {
-    return kIsWeb||Platform.isLinux||Platform.isWindows;
+    return kIsWeb||Platform.isLinux||Platform.isWindows||Platform.isMacOS;
   }
+
+/*  static getFullScreenSize()
+  {
+    final screens = PlatformDispatcher.instance.displays;
+    return screens.first.size;
+   // print("size"+fSize.toString());
+  }*/
 
 }
 
