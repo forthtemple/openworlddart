@@ -63,11 +63,15 @@ One game is set in Jerusalem at the Second Temple 72AD just before a roman invas
 
 This game is not only available in this repository but also on <a href="https://apps.apple.com/us/app/ark-uncovered/id6593662011">iTunes</a> (iOS, macOS) on  <a href="https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.secondtemple">Amazon</a> (Android), <a href='https://chatgpt.forthtemple.com/secondtemple/'>web</a>, <a href="https://snapcraft.io/secondtemple">snap</a> (Linux) and <a href='https://www.youtube.com/watch?v=v63XYmFEgj8'>Youtube</a>
 
+[![secondtemple](https://snapcraft.io/secondtemple/badge.svg)](https://snapcraft.io/secondtemple)
+
 A second game is set in Lindos, Rhodes south of Greece in 1522 just before Sulamains invasion.
 
 ![image](https://github.com/user-attachments/assets/be650f03-b6dd-4156-9a4c-ba32e5a1edca)
 
 It is also available on <a href="https://apps.apple.com/us/app/lindos-1522/id6736712620">iTunes</a> (iOS, macOS) on  <a href="https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.rhodes3d">Amazon</a> (Android), <a href="https://snapcraft.io/rhodes3d">snap</a> (Linux), <a href='https://chatgpt.forthtemple.com/rhodes3d'>web</a> and <a href='https://www.youtube.com/watch?v=-xjAiFQzZRM'>Youtube</a>.
+
+[![rhodes3d](https://snapcraft.io/rhodes3d/badge.svg)](https://snapcraft.io/rhodes3d)
      
 The philosphy of the engine it should not be bloated and only include features that typical openworld games would require on a smartphone or desktop. For example most openworld games will have animated actors, such as a person or monster walking. Most would include models,  planes and sprites, sound, light, weather, time of day, maps, music and rooms. But not all would include, for example, a players inventory system or a combat system or a monetary system. So these less used features are excluded.
 
