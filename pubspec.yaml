@@ -17,17 +17,16 @@ dependencies:
   universal_html: ^2.2.4
   ffi: ^2.1.0
   image: ^4.0.02
-  #flutter_gl: ^0.0.21
   typr_dart: ^0.0.2
   opentype_dart: ^0.0.1
   crypto: ^3.0.3
   audioplayers: ^6.1.0
   shared_preferences: ^2.2.3
-  #openworld_gl: ^0.0.23
+  openworld_gl: ^0.0.26
   archive: ^3.3.0
 dependency_overrides:
-  openworld_gl:
-    path: ../openworld_gl/openworld_gl
+  #openworld_gl:
+  #  path: ../openworld_gl/openworld_gl
 dev_dependencies:
   flutter_test:
     sdk: flutter
