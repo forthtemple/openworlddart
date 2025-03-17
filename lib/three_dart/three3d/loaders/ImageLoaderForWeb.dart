@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:openworld/three_dart/extra/Blob.dart';
+import 'package:openworld/three_dart/extra/blob.dart';
 import 'dart:html' as html;
 
 class ImageLoaderLoader {
