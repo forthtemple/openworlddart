@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart';
-import 'package:openworld/three_dart/extra/Blob.dart';
+import 'package:openworld/three_dart/extra/blob.dart';
 
 class ImageLoaderLoader {
   static Future<Image?> loadImage(url, bool flipY, {Function? imageDecoder}) async {
