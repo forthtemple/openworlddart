@@ -9,7 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:openworld_gl/openworld_gl.dart';
 import 'package:image/image.dart' hide Color;
-import 'package:openworld/three_dart/extra/Blob.dart';
+import 'package:openworld/three_dart/extra/blob.dart';
 import 'package:openworld/three_dart/three3d/animation/index.dart';
 import 'package:openworld/three_dart/three3d/cameras/index.dart';
 import 'package:openworld/three_dart/three3d/constants.dart';
