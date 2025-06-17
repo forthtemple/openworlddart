@@ -6,17 +6,19 @@ define("LOG_EXIT",2);     // Player has disconnected
 define("LOG_DIED",3);     // Player removed because inactive
 define("LOG_WELCOME",4);  // Player may have same session but reentered
 
+
 if (!$_POST["position"]) {
+	//print("xxx");
 	exit;
 }
 
-$link = mysql_connect('localhost', 'openworld','');
+$link = mysqli_connect('localhost', '','');
 if (!$link) {
 		echo 'Could not connect to mysql';
 		exit;
 }
 
-if (!mysql_select_db('openworld', $link)) {
+if (!mysqli_select_db($link, 'openworld')) {
 		echo 'Could not select database';
 		exit;
 }
@@ -37,8 +39,8 @@ function userid()
 {
 	global $link;
 	$sql    = 'SELECT * FROM user WHERE session="'.session_id().'"';	 
-	$result =mysql_query($sql, $link);	 
-	$row =  mysql_fetch_assoc($result);		
+	$result =mysqli_query($link, $sql);	 
+	$row =  mysqli_fetch_assoc($result);		
 	return $row['id'];
 
 }
@@ -52,7 +54,7 @@ function shout_message($name, $msgi)
 	   $sql    = 'INSERT INTO msg (fromuserid,name,msg,time ) values ("-1","'.$name.'","'.$msgi.'",now(3))';//me="'.$position->name.'", x="'.$position->x.'", y="'.$position->y.'", z="'.$position->z.'", turn="'.$position->turn.'", action="'.$position->action.'",last_active=now(), ipaddress="'. $_SERVER['REMOTE_ADDR'].'" where session="'.session_id().'"';
 	else 
 	   $sql    = 'INSERT INTO msg (fromuserid,name,msg,time ) values ("'.userid().'","'.$name.'","'.$msgi.'",now(3))';//me="'.$position->name.'", x="'.$position->x.'", y="'.$position->y.'", z="'.$position->z.'", turn="'.$position->turn.'", action="'.$position->action.'",last_active=now(), ipaddress="'. $_SERVER['REMOTE_ADDR'].'" where session="'.session_id().'"';
-    mysql_query($sql, $link);
+    mysqli_query($link, $sql);
 }
 
 // Broadcast from server to everyone
@@ -70,7 +72,7 @@ function shout_message_exclude($name, $msgi, $excludeuserid)
 	else 
 		$sql    = 'INSERT INTO msg (fromuserid,name, excludeuserid,msg,time ) values ("'.userid().'","'.$name.'","'.$excludeuserid.'","'.$msgi.'",now(3))';//me="'.$position->name.'", x="'.$position->x.'", y="'.$position->y.'", z="'.$position->z.'", turn="'.$position->turn.'", action="'.$position->action.'",last_active=now(), ipaddress="'. $_SERVER['REMOTE_ADDR'].'" where session="'.session_id().'"';
    
-    mysql_query($sql, $link);
+    mysqli_query($link, $sql);
 }
 
 // Tell everyone the message except excludeuserid
@@ -89,41 +91,46 @@ function tell_message($name, $msgi, $touserid)
 	else 
 		$sql    = 'INSERT INTO msg (fromuserid,name, touserid,msg,time ) values ("'.userid().'","'.$name.'","'.$touserid.'","'.$msgi.'",now(3))';//me="'.$position->name.'", x="'.$position->x.'", y="'.$position->y.'", z="'.$position->z.'", turn="'.$position->turn.'", action="'.$position->action.'",last_active=now(), ipaddress="'. $_SERVER['REMOTE_ADDR'].'" where session="'.session_id().'"';
    
-    mysql_query($sql, $link);
+    mysqli_query($link, $sql);
 
 }
+//if (/*is_ajax()&&*/$_POST["position"]) {
+
+	//echo "nn".$_POST["position"];
 
 	$position=json_decode($_POST["position"]);
 
 
+	//print_r($position);
 	//$MAX_DISTANCE=10;
 
 	$commands=$position->commands;
 
-	//print_r($commands);
+	print_r($commands);
 
+	
 	// Remove disconnected player
-	if (in_array("disconnect",$commands)){//isset($position->disconnect)&&$position->disconnect) {
+	if (in_array("disconnect",$commands)){  //isset($position->disconnect)&&$position->disconnect) {
         broadcast_message($position->name." left the game");
         if ($LOG_MSG) {
 			$sql    = 'INSERT INTO log (userid, type,ip,msg) values ("'.userid().'",  "'.LOG_EXIT.'","'. $_SERVER['REMOTE_ADDR'].'","'.$position->name.' exited")';
-			mysql_query($sql, $link);
+			mysqli_query($link, $sql);
 		}
 		$sql    = 'DELETE FROM user WHERE session="'.session_id().'"';//name="'.$position->name.'"';
-		$result = mysql_query($sql, $link);
+		$result = mysqli_query($link, $sql);
 
 		//echo "vooot";
 		return;
 	}
 	// Remove old dead players - players who have done nothing for 5 minutes
 	$sql    = 'SELECT * FROM user WHERE now(3)-last_active>5*60';//name="'.$position->name.'"';
-	$result = mysql_query($sql, $link);
-	while ($row = mysql_fetch_assoc($result)) {
+	$result = mysqli_query($link, $sql);
+	while ($row = mysqli_fetch_assoc($result)) {
 		$sql="DELETE FROM user WHERE id='".$row['id']."'";
-		mysql_query($sql,$link);
+		mysqli_query($sql,$link);
 	    if ($LOG_MSG) {
 			$sql    = 'INSERT INTO log (userid, type,ip,msg) values ("'.$row['id'].'","'.LOG_DIED.'","'. $_SERVER['REMOTE_ADDR'].'","'.$row['name'].' died")';
-			mysql_query($sql, $link);
+			mysqli_query($link, $sql);
 		}
 	}
 
@@ -143,29 +150,29 @@ function tell_message($name, $msgi, $touserid)
     }
 
 	$sql    = 'SELECT * FROM user WHERE session="'.session_id().'"';//name="'.$position->name.'"';
-	$result = mysql_query($sql, $link);
+	$result = mysqli_query($link, $sql);
 
 	$msg=array();
 	$welcome=in_array("connecting",$commands);
-	if ( !mysql_num_rows ( $result )) {
+	if ( !mysqli_num_rows ( $result )) {
 		// Player is not in the database so add him
 		$sql    = "INSERT INTO user (name,session,last_active,x,y,z,turn) values ('".$position->name."','".session_id()."',now(3),0,0,0,0)";
-		mysql_query($sql, $link);
+		mysqli_query($link, $sql);
 		if ($LOG_MSG) {
 		 	$sql    = 'INSERT INTO log (userid, type,ip,msg) values ("'.userid().'","'.LOG_ENTER.'","'. $_SERVER['REMOTE_ADDR'].'","'.$position->name.' entered")';
-		 	mysql_query($sql, $link);
+		 	mysqli_query($link, $sql);
 		 	$welcome=true;
 		}
 
 	} else {
 		// Player already in the database.
 		// Fetch him any new messages - ignore any that are older than last time player active so dont get repeats
-		$row =  mysql_fetch_assoc($result);
+		$row =  mysqli_fetch_assoc($result);
 		$sql    = 'SELECT * FROM msg WHERE time>"'.$row['last_active'].'"';
 
-		$result = mysql_query($sql, $link);
+		$result = mysqli_query($link, $sql);
 
-		while ($row = mysql_fetch_assoc($result)) {
+		while ($row = mysqli_fetch_assoc($result)) {
 
 			// if touserid only tell touserid
 			// if excludeuserid then tell everyone except excludeuserid
@@ -181,7 +188,7 @@ function tell_message($name, $msgi, $touserid)
 
 	// Update your location in the database
 	$sql    = 'UPDATE user SET name="'.$position->name.'", x="'.$position->x.'", y="'.$position->y.'", z="'.$position->z.'", turn="'.$position->turn.'", action="'.$position->action.'",last_active=now(3) where session="'.session_id().'"';
-    mysql_query($sql, $link);
+    mysqli_query($link, $sql);
 	
 	// Find players close by
 	if ($MAX_DISTANCE>0)
@@ -192,12 +199,12 @@ function tell_message($name, $msgi, $touserid)
 		$ex.=' ORDER BY GREATEST(abs(x- '.$position->x.'),abs(y- '.$position->y.')) LIMIT '.$CLOSEST;
 	$sql    = 'SELECT * FROM user WHERE session<>"'.session_id().'" '.$ex ;
 	//log_text($sql);
-	$result = mysql_query($sql, $link);
+	$result = mysqli_query($link, $sql);
 
 
 	if (!$result) {
 		echo "DB Error, could not query the database\n";
-		echo 'MySQL Error: ' . mysql_error();
+		echo 'MySQL Error: ' . mysqli_error();
 		exit;
 	}
 	
@@ -206,35 +213,35 @@ function tell_message($name, $msgi, $touserid)
 
 	// Tell the player of players close by
 	$ret["users"]=array();
-	if (mysql_num_rows ( $result )){//||count($msg)>0) {
+	if (mysqli_num_rows ( $result )){//||count($msg)>0) {
 
-		while ($row = mysql_fetch_assoc($result)) {
+		while ($row = mysqli_fetch_assoc($result)) {
 			$ret["users"][]=array($row['id'],$row['name'],$row["x"],$row["y"],$row["z"],$row["turn"], $row["action"]);
 		}
  
 	} 
 	// Tell the player how many players are on
 	$sql    = 'SELECT *  FROM user ';
-	$result = mysql_query($sql, $link);
-    $ret["num_players"]=mysql_num_rows ( $result );
+	$result = mysqli_query($link, $sql);
+    $ret["num_players"]=mysqli_num_rows ( $result );
 
     // Give a new player a welcome message
 	if ($welcome) {
 		 if ($LOG_MSG) {
 			$sql    = 'INSERT INTO log (userid,type,ip,msg) values ("'.userid().'","'.LOG_WELCOME.'","'. $_SERVER['REMOTE_ADDR'].'","'.$position->name.' welcome")';
-			mysql_query($sql, $link);
+			mysqli_query($link, $sql);
 		}
         shout_message_exclude($position->name,$position->name." enters the game", userid(), $link);
 
 		$msg[]=array(-1,$welcome_message);//"<font color='yellow'>Welcome to Second Temple</font>");
-		if ($alone_message&&mysql_num_rows ( $result )==1)
+		if ($alone_message&&mysqli_num_rows ( $result )==1)
 			$msg[]=array(-1,$alone_message);
 	}    
 
 	// Tell the player whos on if they ask
     if (in_array("who",$commands)){//$position->who) {
         	$ret["who"]=array();
-			while ($row = mysql_fetch_assoc($result)) {
+			while ($row = mysqli_fetch_assoc($result)) {
 				$ret["who"][]=$row['name'];
 			}
 
@@ -249,7 +256,7 @@ function tell_message($name, $msgi, $touserid)
 
 	echo json_encode($ret);//["users"]);
 
-
+//}
 
 function random()
 {   // auxiliary function
