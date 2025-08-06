@@ -71,12 +71,12 @@ dependencies:
   window_manager: ^0.4.3
   #desktop_window: ^0.4.2
   #openworld_gl: ^0.0.23
-  #openworld_gl: ^0.0.25
-  #openworld: ^0.0.5
-  openworld:
-    path: ../
-  openworld_gl:
-    path: ../../openworld_gl/openworld_gl
+  openworld_gl: ^0.0.26
+  openworld: ^0.0.9
+  #openworld:
+  #  path: ../
+  #openworld_gl:
+  #  path: ../../openworld_gl/openworld_gl
 
 dependency_overrides:
   #openworld:
