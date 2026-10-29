@@ -186,8 +186,9 @@ Openworld also make it easy to add sprites, planes and text.
 ```
 
 As with actors and models, the objects can be scale and placed on the surface of terrain.
-
-instancedbillboards
+-multitext
+  -mention extra features of adding text here perpahs like tails, padding
+-instancedbillboards
 
 *Terrain and collision detection*  
 Openworld allows for a single terrain model to be defined. For example for the Second Temple game the terrain is defined in:
@@ -221,7 +222,10 @@ Terrains should be exported as wavefront obj files since mesh names are retained
     OPENWORLD.Space.init(  mesh, scene);
 ```
 multilevel
-use assetloader instead of above
+caching height so less cpu time with intersections
+  -mnetion how to increase gridsize
+mnetion about wall intersection how good to group into aras so will use bounding box
+  -if spread out then will check coolisions on everything
 
 *Spatial features*  
 Alongside using threedarts existing spatial placement of objects OPENWORLD has extra procedures to make it easy to place objects on a terrain at a certain point and with procedures to turn and scale them. All turn angle are in degrees with 0 degrees being north and 90 being east. Spatial functions make it easy to hide 3D objects if the camera gets a certain distance away from an object helping to increase frame rate. There is also spatial lerping making it possible to move an object along a terrain from one point to another in a given amount of time. Similarly with turning an object it is possible to lerp. For example turn 90 degrees in 1 second such as in this example:
@@ -626,7 +630,9 @@ The config file also has  pool objects. This is useful for example with a forest
   }
 }
 ```
-
+- mention big changes to config like onvisible, throttling
+   -getting the json based on the actor so can know position and vice versa, given an position get the actor associated if visible
+  
 *Common objects*    
 Openworld includes some useful objects like fire, water, flares, smoke and sky. Most are based on those  available in threejs as shaders. 
 
@@ -701,4 +707,5 @@ By copying and pasting the position into the hotload function, objects can be pl
 
 --
 asset protector
+   load a model with asset...
 
