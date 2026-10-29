@@ -660,12 +660,13 @@ The following is an example of water:
 -vegetation
 -trees
 
-<!--
+
 *Multi player*  
 The demo games include simple multi player capability. But multiplayer is not built into the openworld gaming engine. This might change in the future. Openworld does have a client class with sessions and player information but the actual game play is specific for each demo. The demo multiplayer simply broadcasts a logged in players  position and turn and broadcasting a player action 'wave'. The multiplayer does provide chat and information on whos on. The server side is written in php and mysql as available in the repository in /server
 
 ![image](https://github.com/user-attachments/assets/d5114ddf-57ab-46e7-a3ab-54b29215eca7)
--->
+  - not in second temple demo but is in rhodes3d
+    -possibly need to include the php server for rhdoes3d
 
 *Hotloading*  
 The demo games include a hotloading function that is called whenever a game is hotloaded. This allows everything in hotload function being reloaded and displayed instantly making placement of objects being possible on the fly. For example in the example below an extra grassposs position could be added and then hotloaded and it will be displayed straight away:
@@ -695,6 +696,7 @@ hotload() async
 }
 ```
 
+  
 An easy way to get a world position on the terrain is from the android studio console which will every second display your location and turn:
 
 ```
