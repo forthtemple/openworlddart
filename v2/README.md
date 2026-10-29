@@ -220,7 +220,8 @@ Terrains should be exported as wavefront obj files since mesh names are retained
     // OPENWORLD uses groups in mesh to determine which meshes are surfaces, walls or roofs
     OPENWORLD.Space.init(  mesh, scene);
 ```
-
+multilevel
+use assetloader instead of above
 
 *Spatial features*  
 Alongside using threedarts existing spatial placement of objects OPENWORLD has extra procedures to make it easy to place objects on a terrain at a certain point and with procedures to turn and scale them. All turn angle are in degrees with 0 degrees being north and 90 being east. Spatial functions make it easy to hide 3D objects if the camera gets a certain distance away from an object helping to increase frame rate. There is also spatial lerping making it possible to move an object along a terrain from one point to another in a given amount of time. Similarly with turning an object it is possible to lerp. For example turn 90 degrees in 1 second such as in this example:
@@ -254,6 +255,18 @@ OPENWORLD.Space.faceObjectAlways(knight, camera);
 
 
 ```
+normal2world
+surfaceonlylerp
+lerpacity
+lerpintensity
+
+maybe seperatley
+portals
+  useful between levels
+     -angiediff
+     -adjacent
+obstacles
+doors
 
 *Triggers*  
 Openworld also has a trigger system whereby its possible to trigger an event. For example a trigger for when the camera gets a certain distance from an npc. In the following example a cat has a distance trigger that causes the cat to meow when a player moves within 4 meters of the cat:
@@ -271,6 +284,7 @@ Openworld also has a trigger system whereby its possible to trigger an event. Fo
       } else {
       }
     });
+!distance triggers changed
 
 The is also a trigger for when a 3D object in the scene is clicked. In the following example when the minorah is clicked it is hidden:
 
@@ -285,6 +299,7 @@ The is also a trigger for when a 3D object in the scene is clicked. In the follo
        minorah.visible=false;
     });
 ```
+!touch triggers changed
 
 This is also custom triggers. For example its possible to create your own trigger for when an npc is struck by a player:
 
@@ -300,7 +315,7 @@ This is also custom triggers. For example its possible to create your own trigge
          ...
 
 ```
-
+=really should change custom triggers to be consitent with the change
       
 *Movement system*  
 Openworld includes the flutter <a href="https://pub.dev/packages/flutter_joystick">joystick</a> widget that allows a player to control turning and movement on a smartphone.  
@@ -312,6 +327,7 @@ This widget is used in conjuction with a threejs joystick/ keyboard that has bee
 Movement also includes swiping on the screen to turn and pitch the camera.
 
 The threedart code has been modified so that keyboard control can be switched from movement back to flutter widgets so that for example you could type text in a flutter widget.
+-keyboardcallbacks
 
 
 *Mob System*  
@@ -336,6 +352,7 @@ There is also a procedure to move an NPC over and over again through a set of po
               [381.72, 276.86, 0, 0.2], ],
             action: "walk". // Animation to play while walking
        );
+!must change and mention callbacks and actions and different types of movetoloops eg stop
 
   // Or just move an npc through multiple points to reach a destination
   // For example have a knight walk through the point 384.76, 252.02 to reach 383.76, 252.02
@@ -344,6 +361,8 @@ There is also a procedure to move an NPC over and over again through a set of po
       stopaction:"idle" // Animation when reached final point
   );
 ```
+!mention callback
+
 There are also procedures to make it easy to add random chatter to an npc. For example:
 
 <img src="https://github.com/user-attachments/assets/63442d1c-8c3c-4ecd-9d29-624e784c2182" width="256">
@@ -361,7 +380,10 @@ Its also possible to have an npc say a speech with one sentence spoken after the
   // Here the oldlady says the following 3 sentences one after the other rather than randomly
   OPENWORLD.Mob.setSpeech(oldlady, ["I can't see very well.","Is someone there?","Try some of my pie"]);
 ```
-
+-callback
+-x,y,z 
+-tails
+-padding
 
 *Weather*  
 Openworld has weather built into the engine and includes wind, rain, cloud and fog. It has lerping so it is possible gradually transition from say clear sky to cloudy or rain to fog. It also includes a random weather generator where you can specify the probabity in a given day it will rain, be cloudy, be windy or foggy.
@@ -398,6 +420,7 @@ Openworld includes features like specifying that a light should be switched on a
     // Specify that homelight will only be on at night
     OPENWORLD.Light.addNightOnly(homelight);
 ```
+!lightlerp
 
 *Sound*  
 Openworld has a sound system including a pool of flutter audioplayers which can be reused when a sound has finished playing. The pool also allows all audioplayers to be silenced when the game is closed and reactivated when the game is restarted. The sound system also includes features like volume, looping, fading and also delay.
@@ -499,6 +522,8 @@ Openworld has a room system which allows things to happen when a player enters a
       } 
     });
 ```
+! have modified distance trigger
+-mention exitroom and ability to  have a roomterrain
 <!--
 rooms where define an area for a room and 
     can trigger entry and exit of room eg have butcher say hello when someone enters
@@ -626,12 +651,15 @@ The following is an example of water:
 
 ![image](https://github.com/user-attachments/assets/4f4499fd-e278-4457-8810-71d83fd11289)
 
+-vegetation
+-trees
 
+<!--
 *Multi player*  
 The demo games include simple multi player capability. But multiplayer is not built into the openworld gaming engine. This might change in the future. Openworld does have a client class with sessions and player information but the actual game play is specific for each demo. The demo multiplayer simply broadcasts a logged in players  position and turn and broadcasting a player action 'wave'. The multiplayer does provide chat and information on whos on. The server side is written in php and mysql as available in the repository in /server
 
 ![image](https://github.com/user-attachments/assets/d5114ddf-57ab-46e7-a3ab-54b29215eca7)
-
+-->
 
 *Hotloading*  
 The demo games include a hotloading function that is called whenever a game is hotloaded. This allows everything in hotload function being reloaded and displayed instantly making placement of objects being possible on the fly. For example in the example below an extra grassposs position could be added and then hotloaded and it will be displayed straight away:
@@ -671,90 +699,6 @@ pos: 8.59, 1.51, t-95.00
 
 By copying and pasting the position into the hotload function, objects can be placed in the scene, hotloaded and viewed straight away.
 
-<!--
-**Blender**
-All actors and models are made with the Blender modelling tool and are available in '/examplesecondtemple/blender' and '/examplerhodes3d/blender'. These are then exported into the assets directory in glb format with blender except for the terrain which should be exported in wavefront obj format with strip applied since mesh names are preserved which is necessary in defining the terrain surface, walls and roofs.
-
--demos made with blender modelling tool
-  -mesh editing, animations, texturing in blender
-  all availble in this respotiroy
-  
-*Terrain*    
-terrain is exported to obj, use strip
-  - seems to work better in terms of intersections
-  wall, roof surface in name show screenshot
-
-*Actors    
-actor, models are export as glb from blender
-
- 
-A minimalistic framework to make it easier creating an multi user open world with threejs for both smartphones and desktops
-
-To demonstrate the framework, a demo has been made for the Second Temple, the temple that was at the center of judaism before 77AD. It is where the dome of the rock currently stands on the temple mount in Jerusalem. In the demo you can explore the Second Temple. This framework also includes the original blender models for the temple and the actors in the demo. It also demonstrates a multi user server. The demo should work on smartphone browsers (tested on iPhone and iPad 9.3) and desktops.
-
-Live Demo http://www.forthtemple.com/secondtemple
-
-Click 'connect' to connect to the server
-
-![alt tag](http://www.forthtemple.com/secondtemple/screenshots/temple200.jpg)  ![alt tag](http://www.forthtemple.com/secondtemple/screenshots/templeiii200.jpg)
-
-
-**Installation**  
-If you unzip the distrubution under your webserver root then browsing http://localhost/openworldthreejs/web/secondtemple/ should display the Second Temple.
-
-For instructions on setting up the server refer to the server section at the end.
-
-**Intro**  
-The framework revolves around a main world model that contains surfaces and walls that the framework detects to allow a user to walk around a model. The demo includes a blender model for the second temple (/models/secondtemple/temple/temple.blend). The minimalistic framework is in the javascript file /web/secondtemple/openworldjs/openworld.js and has functions that make it possible to work with world coordinates and directions instead of local coordinates and rotations. For example the coordinates 5,4,0 means 5,4 in the xy plane and height zero off the surface of the model. Also direction can be specified with 90 degrees being east, 180 being south.
-
-The openworld framework also includes an all purpose controller with virtual joystick that works on a smartphone. It also works with a keyboard and mouse.
-
-There is also a server written in PHP and MySQL that allows multiple users to interact on the server. It has a base server that can be the basis for other multi user open worlds.
-
-
-**Using blender models**  
-
-terrain is exported to obj, use strip
-  - seems to work better in terms of intersections
-actor, models are export as glb from blender
-
-All the models in the demos are created using Blender. There are included in the repository. In the demo, models are exported as wavefront 'obj' models since they allow for multiple texturing. For actors they are exported from Blender as json models since they include animations which json allows for but obj does not.
-
-If you open /models/secondtemple/temple/temple.blend notice the multiple meshes. Notice that some have the word wall and some surface in them.
-
-![alt tag](http://www.forthtemple.com/secondtemple/screenshots/wallsurface.jpg) 
-
-A surface mesh will be intersected by the open world framework to determine the ground. Walls are also detected to stop players walking through walls. Also notice the units of distance in the blender model are around about 1 meter. Also Z is up. Also some meshes are hidden in order to reduce the size. To export the temple.blend model to obj, select all the meshes you wish to export (will exclude the hidden ones) and then export the obj and then click on 'selection only' to only export the selected meshes.
-
-![alt tag](http://www.forthtemple.com/secondtemple/screenshots/exportobj.jpg) 
-
-To export an actor like a priest (/models/secondtemple/priest/priest.blend) to json make sure the Blender export io_three is placed under the directory Blender\2.xx\scripts\addons. Exporting to json can be fiddly where you must first select the mesh you wish to export like selecting body below:
-
-![alt tag](http://www.forthtemple.com/secondtemple/screenshots/jsonselectmesh.jpg) 
-
-And then when you export to json you must specify all the correct flags once to export so that it is not missing animation, bone, texture information. These are the ones that work:
-
-![alt tag](http://www.forthtemple.com/secondtemple/screenshots/exportjsonsmall.jpg) 
-
-**Server**  
-The server is written in pure PHP and MySQL with no dependencies. MySQL is used to hold the player positions and also includes messaging. Every second a player polls the server giving the server via json the players position. In return the server gives player positions in the players vicinity and also any messages from players. There is tests for player abuse, such as polling much more often or giving false positions, but this could easily be added in the future.
-  
-*Installation*  
-1. From the distribution copy the server directory to your host that has PHP and MySQL. It should be the same directory as your index.html file. Eg  
-     - index.html  
-     - actors  
-     - server  
-     - models  
-     - openworldjs  
-2. Create a MySQL database such as 'openworld' with a user and password  
-3. Run the openworld.sql script under /server on the new database  
-4. Change the base_server.php mysql username and password and database to the database you just setup  
-  
-Now when you click on 'Connect' when browse to index.html it should connect you to the server.
-
-*Modifying game parameters*  
-Some of the game specific parameters for the server are specified in secondtemple.php. These paramaters include $MAX_DISTANCE where if it is greater than 0 will only tell players of other players that are within that distance. $CLOSET will show just the closest x number of players. -->
-
-
-
+--
+asset protector
 
