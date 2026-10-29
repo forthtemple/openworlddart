@@ -2,8 +2,9 @@
 
 new version threejs vs three_dart because seemed to work better across platforms
 
-new game on steam https://store.steampowered.com/app/4067520/Second_Temple/ using this
-
+new game on steam https://store.steampowered.com/app/4067520/Second_Temple/ using this - windows, mac and linux - also iphone and android and web
+   new game designed to work better on a diesktop - previously version designed for phone and desktop as an after thought
+   
 also on itunes for mac
 
 new features
@@ -29,6 +30,8 @@ lerp opacity for objects so fade
 light lerp so lights can fade instead of suddenly turning off
 
 create new animations on the fly - if squating and have a look left animation can have squatting and looking left
+
+iosntalced models and instanced sprite (billboard) make easy for lots of models so dont have huge number of render calls
 
 
 
