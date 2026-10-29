@@ -96,7 +96,7 @@ One game is set in Jerusalem at the Second Temple 72AD just before a roman invas
 
 ![secondtemple](https://github.com/user-attachments/assets/49e647e9-a4b4-463b-a97a-8012a9cdcf60)
 
-This game is not only available in this repository but also on <a href='https://store.steampowered.com/app/4067520/Second_Temple/'>Steam</a>. <a href="https://apps.apple.com/us/app/ark-uncovered/id6593662011">iTunes</a> (iOS, macOS) on  <a href="https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.secondtemple">Amazon</a> (Android), <a href='https://chatgpt.forthtemple.com/secondtemple/'>web</a>, <a href="https://snapcraft.io/secondtemple">snap</a> (Linux) and <a href='https://www.youtube.com/watch?v=v63XYmFEgj8'>Youtube</a>
+This game is not only available in this repository but also on <a href='https://store.steampowered.com/app/4067520/Second_Temple/'>Steam</a> (Windows, Mac, Linux). <a href="https://apps.apple.com/us/app/ark-uncovered/id6593662011">iTunes</a> (iOS, macOS) on  <a href="https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.secondtemple">Amazon</a> (Android), <a href='https://chatgpt.forthtemple.com/secondtemple/'>web</a>, <a href="https://snapcraft.io/secondtemple">snap</a> (Linux) and <a href='https://www.youtube.com/watch?v=v63XYmFEgj8'>Youtube</a>
 
 [![secondtemple](https://snapcraft.io/secondtemple/badge.svg)](https://snapcraft.io/secondtemple)
 
@@ -144,6 +144,9 @@ It is possible to specify new textures for cloned actors and models which allows
     // Here the _shofar actor is cloned and the shofar2.jpg clone is applied to it create a second shofar that looks different
     _shofar2 = await OPENWORLD.Actor.copyActor(_shofar, randomduration: 0.1, texture:"assets/actors/shofar/shofar2.jpg");
 ```
+- create new animations
+- throttling
+- shadows
 
 *Models*  
   Openworld also make it easy to include models that can be cloned and also reused with different texture. Like actors, models are also made with the Blender modelling tool and are available in '/examplesecondtemple/blender' and '/examplerhodes3d/blender'. These are also exported into the assets directory in glb format with blender (except for the terrain which should be exported in wavefront objformat ).
@@ -161,6 +164,7 @@ It is possible to specify new textures for cloned actors and models which allows
     scene.add(laver);
     
 ```
+instancedmodels
 
 *Adding sprites, planes and text*  
 Openworld also make it easy to add sprites, planes and text.
@@ -183,6 +187,7 @@ Openworld also make it easy to add sprites, planes and text.
 
 As with actors and models, the objects can be scale and placed on the surface of terrain.
 
+instancedbillboards
 
 *Terrain and collision detection*  
 Openworld allows for a single terrain model to be defined. For example for the Second Temple game the terrain is defined in:
