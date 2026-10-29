@@ -38,20 +38,12 @@ normal2world eg a car going down a hill will pitch down
 
 multitext
 
-This gaming engine is written in flutter and is based upon our existing threejs openworld repository [openworldthreejs](https://github.com/forthtemple/openworldthreejs). The gaming engine uses the [three_dart](https://github.com/Knightro63/three_dart (is more up to date then three_dart on pub.dev)) package making it easy to convert threejs code to three_dart. This package is available on <a href="https://pub.dev/packages/openworld">pubdev</a>. Because it uses flutter, games created with this engine are cross platform working on Android, iOS, web, windows and Linux. And with the flutter feature of hotloading it allows 3D objects to be added to a scene on the fly making game design easier. Note, openworld is compatible with three_dart and can be used without the openworld aspects eg the game [stack tower](https://github.com/forthtemple/stacktower/). Openworld has extra features compared to three_dart like linux compatibility and is more up to date.
-
-I am working on the new version of the engine that uses  [three_js](https://github.com/Knightro63/three_js) instead of  [three_dart](https://github.com/wasabia/three_dart) and am working on game for  [Steam](https://store.steampowered.com/app/4067520/Second_Temple/) that uses this new engine. Check out my [twitter](https://x.com/forthtemple) to see the progress. I have a preview on [Steam](https://store.steampowered.com/app/4067520/Second_Temple/)
-
-This small sample code demonstrates a small part of openworld showing how to add a skydome but suggest you look at the example games in github to see how the engine works in its entirety with weather, actor animations, terrains, chatter etc.
+This small sample code demonstrates a small part of openworld showing how to add a skydome but suggest you look at the example games in github to see how the library works in its entirety with weather, actor animations, terrains, chatter etc.
 
 
 ### Import
 
 ```
-import 'package:openworld_gl/openworld_gl.dart';
-import 'package:openworld/three_dart/three3d/objects/index.dart';
-import 'package:openworld/three_dart/three_dart.dart' as THREE;
-import 'package:openworld/three_dart_jsm/three_dart_jsm.dart' as THREE_JSM;
 import 'package:openworld/shaders/SkyShader.dart';
 import 'package:openworld/openworld.dart' as OPENWORLD;
 ```
@@ -96,7 +88,7 @@ import 'package:openworld/openworld.dart' as OPENWORLD;
     OPENWORLD.Time.init(sunSphere, skyMat, ambience);
 
 ```   
-This gaming engine includes two demo games with full source and all resources including blender models, sound, textures being freely available in this repository.
+This gaming library includes two demo games with full source and all resources including blender models, sound, textures being freely available in this repository.
 
 One game is set in Jerusalem at the Second Temple 72AD just before a roman invasion. 
 
@@ -104,7 +96,7 @@ One game is set in Jerusalem at the Second Temple 72AD just before a roman invas
 
 ![secondtemple](https://github.com/user-attachments/assets/49e647e9-a4b4-463b-a97a-8012a9cdcf60)
 
-This game is not only available in this repository but also on <a href="https://apps.apple.com/us/app/ark-uncovered/id6593662011">iTunes</a> (iOS, macOS) on  <a href="https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.secondtemple">Amazon</a> (Android), <a href='https://chatgpt.forthtemple.com/secondtemple/'>web</a>, <a href="https://snapcraft.io/secondtemple">snap</a> (Linux) and <a href='https://www.youtube.com/watch?v=v63XYmFEgj8'>Youtube</a>
+This game is not only available in this repository but also on <a href='https://store.steampowered.com/app/4067520/Second_Temple/'>Steam</a>. <a href="https://apps.apple.com/us/app/ark-uncovered/id6593662011">iTunes</a> (iOS, macOS) on  <a href="https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.secondtemple">Amazon</a> (Android), <a href='https://chatgpt.forthtemple.com/secondtemple/'>web</a>, <a href="https://snapcraft.io/secondtemple">snap</a> (Linux) and <a href='https://www.youtube.com/watch?v=v63XYmFEgj8'>Youtube</a>
 
 [![secondtemple](https://snapcraft.io/secondtemple/badge.svg)](https://snapcraft.io/secondtemple)
 
@@ -115,10 +107,11 @@ A second game is set in Lindos, Rhodes south of Greece in 1522 just before Sulam
 It is also available on <a href="https://apps.apple.com/us/app/lindos-1522/id6736712620">iTunes</a> (iOS, macOS) on  <a href="https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.rhodes3d">Amazon</a> (Android), <a href="https://snapcraft.io/rhodes3d">snap</a> (Linux), <a href='https://chatgpt.forthtemple.com/rhodes3d'>web</a> and <a href='https://www.youtube.com/watch?v=-xjAiFQzZRM'>Youtube</a>.
 
 [![rhodes3d](https://snapcraft.io/rhodes3d/badge.svg)](https://snapcraft.io/rhodes3d)
-     
-The philosphy of the engine it should not be bloated and only include features that typical openworld games would require on a smartphone or desktop. For example most openworld games will have animated actors, such as a person or monster walking. Most would include models,  planes and sprites, sound, light, weather, time of day, maps, music and rooms. But not all would include, for example, a players inventory system or a combat system or a monetary system. So these less used features are excluded.
+-------
 
-Alongside threedarts existing 3D functions such as loading models, lighting, texturing, shaders it also includes features that are useful in openword games such as:
+The philosophy of the engine it should not get bloated and only include features that typical openworld games would require on a smartphone or desktop. For example most openworld games will have animated actors, such as a person or monster walking. Most openworld games would include models,  planes and sprites, sound, light, weather, time of day, maps, music and rooms. But not all would include, for example, a players inventory system or a combat system or a monetary system. So these less used features are excluded.
+
+Alongside threejs existing 3D functions such as loading models, lighting, texturing, shaders it also includes features that are useful in openword games such as:
 
 *Animated actors*  
   Openworld has easy actor animation including duration, looping, cloning existing actors, assigning new textures to cloned actor, sharing animations between actors with the same skeleton, doing one acion and then transitioning to an idling action.  All actors  made with the Blender modelling tool and are available in '/examplesecondtemple/blender' and '/examplerhodes3d/blender'. These are then exported into the assets directory in glb format.
