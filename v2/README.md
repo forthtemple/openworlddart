@@ -1,4 +1,37 @@
 # Open World for dart
+
+new version threejs vs three_dart because seemed to work better across platforms
+
+new game on steam https://store.steampowered.com/app/4067520/Second_Temple/ using this
+
+also on itunes for mac
+
+new features
+levels eg have a building with multi stories and walk 
+   can use mutlilevel portals to go between levels
+vegetation  fast sprites
+trees fast sprite
+water3 customized faster - skip frames to update reflection - choose what objects to include in the reflection
+asset encrypter
+   develop as normal with protected folder but can encrypt for release
+   
+config can be used runtime so can say have a crowd of 1000 actors and only show those close to the camera
+
+addition of callbacks eg moveltoop can say walk and do an action and callback eg walks to a house, knocks and play knocking sound
+  speech
+  moveto
+  portals
+optimized surface, wall intersections, touch intersections
+
+obstacles, doorways, keyboardcallbacks
+
+lerp opacity for objects so fade
+light lerp so lights can fade instead of suddenly turning off
+
+create new animations on the fly - if squating and have a look left animation can have squatting and looking left
+
+
+
 This gaming engine is written in flutter and is based upon our existing threejs openworld repository [openworldthreejs](https://github.com/forthtemple/openworldthreejs). The gaming engine uses the [three_dart](https://github.com/Knightro63/three_dart (is more up to date then three_dart on pub.dev)) package making it easy to convert threejs code to three_dart. This package is available on <a href="https://pub.dev/packages/openworld">pubdev</a>. Because it uses flutter, games created with this engine are cross platform working on Android, iOS, web, windows and Linux. And with the flutter feature of hotloading it allows 3D objects to be added to a scene on the fly making game design easier. Note, openworld is compatible with three_dart and can be used without the openworld aspects eg the game [stack tower](https://github.com/forthtemple/stacktower/). Openworld has extra features compared to three_dart like linux compatibility and is more up to date.
 
 I am working on the new version of the engine that uses  [three_js](https://github.com/Knightro63/three_js) instead of  [three_dart](https://github.com/wasabia/three_dart) and am working on game for  [Steam](https://store.steampowered.com/app/4067520/Second_Temple/) that uses this new engine. Check out my [twitter](https://x.com/forthtemple) to see the progress. I have a preview on [Steam](https://store.steampowered.com/app/4067520/Second_Temple/)
