@@ -10,6 +10,7 @@ also on itunes for mac
 new features
 levels eg have a building with multi stories and walk 
    can use mutlilevel portals to go between levels
+shadows
 vegetation  fast sprites
 trees fast sprite
 water3 customized faster - skip frames to update reflection - choose what objects to include in the reflection
@@ -33,7 +34,11 @@ create new animations on the fly - if squating and have a look left animation ca
 
 iosntalced models and instanced sprite (billboard) make easy for lots of models so dont have huge number of render calls
 
+lerp across surfaces
 
+normal2world eg a car going down a hill will pitch down
+
+multitext
 
 This gaming engine is written in flutter and is based upon our existing threejs openworld repository [openworldthreejs](https://github.com/forthtemple/openworldthreejs). The gaming engine uses the [three_dart](https://github.com/Knightro63/three_dart (is more up to date then three_dart on pub.dev)) package making it easy to convert threejs code to three_dart. This package is available on <a href="https://pub.dev/packages/openworld">pubdev</a>. Because it uses flutter, games created with this engine are cross platform working on Android, iOS, web, windows and Linux. And with the flutter feature of hotloading it allows 3D objects to be added to a scene on the fly making game design easier. Note, openworld is compatible with three_dart and can be used without the openworld aspects eg the game [stack tower](https://github.com/forthtemple/stacktower/). Openworld has extra features compared to three_dart like linux compatibility and is more up to date.
 
