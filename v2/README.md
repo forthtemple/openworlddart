@@ -1,4 +1,6 @@
 # Open World for dart
+This a draft I'm writing for the future version of the openworld library so please ignore for the time being.
+
 This library has feature to make openworld games with the dart package threejs. This is for flutter and is based upon the existing threejs openworld repository [openworldthreejs](https://github.com/forthtemple/openworldthreejs). Some of the advantages of using flutter for an openworld game is ease of making the game multiplatform with one code base, the huge number of flutter widgets that can be incorportated into the game and hotloading making it possible to add say grass to a scene, hit hotload and see it appear in your game very quickly. 
 
 This version of the library is an updated version of the previous openworld library which used [three_dart](https://github.com/wasabia/three_dart) instead of [three_js](https://github.com/Knightro63/three_js)/ Threejs is more up to date and have found it works better across platforms. This library has been updated to work better on desktops. To showcase this there is a new game on steam https://store.steampowered.com/app/4067520/Second_Temple/ that uses the library. It is available on windows, mac, linux, iphone and android and web.
@@ -90,7 +92,7 @@ import 'package:openworld/openworld.dart' as OPENWORLD;
 ```   
 This gaming library includes two demo games with full source and all resources including blender models, sound, textures being freely available in this repository.
 
-One game is set in Jerusalem at the Second Temple 72AD just before a roman invasion. 
+One game is set in Jerusalem at the Second Temple 65AD. 
 
 <img src="https://github.com/user-attachments/assets/87d3e8a2-fd28-428f-807e-733b0f1bbef2" width="400"/>
 
@@ -144,7 +146,17 @@ It is possible to specify new textures for cloned actors and models which allows
     // Here the _shofar actor is cloned and the shofar2.jpg clone is applied to it create a second shofar that looks different
     _shofar2 = await OPENWORLD.Actor.copyActor(_shofar, randomduration: 0.1, texture:"assets/actors/shofar/shofar2.jpg");
 ```
-- create new animations
+
+-Create new animations
+This lets you compose many pose variants (sittableleft, squatleft, squatright,
+ standleft etc.) from a small set of base animations and a small set of single-bone
+"pose" animations, instead of hand-authoring every combination in Blender.
+
+```
+      OPENWORLD.Actor.createAnimation(seller, "squatright", "squat", "lookright", ["Bip01_Head"]);
+      OPENWORLD.Actor.createAnimation(seller, "walkhandrightpoint", "walkhandright", "pointleft", ["Bip01_L_Arm1","Bip01_L_Arm2"]);
+
+```
 - throttling
 - shadows
 
