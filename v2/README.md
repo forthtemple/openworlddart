@@ -159,7 +159,17 @@ It is possible to specify new textures for cloned actors and models which allows
 
 ```
 
-- throttling
+- Animation throttling
+  
+     When there is  a large number of actors, such in a crowd the compute can be high to animate each actors new pose each frame. To reduce this compute frames can be skipped if the actor is a certain distance away from the camera. For example if the actor is 0.5 units away then skip 6 frames before doing the next animation.
+  
+```
+     // Have every 6th frame skipped if 0.5 units from the camera
+     OPENWORLD.Actor.enableDistanceThrottle(actor, minDistance: 0.5, skipFrames: 6);
+     // Turn the animation throttling off
+     OPENWORLD.Actor.disableDistanceThrottle(actor);
+```
+  
 - shadows
 
 
