@@ -170,7 +170,7 @@ It is possible to specify new textures for cloned actors and models which allows
      OPENWORLD.Actor.disableDistanceThrottle(actor);
 ```
   
-- shadows
+
 
 
 *Models*  
@@ -191,6 +191,23 @@ It is possible to specify new textures for cloned actors and models which allows
 ```
 instancedmodels
 
+*Shadows*
+for both actors and models
+  each a terrain and the actor casting the shadow on the terrain
+  eg in a terrain set a part of the model   
+  
+
+```
+  groundsurface= OPENWORLD.BaseObject.getGroupByName(OPENWORLD.Space.mesh, "ground");
+  groundsurface.receiveShadow = true;
+
+  soldier2 = await OPENWORLD.Actor.createActor(
+        'assets/actors/soldier/soldier2.glb',
+        z: actoroffset,
+        shareanimations: seller,
+        castshadow: true);
+```
+        
 *Adding sprites, planes and text*  
 Openworld also make it easy to add sprites, planes and text.
 
