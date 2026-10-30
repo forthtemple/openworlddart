@@ -147,9 +147,10 @@ It is possible to specify new textures for cloned actors and models which allows
     _shofar2 = await OPENWORLD.Actor.copyActor(_shofar, randomduration: 0.1, texture:"assets/actors/shofar/shofar2.jpg");
 ```
 
--Create new animations
-This lets you compose many pose variants (sittableleft, squatleft, squatright,
- standleft etc.) from a small set of base animations and a small set of single-bone
+- Create new animations
+  
+   This lets you compose many pose variants (sittableleft, squatleft, squatright,
+   standleft etc.) from a small set of base animations and a small set of single-bone
 "pose" animations, instead of hand-authoring every combination in Blender.
 
 ```
@@ -157,8 +158,10 @@ This lets you compose many pose variants (sittableleft, squatleft, squatright,
       OPENWORLD.Actor.createAnimation(seller, "walkhandrightpoint", "walkhandright", "pointleft", ["Bip01_L_Arm1","Bip01_L_Arm2"]);
 
 ```
+
 - throttling
 - shadows
+
 
 *Models*  
   Openworld also make it easy to include models that can be cloned and also reused with different texture. Like actors, models are also made with the Blender modelling tool and are available in '/examplesecondtemple/blender' and '/examplerhodes3d/blender'. These are also exported into the assets directory in glb format with blender (except for the terrain which should be exported in wavefront objformat ).
