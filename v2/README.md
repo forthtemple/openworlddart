@@ -149,13 +149,13 @@ It is possible to specify new textures for cloned actors and models which allows
 
 - Create new animations
   
-   This lets you compose many pose variants (sittableleft, squatleft, squatright,
-   standleft etc.) from a small set of base animations and a small set of single-bone
-"pose" animations, instead of hand-authoring every combination in Blender.
+   You can create new animations from existing ones such as combining a squat animation with a look right animation instead of manually creating an infinite number of combinations in blender. For example
 
 ```
+      // Create a new animation squatright using the squat animation and the lookright animation just copying the pose on the head
       OPENWORLD.Actor.createAnimation(seller, "squatright", "squat", "lookright", ["Bip01_Head"]);
-      OPENWORLD.Actor.createAnimation(seller, "walkhandrightpoint", "walkhandright", "pointleft", ["Bip01_L_Arm1","Bip01_L_Arm2"]);
+      // Create a new animation walkhandrightpointleft using the with animation of oa person walking with the right hand up and combine it with a person pointing left using the bones left arm1 and left arm2 
+      OPENWORLD.Actor.createAnimation(seller, "walkhandrightpointleft", "walkhandright", "pointleft", ["Bip01_L_Arm1","Bip01_L_Arm2"]);
 
 ```
 
