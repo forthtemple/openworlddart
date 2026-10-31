@@ -243,11 +243,14 @@ Openworld also make it easy to add sprites, planes and text.
 As with actors and models, these objects can be scaled and placed on the surface of terrain.
 
 *Instanced Objects*
+
 Can be costly if must render huge number of objects each frame
    can use instanced models and sprite so one pass
    
 <img width="400"  alt="image" src="https://github.com/user-attachments/assets/17044f21-63e5-4ef2-a835-de14085beb5b" />
+
 in this example thousands of column models displayed and renderer will be one pass
+
 ```
     // Display 300 columns in a row with one column model
     column = await OPENWORLD.Model.createModel( 'assets/models/column.glb');
@@ -260,26 +263,34 @@ in this example thousands of column models displayed and renderer will be one pa
       instancedColumns.place(-90, 6.82, 14.77 + i * 0.15, 0.0, scale: THREE.Vector3(0.4, 0.4, 0.4));
     instancedColumns.finish();
 
+    //  Display 100 grass sprites at random positions
+    var grasstexture = await  AssetPack.loadTexture('assets/models/temple/grass.png');
+    instancedGrass = InstancedBillboards.create(grasstexture!, 10, threeJs.scene,color:spritebillboardambiencecolor);
+    for (var i=0; i<100; i++)
+      instancedGrass.place(    OPENWORLD.Math.random()*10, OPENWORLD.Math.random()*10, 0.1,  width: 0.1,  height: 0.1);
+
 ```
--instancedbillboards
-instancedmodels
 
 *Terrain and collision detection*  
 Openworld allows for a single terrain model to be defined. For example for the Second Temple game the terrain is defined in:
 
 openworld/examplesecondtemple/blender/terrain/temple.blend 
-
+<img width="1247" height="546" alt="image" src="https://github.com/user-attachments/assets/58ed0076-f1b3-467a-bc27-e6e2c840f00c" />
+<!--
 ![image](https://github.com/user-attachments/assets/7a1c1422-d8f5-4912-bf91-77e5107c946f)
 
 
 In blender you can defines multple meshes in a model as follows:
  
  ![image](https://github.com/user-attachments/assets/3e4fb79b-1f38-4679-97f5-c2a4313813ad)
- 
-If the mesh contains the name 'surface' then OPENWORLD treats it as a surface and 3D objects can easily be placed onto the surface using opendarts rayscaster.  The OPENWORLD function worldToLocalSurfaceObj places an object on the terrain at the point it intersects the terrain surface. Likewise a mesh with the word 'wall' in it is treated as a wall and OPENWORLD stop a player walking through it. And a 'roof' mesh is used so OPENWORLD knows if a player is indoors and stop showing rain indoors
- 
+-->
 
-Terrains should be exported as wavefront obj files since mesh names are retained. This is necessary so OPENWORLD knows which meshes are a wall, surface or roof
+If the mesh contains the name 'surface' then OPENWORLD treats it as a surface and 3D objects can easily be placed onto the surface using opendarts rayscaster.  The OPENWORLD function worldToLocalSurfaceObj places an object on the terrain at the point it intersects the terrain surface. Also you can define levels of surfaces eg a roof with level name 'surface1' in blender. Can also be negative for say below ground
+
+Likewise a mesh with the word 'wall' in it is treated as a wall and OPENWORLD stop a player walking through it. And a 'roof' mesh is used so OPENWORLD knows if a player is indoors and stop showing rain indoors.
+
+
+Terrains can be exported as glb files but also wavefront obj files. 
 
 ```
     // Example of loading terrain  openworld/examplesecondtemple/blender/terrain/temple.blend that has been exported to an obj file with path mode set to strip
@@ -295,14 +306,10 @@ Terrains should be exported as wavefront obj files since mesh names are retained
     // OPENWORLD uses groups in mesh to determine which meshes are surfaces, walls or roofs
     OPENWORLD.Space.init(  mesh, scene);
 ```
-multilevel
-caching height so less cpu time with intersections
-  -mnetion how to increase gridsize
-mnetion about wall intersection how good to group into aras so will use bounding box
-  -if spread out then will check coolisions on everything
+
 
 *Spatial features*  
-Alongside using threedarts existing spatial placement of objects OPENWORLD has extra procedures to make it easy to place objects on a terrain at a certain point and with procedures to turn and scale them. All turn angle are in degrees with 0 degrees being north and 90 being east. Spatial functions make it easy to hide 3D objects if the camera gets a certain distance away from an object helping to increase frame rate. There is also spatial lerping making it possible to move an object along a terrain from one point to another in a given amount of time. Similarly with turning an object it is possible to lerp. For example turn 90 degrees in 1 second such as in this example:
+Alongside using threejs existing spatial placement of objects OPENWORLD has extra procedures to make it easy to place objects on a terrain at a certain point and with procedures to turn and scale them. All turn angle are in degrees with 0 degrees being north and 90 being east. Spatial functions make it easy to hide 3D objects if the camera gets a certain distance away from an object helping to increase frame rate. There is also spatial lerping making it possible to move an object along a terrain from one point to another in a given amount of time. Similarly with turning an object it is possible to lerp. For example turn 90 degrees in 1 second such as in this example:
 
 ```
     // Example of a fountain moving south 1 unit taking 1 second to lerp and also spinning from 90 degrees to 180 degress in 1 second
@@ -318,7 +325,17 @@ Alongside using threedarts existing spatial placement of objects OPENWORLD has e
    // Have fountain spin from 90 degrees to 180 degress lerping for one second
    OPENWORLD.Space.objTurnLerp(fountain, 180, 1);
 
+  // Can also use levels eg place a chimney on a roof that is on a surface set as level 1 in blender
+  var chimney = await OPENWORLD.Model.createModel('assets/models/chimney.glb');
+  OPENWORLD.Space.worldToLocalSurfaceObjHide(
+       chimney, 1,3, 0.0, 7, level:1);             // Set the position of the chimney on the roof which is level 1 and hide if its over 7 units away
+  OPENWORLD.Space.objTurn(chimney, 90);          // Set angle chimey is facing east 
+  scene.add(chimney);
+
 ```
+Behind the scenes mesh intersections with surfaces are cached in a small grid. This way say a lot of NPC's walking on a surface will not cost a rayintersection with every frame. If you wish finer more accrate heights can increase grid size.
+
+Also wall intersection are optimized so that if you have a big terrain with a lot of walls, can be expensive to do wall intersection every frame. Behind scenes has bounding box so only check walls in mesh that are within range of the camera rather than everwhere. Therefore it is good if  group your walls into blocks rather than spread over the terrain so dont intersect with every walls.
 
 There are many other spatial functions.  For example:
 
