@@ -189,13 +189,14 @@ It is possible to specify new textures for cloned actors and models which allows
     scene.add(laver);
     
 ```
-instancedmodels
+
 
 *Shadows*
 for both actors and models
   each a terrain and the actor casting the shadow on the terrain
   eg in a terrain set a part of the model   
   
+<img width="309"  alt="image" src="https://github.com/user-attachments/assets/bc52b1d4-4d14-4131-9532-f815aeb4a8d7" />
 
 ```
   groundsurface= OPENWORLD.BaseObject.getGroupByName(OPENWORLD.Space.mesh, "ground");
@@ -212,6 +213,8 @@ for both actors and models
 Openworld also make it easy to add sprites, planes and text.
 
   ![image](https://github.com/user-attachments/assets/8eca92a9-a123-4563-a54e-3cdce4e9f6c6)
+  <img width="200" alt="image" src="https://github.com/user-attachments/assets/85480e4e-6ce2-4144-aa4f-1c3f46724b12" />
+
 
 ```
     // Load a sprite of gabriel 
@@ -225,12 +228,41 @@ Openworld also make it easy to add sprites, planes and text.
 
     // Load a plane with the text 'Lindos News'
     var textplane =   await OPENWORLD.Plane.makeTextPlane("Lindos News", Colors.black, backgroundopacity: 0);
+
+   // Create a multitext sprite with the part on the left with a transparent background and the second part of the text black and bold like in the screenshot above
+   var stairsdownicon = await OPENWORLD.Sprite.makeMultiTextSprite( [{'message': 'E', 'textcolor': Colors.white,
+          'backgroundcolor': Colors.black,
+          'backgroundopacity': 1.0,
+          'paddingLeft': 5, 'paddingRight': 5},
+              {'message': 'Stairs ↓', 'textcolor': Colors.white,
+            'backgroundcolor': Colors.black,
+            'bold':true,
+            'backgroundopacity': 0.0}], scale:0.03);
 ```
 
-As with actors and models, the objects can be scale and placed on the surface of terrain.
--multitext
-  -mention extra features of adding text here perpahs like tails, padding
+As with actors and models, these objects can be scaled and placed on the surface of terrain.
+
+*Instanced Objects*
+Can be costly if must render huge number of objects each frame
+   can use instanced models and sprite so one pass
+   
+<img width="400"  alt="image" src="https://github.com/user-attachments/assets/17044f21-63e5-4ef2-a835-de14085beb5b" />
+in this example thousands of column models displayed and renderer will be one pass
+```
+    // Display 300 columns in a row with one column model
+    column = await OPENWORLD.Model.createModel( 'assets/models/column.glb');
+    instancedColumns = InstancedModel.fromTemplate(column, 300, threeJs.scene,name:'column');
+    instancedColumns.hideDistance=15.0;
+    instancedModels.add(instancedColumns);
+
+    instancedColumns.reset();
+    for (var i = 0; i < 300; i++) {
+      instancedColumns.place(-90, 6.82, 14.77 + i * 0.15, 0.0, scale: THREE.Vector3(0.4, 0.4, 0.4));
+    instancedColumns.finish();
+
+```
 -instancedbillboards
+instancedmodels
 
 *Terrain and collision detection*  
 Openworld allows for a single terrain model to be defined. For example for the Second Temple game the terrain is defined in:
@@ -429,6 +461,23 @@ Its also possible to have an npc say a speech with one sentence spoken after the
 -callback
 -x,y,z 
 -tails
+  <img width="300" alt="image" src="https://github.com/user-attachments/assets/4687b052-1eac-496b-a4c4-14335e081c75" />
+ OPENWORLD.Mob.setSpeech(actor,
+                                verselines.toList(), z: 90,
+                                y: -50.0,
+                                //allverselines,
+                                width: 300,
+                                clearwhendone: true,
+                                minwait: minwait,
+                                scale: 0.7,
+                                //  delay: time,
+                                tails: { 'bottomleft', 'bottomright', 'bottomcenter' },
+                                callbackonfinish: (actor) {
+                                  versefinish(actor);
+
+                                  actor.extra['verseindex']++;
+                                },
+                                randwait: 0);
 -padding
 
 *Weather*  
