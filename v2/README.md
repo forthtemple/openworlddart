@@ -312,18 +312,16 @@ Terrains can be exported as glb files but also wavefront obj files.
 Alongside using threejs existing spatial placement of objects OPENWORLD has extra procedures to make it easy to place objects on a terrain at a certain point and with procedures to turn and scale them. All turn angle are in degrees with 0 degrees being north and 90 being east. Spatial functions make it easy to hide 3D objects if the camera gets a certain distance away from an object helping to increase frame rate. There is also spatial lerping making it possible to move an object along a terrain from one point to another in a given amount of time. Similarly with turning an object it is possible to lerp. For example turn 90 degrees in 1 second such as in this example:
 
 ```
-    // Example of a fountain moving south 1 unit taking 1 second to lerp and also spinning from 90 degrees to 180 degress in 1 second
-    var fountain = await OPENWORLD.Model.createModel('assets/models/fountain.glb');
-    OPENWORLD.Space.worldToLocalSurfaceObjHide(
-        fountain, 1,1, 0.0, 7);             // Set the position of the fountain on the surface and hide if its over 7 units away
-    OPENWORLD.Space.objTurn(fountain, 90);          // Set angle plane is facing east 
-    scene.add(fountain);
+    // Example of a car moving south 1 unit taking 1 second to lerp and also spinning from 90 degrees to 180 degrees in 1 second
+    var car = await OPENWORLD.Model.createModel('assets/models/car.glb');
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(     car, 1,1, 0.0, 7);             // Set the position of the car on the surface and hide if its over 7 units away
+    OPENWORLD.Space.objTurn(car, 90);          // Set angle plane is facing east 
+    scene.add(car);
 
-    // Move the fountain south one unit taking 1 second to gets there - lerp the fountain
-    OPENWORLD.Space.worldToLocalSurfaceObjLerp(
-            fountain, 1,2, 0, 1);
-   // Have fountain spin from 90 degrees to 180 degress lerping for one second
-   OPENWORLD.Space.objTurnLerp(fountain, 180, 1);
+    // Move the car south one unit taking 1 second to gets there - lerp the car
+    OPENWORLD.Space.worldToLocalSurfaceObjLerp(  car, 1,2, 0, 1);
+   // Have car spin from 90 degrees to 180 degress lerping for one second
+   OPENWORLD.Space.objTurnLerp(car, 180, 1);
 
   // Can also use levels eg place a chimney on a roof that is on a surface set as level 1 in blender
   var chimney = await OPENWORLD.Model.createModel('assets/models/chimney.glb');
@@ -331,6 +329,8 @@ Alongside using threejs existing spatial placement of objects OPENWORLD has extr
        chimney, 1,3, 0.0, 7, level:1);             // Set the position of the chimney on the roof which is level 1 and hide if its over 7 units away
   OPENWORLD.Space.objTurn(chimney, 90);          // Set angle chimey is facing east 
   scene.add(chimney);
+
+
 
 ```
 Behind the scenes mesh intersections with surfaces are cached in a small grid. This way say a lot of NPC's walking on a surface will not cost a rayintersection with every frame. If you wish finer more accrate heights can increase grid size.
@@ -350,12 +350,16 @@ OPENWORLD.Space.faceObjectAlways(knight, camera);
 
 
 ```
-It is also possibly to place an object on a terrain with the same pitch as the terrain. For example a horse and cart going up a hill like below
+It is also possibly to place an object on a terrain with the same pitch as the terrain using the normal2world parameter. For example a horse and cart going up a hill like below
 
 <img width="261" height="279" alt="image" src="https://github.com/user-attachments/assets/71d9c89f-65ed-4f06-8b13-a3e4ee273bd2" />
 
 ```
-  OPENWORLD.Space.worldToLocalSurfaceObjHide(  cart, 1,3, 0.0, 7, normal2world:true); 
+  OPENWORLD.Space.worldToLocalSurfaceObjHide(  cart, 1,3, 0.0, 7, normal2world:true);
+
+  // Move the cart up hill to position 1,5 in 10 seconds while keeping the cart normal to the world
+  // worldToLocalSurfaceOnlyObjLerp will calculate its height position on the terrain at every movement so the cart will move along the contours of the terrain
+  OPENWORLD.Space.worldToLocalSurfaceOnlyObjLerp(  cart, 1,5,0, 10.0, normal2world:true);
 ```
 
 surfaceonlylerp
