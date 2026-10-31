@@ -350,7 +350,14 @@ OPENWORLD.Space.faceObjectAlways(knight, camera);
 
 
 ```
-normal2world
+It is also possibly to place an object on a terrain with the same pitch as the terrain. For example a horse and cart going up a hill like below
+
+<img width="261" height="279" alt="image" src="https://github.com/user-attachments/assets/71d9c89f-65ed-4f06-8b13-a3e4ee273bd2" />
+
+```
+  OPENWORLD.Space.worldToLocalSurfaceObjHide(  cart, 1,3, 0.0, 7, normal2world:true); 
+```
+
 surfaceonlylerp
 lerpacity
 lerpintensity
