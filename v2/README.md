@@ -323,12 +323,12 @@ Alongside using threejs existing spatial placement of objects OPENWORLD has extr
    // Have car spin from 90 degrees to 180 degress lerping for one second
    OPENWORLD.Space.objTurnLerp(car, 180, 1);
 
-  // Can also use levels eg place a chimney on a roof that is on a surface set as level 1 in blender
-  var chimney = await OPENWORLD.Model.createModel('assets/models/chimney.glb');
-  OPENWORLD.Space.worldToLocalSurfaceObjHide(
+   // Can also use levels eg place a chimney on a roof that is on a surface set as level 1 in blender
+   var chimney = await OPENWORLD.Model.createModel('assets/models/chimney.glb');
+   OPENWORLD.Space.worldToLocalSurfaceObjHide(
        chimney, 1,3, 0.0, 7, level:1);             // Set the position of the chimney on the roof which is level 1 and hide if its over 7 units away
-  OPENWORLD.Space.objTurn(chimney, 90);          // Set angle chimey is facing east 
-  scene.add(chimney);
+   OPENWORLD.Space.objTurn(chimney, 90);          // Set angle chimey is facing east 
+   scene.add(chimney);
 
 
 
@@ -362,9 +362,29 @@ It is also possibly to place an object on a terrain with the same pitch as the t
   OPENWORLD.Space.worldToLocalSurfaceOnlyObjLerp(  cart, 1,5,0, 10.0, normal2world:true);
 ```
 
-surfaceonlylerp
-lerpacity
-lerpintensity
+It is also possible to lerp the opacity of the object so rather than an object disappear instantly when it is a certain distance from the camera instead if fades
+```
+    // Have a car fade in 1 second when the car is 7 units away from the camera and fade in when you get closer than 7 units
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(     car, 1,1, 0.0, 7, lerpopacity:1.0);             
+
+```
+
+This also applies to light intensity. Rather than have a light abruptly turn off when the camera is a certain distance away from it it can fade using the 'lerplight' parameter:
+
+```
+    // Set up a point light
+    var hearthlightgroup = THREE.Group();
+    var light = new THREE.PointLight(    0xFFA500); 
+    light.intensity = 0.3; 
+    light.distance = 0.5; 
+    hearthlightgroup.add(light);
+    scene.add(hearthlightgroup);
+    // Place the light source in the scene and when camera is 2 units away from it have the light fade in 1 second
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(
+        hearthlightgroup, hearthposx, hearthposy,2.0,level:1, 1, lerplight: 1);
+
+```
+
 
 maybe seperatley
 portals
