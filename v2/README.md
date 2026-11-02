@@ -1004,6 +1004,8 @@ In the example below the surfaceTexture is is set to detailmap.jpg
     OPENWORLD.Updateables.add(grassiii);
 ```  
 - Trees
+  Can cheap trees made up of transparent planes. In example below  has 3 types of tree section and have 128 out of them. Made quite large so fewer leaves.
+  
   <img width="300" alt="image" src="https://github.com/user-attachments/assets/974a3ece-0b53-4c1a-83d2-abccc6e2a7a1" />
 ```
           var treei = await Tree.createTree([
@@ -1013,7 +1015,6 @@ In the example below the surfaceTexture is is set to detailmap.jpg
           ],
               leafspritescale: 1.2,
               // is redundant because have specified in leafpaths
-              // treehollowness: 0.2,
               spreadx: 3.0,
               spreadz: 3.0,
               spready: 1.0,
@@ -1041,16 +1042,26 @@ The following is an example of flares:
 ![image](https://github.com/user-attachments/assets/ee950d2f-7ca7-4a2f-8397-6bf3a9d8269d)
 -->
 
--vegetation
--trees
+*Asset Pack*
 
+If you upload to steam then your assets will have not protection and can be loaded by anyone. There is an asset pack tool that lets you encrypt your assets to offer some encryption.  It is made to be convenient so that in debug mode you can continue to load your assets like normal  in a new /protected folder but when you do a release instead the assets can be loaded from an archive in your assets/pack directory. You will need to add - assets/packs/ to your pubspec.yaml file.
+
+
+You can follow instructions in /lib/ASSET_PACK_README.md
+```
+dart run openworld:pack_assets --gen-key
+
+dart run openworld:pack_assets --in protected --out assets/packs/game.owp
+
+
+```
 
 *Multi player*  
-The demo games include simple multi player capability. But multiplayer is not built into the openworld gaming engine. This might change in the future. Openworld does have a client class with sessions and player information but the actual game play is specific for each demo. The demo multiplayer simply broadcasts a logged in players  position and turn and broadcasting a player action 'wave'. The multiplayer does provide chat and information on whos on. The server side is written in php and mysql as available in the repository in /server
+The rhodes3d demo games include simple multi player capability. But multiplayer is not built into the openworld gaming engine. This might change in the future. Openworld does have a client class with sessions and player information but the actual game play is specific for each demo. The demo multiplayer simply broadcasts a logged in players  position and turn and broadcasting a player action 'wave'. The multiplayer does provide chat and information on whos on. The server side is written in php and mysql as available in the repository in /server
 
 ![image](https://github.com/user-attachments/assets/d5114ddf-57ab-46e7-a3ab-54b29215eca7)
-  - not in second temple demo but is in rhodes3d
-    -possibly need to include the php server for rhdoes3d
+
+Future versions of the library will include multiplayer support that is peer to peer so that no server is required. The games will be hosted by players themselves. 
 
 *Hotloading*  
 The demo games include a hotloading function that is called whenever a game is hotloaded. This allows everything in hotload function being reloaded and displayed instantly making placement of objects being possible on the fly. For example in the example below an extra grassposs position could be added and then hotloaded and it will be displayed straight away:
@@ -1091,7 +1102,4 @@ pos: 8.59, 1.51, t-95.00
 
 By copying and pasting the position into the hotload function, objects can be placed in the scene, hotloaded and viewed straight away.
 
---
-asset protector
-   load a model with asset...
 
