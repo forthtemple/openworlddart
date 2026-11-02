@@ -479,6 +479,7 @@ Allows you to jump from one part of the game to another. For example if multi le
 ```
 
 *Obstacles*
+
 At run time place a rectangle of certain with and height and stop player from getting past
 
 ```
@@ -494,14 +495,33 @@ At run time place a rectangle of certain with and height and stop player from ge
     );
 ```
 
-maybe seperatley
-portals
-  useful between levels
-     -angiediff
-     -adjacent
-obstacles
-doors
+*Doorways*
+If have a doorway made of multiple doors such as a double door can add the doors to doorway class and set their angle when opened or close so only need to call setOpenClose( to open and
+close a door rather than move the doors individually.
 
+```
+    // For a doorway of two doors create the two door objects
+    var doorwomensgateeast = doorwood.clone();
+    _hotload.add(doorwomensgateeast);
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(
+        doorwomensgateeast,-13.66, 63.15, 0.00,  10);
+    doorwomensgateeast.scale.setValues(0.2, 0.25, 0.2);
+
+    var doorwomensgatewest = doorwomensgateeast.clone();
+    _hotload.add(doorwomensgatewest);
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(
+        doorwomensgatewest, -13.86, 63.15, 0.00,   10);
+
+    // These two doors can be added to a doorway 
+    var doorwaywomensgate=OPENWORLD.Doorway();
+    // If the door is open turn the door to 0 degrees otherwise to 90 degrees
+    doorwaywomensgate.addDoor(doorwomensgateeast,0,90);
+    // If the second door is open turn the door to 0 degrees otherwise set it to -90 degrees
+    doorwaywomensgate.addDoor(doorwomensgatewest,0,-90);
+    // Set the doors open or closed with one call - here if its not night time then both doors will be 0 degrees
+    doorwaywomensgate.setOpenClose(!OPENWORLD.Time.isNight(OPENWORLD.Time.time));
+
+```
       
 *Movement system*  
 Openworld includes the flutter <a href="https://pub.dev/packages/flutter_joystick">joystick</a> widget that allows a player to control turning and movement on a smartphone.  
