@@ -955,77 +955,49 @@ Here have set to incluseiveonly so that choose what you want to reflect otherwis
 
 - Vegeration
   <img width="300" alt="image" src="https://github.com/user-attachments/assets/ffeca468-17f4-4c6e-9737-6d8669980a1c" />
-
+The vegetation object allows the rendering of vegetation sprites cheaply including grass and shrubs and also detail the ground.
+In the example below the surfaceTexture is is set to detailmap.jpg 
 ```
+    // Create vegetation at x,y=5,6 of 20 units in width and height and exclude a point at 2,2 of width and height 0.5
+    // Add grass and myrtle
     var grass = Vegetation();
-    maxx = -5.9 + 0.1; miny = -2.1; minx = -10.12; maxy = 2.0;//6;//12.26;
-    var boundarywidth3 = maxx - minx;
-    var boundarylength3 = maxy - miny;
-
-    var grassposx2 = (maxx + minx) / 2;
-    var grassposy2 = (maxy + miny) / 2;
-    var diff = 0.4;
-    var pointscitizenpath = OPENWORLD.Math.interpolateByIncrement(
-        citizenpath, diff);
-
-    List<List<double>> excludeSquares = [];
-    for (var point in pointscitizenpath) {
-      if (point[1] < maxy && point[1] >
-          miny) //44&&point[0] >= minx && point[0] <= maxx && point[1] >= miny &&
-        //     point[1] <= maxy) {
-        // if (i==0)
-        //   print("point:"+point.toString());
-        excludeSquares.add(
-            [
-              point[0],
-              point[1],
-              0.3,
-              diff,
-            ]);
-      // } // bethspagepos),  diff, 0.4]);
-
-    }
-    //print("uuu"+grassposx2.toString()+" "+grassposy2.toString());
     var grassgroupii = await grass.createGrass(threeJs.camera,
         grassShadow: 0.2,
-        boundaryWidth: boundarywidth3,
-        //3
-        boundaryLength: boundarylength3,
-        edgeFalloff: 0,
-        worldposx: grassposx2,
-        worldposy: grassposy2,
+        boundaryWidth: 20,
+        boundaryLength:20,
+        worldposx: 5,
+        worldposy: 6,
         layerFadeAngle: 0.25,
-        seed: 9999,
-        excludeSquares: excludeSquares,
+        excludeSquares: [[2,2,0.5,0.5]],  // Exclude regions
         surfaceTexture: SurfaceTextureSpec(
             asset: 'assets/models/temple/detailmap.jpg',
             blendStrength: 0.25,
             tilingScale: 0.3, // texture repeats every 12 world metres
             edgeFade: 0.02
-          //edgeFade: 0.25, // fades over the outer 25% of the boundary
         ),
         plants: [
-          PlantSpec(
-            spriteAsset: 'assets/shaders/grass2.png',
-            count: 1000,
-            width: 0.8 / 3,
-            height: 0.6 / 3,
-            billboard: 1,
-            flipProbability: 0.5,
-            //     exclusionOffset: 0.01,
-            //   renderMode: PlantRenderMode.sprite,
-          ),
+
           PlantSpec(
             spriteAsset: 'assets/shaders/grass.png',
-            count: 10000,
+            count: 10000,  // Create a lot of grass sprites
             width: 0.2 / 2,
             height: 0.3,
             billboard: 1,
             flipProbability: 0.5,
-            //     exclusionOffset: 0.01,
-            //    renderMode: PlantRenderMode.sprite,
           ),
-
+          PlantSpec(
+              spriteAsset: 'assets/models/temple/myrtle.png',
+              count: 100,
+              width: 0.4 ,
+              height: 0.6 ,
+              billboard: 3,
+              heightVariation: 0.3,  // Dont make all the myrtle the same width and height
+              widthVariation: 0.3,
+              layers: 2,
+              flipProbability: 0.5,  // Randomly flip the mytle
+              planeSize: 100,
+              exclusionOffset: 0.1
+          ),
         ],
         showHeightGrid: false,
         heightGridDivisions: 10,
@@ -1034,9 +1006,9 @@ Here have set to incluseiveonly so that choose what you want to reflect otherwis
         planeSize: 50);
 
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
-        grassgroupii, grassposx2, grassposy2, 0.0,
-        15);
-    hotloadAdd(firsthotload, false, grassgroupii);
+        grassgroupii,5,6, 0.0,  15);
+    scene.add( grassgroupii);
+
     OPENWORLD.Updateables.add(grassiii);
 ```  
 - trees
