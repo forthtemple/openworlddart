@@ -897,7 +897,7 @@ It is also possible given an pool object you get find its positionjson informati
    OPENWORLD.Config
             .config['positions']['poolpositions'][1]['positions'].add(
             {
-              'name':  'citize3',
+              'name':  'citizen3',
               'p': [10,10, 0],   't': 35,
               'label':'blacksmith',
               'action': "idle",
@@ -905,7 +905,6 @@ It is also possible given an pool object you get find its positionjson informati
                   var positionjson = OPENWORLD.Config.getPositionForObject(actor);
                   if (positionjson['label']=='blacksmith')
                     OPENWORLD.Sound.play(path: "sounds/hammer.mp3");
-
                 },
             });
 
@@ -919,6 +918,130 @@ It is also possible given an pool object you get find its positionjson informati
 *Common objects*    
 Openworld includes some useful objects like fire, water, flares, smoke and sky. Most are based on those  available in threejs as shaders. 
 
+- Water
+  The following is an example of water:
+<img width="300" alt="image" src="https://github.com/user-attachments/assets/de67d132-ddea-46c8-b08f-87ad39534f68" />
+
+Here have set to incluseiveonly so that choose what you want to reflect otherwise can choose what to exclude. Also only calculates reflections once every 4 frames
+
+```
+    final waterGeometryi = THREE.PlaneGeometry(20.0, 20.0);
+    var watersiloam = Water(waterGeometryi, WaterOptions(
+      color: 0xbbddff,
+      scale: 4 / 32.0,
+      reflectivity: 1.0,
+      flowDirection: THREE.Vector2(0.05, 0.05),
+      textureWidth: 256,
+      textureHeight: 256, 
+      inclusiveOnly:true
+    ));
+
+    watersiloam.scale.setValues(0.1,0.1, 1.0);
+    OPENWORLD.Space.setTurnPitchRoll(Glob.watersiloam!, 0, 0, 90);
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(watersiloam!, -9.3-0.4, -52.62, 0.063, 2.5);
+    scene.add(watersiloam);
+
+    // Use inclusive where say what want reflected in the pool
+    // Choose to include for example the sky, clouds tents
+    threeJs.scene.traverse((obj) {
+        if (obj is THREE.Mesh && 
+            (obj.name== 'skymesh' || obj.name == 'clouds'||   obj.name == 'tentsiloamnormalclotheswall')) 
+           Glob.watersiloam.includeInReflection.add(obj);
+      });
+      // Only calculate the reflections once every 4 frames
+      watersiloam.reflectionUpdateInterval =4;
+
+```
+
+- Vegeration
+  <img width="300" alt="image" src="https://github.com/user-attachments/assets/ffeca468-17f4-4c6e-9737-6d8669980a1c" />
+
+```
+    var grass = Vegetation();
+    maxx = -5.9 + 0.1; miny = -2.1; minx = -10.12; maxy = 2.0;//6;//12.26;
+    var boundarywidth3 = maxx - minx;
+    var boundarylength3 = maxy - miny;
+
+    var grassposx2 = (maxx + minx) / 2;
+    var grassposy2 = (maxy + miny) / 2;
+    var diff = 0.4;
+    var pointscitizenpath = OPENWORLD.Math.interpolateByIncrement(
+        citizenpath, diff);
+
+    List<List<double>> excludeSquares = [];
+    for (var point in pointscitizenpath) {
+      if (point[1] < maxy && point[1] >
+          miny) //44&&point[0] >= minx && point[0] <= maxx && point[1] >= miny &&
+        //     point[1] <= maxy) {
+        // if (i==0)
+        //   print("point:"+point.toString());
+        excludeSquares.add(
+            [
+              point[0],
+              point[1],
+              0.3,
+              diff,
+            ]);
+      // } // bethspagepos),  diff, 0.4]);
+
+    }
+    //print("uuu"+grassposx2.toString()+" "+grassposy2.toString());
+    var grassgroupii = await grass.createGrass(threeJs.camera,
+        grassShadow: 0.2,
+        boundaryWidth: boundarywidth3,
+        //3
+        boundaryLength: boundarylength3,
+        edgeFalloff: 0,
+        worldposx: grassposx2,
+        worldposy: grassposy2,
+        layerFadeAngle: 0.25,
+        seed: 9999,
+        excludeSquares: excludeSquares,
+        surfaceTexture: SurfaceTextureSpec(
+            asset: 'assets/models/temple/detailmap.jpg',
+            blendStrength: 0.25,
+            tilingScale: 0.3, // texture repeats every 12 world metres
+            edgeFade: 0.02
+          //edgeFade: 0.25, // fades over the outer 25% of the boundary
+        ),
+        plants: [
+          PlantSpec(
+            spriteAsset: 'assets/shaders/grass2.png',
+            count: 1000,
+            width: 0.8 / 3,
+            height: 0.6 / 3,
+            billboard: 1,
+            flipProbability: 0.5,
+            //     exclusionOffset: 0.01,
+            //   renderMode: PlantRenderMode.sprite,
+          ),
+          PlantSpec(
+            spriteAsset: 'assets/shaders/grass.png',
+            count: 10000,
+            width: 0.2 / 2,
+            height: 0.3,
+            billboard: 1,
+            flipProbability: 0.5,
+            //     exclusionOffset: 0.01,
+            //    renderMode: PlantRenderMode.sprite,
+          ),
+
+        ],
+        showHeightGrid: false,
+        heightGridDivisions: 10,
+        heightGridColor: 0xff6a00,
+        heightGridOffset: 0.0,
+        planeSize: 50);
+
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(
+        grassgroupii, grassposx2, grassposy2, 0.0,
+        15);
+    hotloadAdd(firsthotload, false, grassgroupii);
+    OPENWORLD.Updateables.add(grassiii);
+```  
+- trees
+- fire
+
 ![image](https://github.com/user-attachments/assets/ab24ea2b-8149-4759-abec-f7f8eb794eca)
 
 The following is an example of fire:
@@ -931,14 +1054,11 @@ The following is an example of fire:
     scene.add(fire.mesh);
     OPENWORLD.Updateables.add(fire);
 ```
-
+<!--
 The following is an example of flares:
 
 ![image](https://github.com/user-attachments/assets/ee950d2f-7ca7-4a2f-8397-6bf3a9d8269d)
-
-The following is an example of water:
-
-![image](https://github.com/user-attachments/assets/4f4499fd-e278-4457-8810-71d83fd11289)
+-->
 
 -vegetation
 -trees
