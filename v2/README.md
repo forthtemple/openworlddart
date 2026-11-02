@@ -478,6 +478,22 @@ Allows you to jump from one part of the game to another. For example if multi le
       );
 ```
 
+*Obstacles*
+At run time place a rectangle of certain with and height and stop player from getting past
+
+```
+    // Place an obstacle at  hearthposx, hearthposy with a width and height of 0.1
+    // If hit the obstacle then play a pain sound
+    OPENWORLD.Obstacles.createObstacle(
+        hearthposx, hearthposy, 0.1, 0.1,
+         //marker:_hotload   // Draw the marker
+        callback: (obstacle) {
+          OPENWORLD.Sound.play(path: OPENWORLD.Math.randPick(['sounds/pain.mp3','sounds/pain2.mp3','sounds/pain3.mp3']),volume: 0.1);
+        },
+        callbacknextwait: 1  // Wait 1 second before allow another callback - stop flood of callbacks if a player hits the obstacle
+    );
+```
+
 maybe seperatley
 portals
   useful between levels
