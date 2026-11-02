@@ -862,8 +862,59 @@ The config file also has  pool objects. This is useful for example with a forest
   }
 }
 ```
-- mention big changes to config like onvisible, throttling
+Config pool objects can also be used run time creating pool objects on the fly without using ocnfig.json file. For example you could create a crowd of 100 npc actors like below randomly placed in a 10x10 grid facing at random directions.  They also have an callbackonvisible and callbackonhide so when they appear you could have them for example say a speech, jump up in the air. And when they are no longer visible you can clear it on callbackonhide. You should always remember to to undo whatever youve done on callbackonvisible or it'll appear when the pool object is reused. In the example below animation throttling is used so that actors that are furtuher away have less frames computed the those closer to the camera allowing for large crowds without expensive animation pose calcualtions.
+
+```
+    // Create 100 pool object in a 10x10 units area
+    for (var i=0; i<100; i++) 
+        OPENWORLD.Config
+            .config['positions']['poolpositions'][1]['positions'].add(
+            {
+              'name':  OPENWORLD.Math.randPick(manlist),
+              'p': [OPENWORLD.Math.random()*10,OPENWORLD.Math.random()*10, 0],
+              't': OPENWORLD.Math.random()*360,
+              'action': "idle",
+              'randomduration': 0.1,
+              "lerpopacity": 1,
+                "callbackonvisible":(actor) {
+                  OPENWORLD.Actor.enableDistanceThrottle(actor, minDistance: 0.5, skipFrames: 6);
+                },
+                "callbackonhide":(actor) {
+                  OPENWORLD.Actor.disableDistanceThrottle(actor);
+                },
+            });
+
+
+    // Call this once any new objects are created  - eg at the end of hotload
+    await OPENWORLD.Config.updatePoolObjects();
+
+    OPENWORLD.Config.forceShowPoolObjects();
+```
+
+It is also possible given an pool object you get find its positionjson information. In the example below ppositionjson will have ppositionjson['p'] as 10,10,0 and 't' will be 35 so for example in callbackonvisible know what positionjson it belongs to and below if its a blacksmith will play a hammering sound.
    -getting the json based on the actor so can know position and vice versa, given an position get the actor associated if visible
+```
+   OPENWORLD.Config
+            .config['positions']['poolpositions'][1]['positions'].add(
+            {
+              'name':  'citize3',
+              'p': [10,10, 0],   't': 35,
+              'label':'blacksmith',
+              'action': "idle",
+                "callbackonvisible":(actor) {
+                  var positionjson = OPENWORLD.Config.getPositionForObject(actor);
+                  if (positionjson['label']=='blacksmith')
+                    OPENWORLD.Sound.play(path: "sounds/hammer.mp3");
+
+                },
+            });
+
+    // Also possible to get the object associated with the positionjson if it is visible
+    var actor = OPENWORLD.Config.getPoolPositionObject(  positionjson);
+    if (actor!=null) {
+       OPENWORLD.Space.objTurnLerp(actor,35,1);
+    }
+```
   
 *Common objects*    
 Openworld includes some useful objects like fire, water, flares, smoke and sky. Most are based on those  available in threejs as shaders. 
