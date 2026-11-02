@@ -615,9 +615,6 @@ Its also possible to have an npc say a speech with one sentence spoken after the
 
 The speech also allows for placement for example the placement of the text above the npc with z. Or left and right of the npc with x or forward or back with y (eg -50 units forward in the example below). It also includes a callback so when it the speech is finished can have the npc do something else.
 
--callback
--x,y,z 
--tails
   <img width="300" alt="image" src="https://github.com/user-attachments/assets/4687b052-1eac-496b-a4c4-14335e081c75" />
  OPENWORLD.Mob.setSpeech(actor,
     ['Jack and Jill',
@@ -656,7 +653,7 @@ Also the day length can be specified. For example 1 hour to equal 24 hours. Ther
 
 *Light*  
 Openworld includes features like specifying that a light should be switched on at night and turned off during the day. Also allows light to flicker and also to lerp turning a light on so its not sudden.
-
+Light intensity can also be lerped dimmer as move away.
 ```
     var homelight= new THREE.PointLight(0xFFA500);
     homelight.intensity = 1.0; 
@@ -665,8 +662,10 @@ Openworld includes features like specifying that a light should be switched on a
     OPENWORLD.Light.addFlicker(homelight);
     // Specify that homelight will only be on at night
     OPENWORLD.Light.addNightOnly(homelight);
+    // when move 5 units away from camera, light will fade in 1 second or vice versa
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(
+        homelight, hearthposx, hearthposy, 5, lerplight: 1);
 ```
-!lightlerp
 
 *Sound*  
 Openworld has a sound system including a pool of flutter audioplayers which can be reused when a sound has finished playing. The pool also allows all audioplayers to be silenced when the game is closed and reactivated when the game is restarted. The sound system also includes features like volume, looping, fading and also delay.
