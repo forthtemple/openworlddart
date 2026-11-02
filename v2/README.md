@@ -436,6 +436,48 @@ This is also custom triggers. For example its possible to create your own trigge
 
 *Portals*
 
+Allows you to jump from one part of the game to another. For example if multi level and have a set of stairs when hit a rectangle at bottom of stairs give a destination at a new level and player moves to the new level
+
+```
+
+
+     // Take a player to the top of a set of steps to level 1
+     // If a player walk into a rectangle at x,y=57.16, 13.35 with width and height 0.04 then take them to x,y 57.7,13.45 on level 1 and have them face 0 degrees when they reach their destination
+     OPENWORLD.Portals.createPortal(
+          57.76, 13.35,
+          0.04,
+          0.04,
+          57.7, 13.45,
+          0.0,
+          level2: 1,
+          finalturn:0,
+          //  marker: _hotload,   // If visually want to see the portal entrance and destination then comment this part out
+          lerp: 1  // Take one second to get lerp to the top of the steps
+     );
+
+     // This portal does the opposite and takes the player from the top of the steps down to the bottom. When the player reaches the bottom they turn 225 degrees
+     // There is a callback where when they reach the bottom, after a delay of 1 second they turn to 318 degrees
+     // Angle entry is the angle they must enter the portal (140 degrees) with a certain threshold (eg  50 degrees eg can enter the portal 90 to 190 degrees)
+     // Angle entry stops the problem of  possibly have multiple portals near each other and accidently falling into the wrong one
+     OPENWORLD.Portals.createPortal(
+          57.74, 13.42,
+          level:1,
+          0.05,
+          0.05,
+          57.63, 13.21,
+          level2: 0,
+          0.0,
+          //   marker:_hotload,
+          finalturn:225,
+          angleentry: 140,
+          angleentrythresh: 50,
+          lerp: 1,
+          callback:(){
+            OPENWORLD.Space.objTurnLerp(threeJs.camera, 318,1,delay1);
+          }
+      );
+```
+
 maybe seperatley
 portals
   useful between levels
