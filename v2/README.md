@@ -750,31 +750,26 @@ Openworld has persistence so data can be stored when an app is closed and all ga
 
 *Rooms*  
 Openworld has a room system which allows things to happen when a player enters a room such as play a background sound, determine if  the room is indoors and call a trigger when a player enters the room. Rooms are defined to have a central x,y point with a rectangle having distance from that point. Rooms not only have a looping sound associated with it but also a random intermittent sound such as a smithy hammering occasionly. If  a room is indoors then rain will not appear.  The following is an example of a room with a background sound and a random intermittent sound and is defined to be indoors if a roof is above the players head. When the player enters the room a priest says a speech:
-
+It also has exitroom so when you leave a room it'll take you do another room eg room terrain
+   -for example can have a large roomterrain with smaller rooms of houses that lead into the terrain
+      -roomterrain could have sound of crickets at night or general terrain 
 ```
     var roomBC = OPENWORLD.Room.createRoom(7.4, 1.26,               // central coordinates of the room
              soundpath: "sounds/courtyard.mp3", volume: 0.05,       // looping background sound played when enter the room
-             randomsoundpath:"sounds/prayer.mp3", randomsoundgap:50 // prayer is played randomly every 50 seconds
+             randomsoundpath:"sounds/prayer.mp3", randomsoundgap:50, // prayer is played randomly every 50 seconds
+             exitroom: roomTerrain
     );
     scene.add(roomBC);
     OPENWORLD.Room.setAutoIndoors(roomBC, true);                    // If roof is above head is 
     OPENWORLD.Room.setDistanceTrigger(roomBC,
-        minx: 5, maxx: 9.1, miny: -0.67, maxy: 2.8);                // define the boundaries of the room - room in x axis from 5 to 9.1 and y axis is -0.67 to 2.0
+       // define the boundaries of the room - room in x axis from 5 to 9.1 and y axis is -0.67 to 2.0
+        minx: 5, maxx: 9.1, miny: -0.67, maxy: 2.8,     event: (action) { {
     // When enter the room
-    roomBC.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
       if (event.action) {
          OPENWORLD.Mob.setSpeech(priest, ["Welcome to the Second Temple","Its 72AD"]);   // When enter the room the priest says a speech
       } 
     });
 ```
-! have modified distance trigger
--mention exitroom and ability to  have a roomterrain
-<!--
-rooms where define an area for a room and 
-    can trigger entry and exit of room eg have butcher say hello when someone enters
-    room sound eg sound fo a smithy when enter
-    indoors when indoors then not effected by rain
--->
 
 *Maps*  
 Openworld has maps that show the players position with a marker. It is possible to have multiple maps where you can have a map for say a city and then a larger encompassing for wilderness. Each map is an image and you specify two points with a pixel position and a corresponding world position. With the two points openworld  calculates the image position from the world position through interpolation and can place a marker in the correct position:
@@ -808,11 +803,7 @@ In this example there are two maps and when the player is within the area of map
     // Given the current world position get the correct map and its marker position on that map
     var map = OPENWORLD.Maps.getMapFromWorldcoords(worldpos.x, worldpos.y);
 ```
-<!--
- maps where just specify two points on a map ie pixel pos and world pos and can tranlate your position onto map
-    -multipel maps and will choose the one at end so can have maps eg for a city and a global map
-    -exmaples of display of maps in two demos
--->
+
 
 *Music*  
 Openworld can play music in the background with multiple songs with different probabilities of playing. In the example below there are four song and hatikvah has a 5/8 chance of the song being chosen to play. By default there is a gap between songs of 3 minutes plus a random number between 0 and 50 second though this can be changed with 'timebetweensongs' and 'randomtimebetweensongs':
