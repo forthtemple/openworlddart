@@ -589,12 +589,11 @@ There is also a procedure to move an NPC over and over again through a set of po
       action:"walk",    // Animation while walking
       stopaction:"idle" // Animation when reached final point
        callbackonfinish: (actor) {
-         OPENWORLD.Mob.setSpeech(actor, ["Hello", z: 90,    scale: 0.4);
+         OPENWORLD.Mob.setSpeech(actor, ["Hello"], z: 90,    scale: 0.4);
        })
   );
 
 ```
-!mention callback
 
 There are also procedures to make it easy to add random chatter to an npc. For example:
 
@@ -613,27 +612,24 @@ Its also possible to have an npc say a speech with one sentence spoken after the
   // Here the oldlady says the following 3 sentences one after the other rather than randomly
   OPENWORLD.Mob.setSpeech(oldlady, ["I can't see very well.","Is someone there?","Try some of my pie"]);
 ```
+
+The speech also allows for placement for example the placement of the text above the npc with z. Or left and right of the npc with x or forward or back with y (eg -50 units forward in the example below). It also includes a callback so when it the speech is finished can have the npc do something else.
+
 -callback
 -x,y,z 
 -tails
   <img width="300" alt="image" src="https://github.com/user-attachments/assets/4687b052-1eac-496b-a4c4-14335e081c75" />
  OPENWORLD.Mob.setSpeech(actor,
-                                verselines.toList(), z: 90,
-                                y: -50.0,
-                                //allverselines,
-                                width: 300,
-                                clearwhendone: true,
-                                minwait: minwait,
-                                scale: 0.7,
-                                //  delay: time,
-                                tails: { 'bottomleft', 'bottomright', 'bottomcenter' },
-                                callbackonfinish: (actor) {
-                                  versefinish(actor);
-
-                                  actor.extra['verseindex']++;
-                                },
-                                randwait: 0);
--padding
+    ['Jack and Jill',
+     'went up the hill',
+     'to fetch a pale of water'],
+    x: 20,     y: -50.0,  z: 90,
+     clearwhendone: true,   // When speech is finished, clear the text
+      scale: 0.7,  tails: { 'bottomleft', 'bottomright', 'bottomcenter' },  // have tails at the bottom of the speech bubble like in the screenshot - for example imlpy a group of people are singing
+      callbackonfinish: (actor) {
+        // When finished speech laugh
+         OPENWORLD.Sound.play(path:'sounds/laugh.mp3');
+      });
 
 *Weather*  
 Openworld has weather built into the engine and includes wind, rain, cloud and fog. It has lerping so it is possible gradually transition from say clear sky to cloudy or rain to fog. It also includes a random weather generator where you can specify the probabity in a given day it will rain, be cloudy, be windy or foggy.
