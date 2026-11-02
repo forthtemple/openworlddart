@@ -561,22 +561,38 @@ Openworld has procedures specifically for npcs. For example  have  an actor rand
 There is also a procedure to move an NPC over and over again through a set of positions such as a guard walking up and down a corridor:
 
 ```
-  // Here a storeman will walk through these three points walking at 0.2m/s looping over and over
-  OPENWORLD.Mob.moveToLoop(
-            storeman,
-            [ [387.26, 285.76, 0, 0.2],
-              [386.05, 281.09, 0, 0.2],
-              [381.72, 276.86, 0, 0.2], ],
-            action: "walk". // Animation to play while walking
-       );
-!must change and mention callbacks and actions and different types of movetoloops eg stop
+  // Here a storeman will walk through these three points walking at 0.02 units/s looping over and over.
+   // Movetoloop also includes actions where can reach a certain point and do something like jump up in the air and turn west.
+  // Also includes callbacks where once a position When reaches 6.1,-20.5 the storaman cries in pain
+  // The looptype canbe looptypestop where rather than looping will stop
+  var v=0.02;
+  OPENWORLD.Mob.moveToLoop(storeman,
+              [
+                {"p": [-5.84, -30.5, 0], "v": v},
+                {"p": [-6.1, -20.5, -0.01], "v": v,
+                  "callback": (actor) {
+                     OPENWORLD.Sound.play(path: OPENWORLD.Math.randPick(['sounds/pain.mp3','sounds/pain2.mp3','sounds/pain3.mp3']),volume: 0.1);
+                  }
+                },
+                {"action": "jump", "time": 10, "t": 270},  // Jump when reach -6.1,-20.5 waiting 10 seconds and face west
+                {"p": [-6.1, -20.5, 0], "v":v},
+                {"p": [-5.84, -35, 0],  "v": v, },
+              ],
+             // looptype: OPENWORLD.Mob.LoopTypeStop,  
+              action: "walk");
+
 
   // Or just move an npc through multiple points to reach a destination
   // For example have a knight walk through the point 384.76, 252.02 to reach 383.76, 252.02
+  // Can have a callback when finish so for example the knight says hello when reached the destinstation
    OPENWORLD.Mob.moveTo(knight, [ [ 384.76, 252.02], [ 383.76, 252.02]] ,
       action:"walk",    // Animation while walking
       stopaction:"idle" // Animation when reached final point
+       callbackonfinish: (actor) {
+         OPENWORLD.Mob.setSpeech(actor, ["Hello", z: 90,    scale: 0.4);
+       })
   );
+
 ```
 !mention callback
 
