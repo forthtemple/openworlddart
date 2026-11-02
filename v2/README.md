@@ -962,11 +962,7 @@ In the example below the surfaceTexture is is set to detailmap.jpg
     // Add grass and myrtle
     var grass = Vegetation();
     var grassgroupii = await grass.createGrass(threeJs.camera,
-        grassShadow: 0.2,
-        boundaryWidth: 20,
-        boundaryLength:20,
-        worldposx: 5,
-        worldposy: 6,
+        boundaryWidth: 20,   boundaryLength:20,    worldposx: 5,  worldposy: 6,
         layerFadeAngle: 0.25,
         excludeSquares: [[2,2,0.5,0.5]],  // Exclude regions
         surfaceTexture: SurfaceTextureSpec(
@@ -976,7 +972,6 @@ In the example below the surfaceTexture is is set to detailmap.jpg
             edgeFade: 0.02
         ),
         plants: [
-
           PlantSpec(
             spriteAsset: 'assets/shaders/grass.png',
             count: 10000,  // Create a lot of grass sprites
@@ -999,10 +994,7 @@ In the example below the surfaceTexture is is set to detailmap.jpg
               exclusionOffset: 0.1
           ),
         ],
-        showHeightGrid: false,
         heightGridDivisions: 10,
-        heightGridColor: 0xff6a00,
-        heightGridOffset: 0.0,
         planeSize: 50);
 
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
@@ -1011,8 +1003,25 @@ In the example below the surfaceTexture is is set to detailmap.jpg
 
     OPENWORLD.Updateables.add(grassiii);
 ```  
-- trees
-- fire
+- Trees
+  <img width="300" alt="image" src="https://github.com/user-attachments/assets/974a3ece-0b53-4c1a-83d2-abccc6e2a7a1" />
+```
+          var treei = await Tree.createTree([
+            ["assets/textures/boxthorn.png", 0.8], // leafscale
+            ["assets/textures/boxthorn2.png", 0.8],
+            ["assets/textures/boxthorn3.png", 1.4]
+          ],
+              leafspritescale: 1.2,
+              // is redundant because have specified in leafpaths
+              // treehollowness: 0.2,
+              spreadx: 3.0,
+              spreadz: 3.0,
+              spready: 1.0,
+              //   useplanes: false,
+              leafspritespertree: 128,
+              spreadytapertop: 0.5);
+```
+- Fire
 
 ![image](https://github.com/user-attachments/assets/ab24ea2b-8149-4759-abec-f7f8eb794eca)
 
