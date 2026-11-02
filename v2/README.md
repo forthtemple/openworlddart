@@ -386,13 +386,6 @@ This also applies to light intensity. Rather than have a light abruptly turn off
 ```
 
 
-maybe seperatley
-portals
-  useful between levels
-     -angiediff
-     -adjacent
-obstacles
-doors
 
 *Triggers*  
 Openworld also has a trigger system whereby its possible to trigger an event. For example a trigger for when the camera gets a certain distance from an npc. In the following example a cat has a distance trigger that causes the cat to meow when a player moves within 4 meters of the cat:
@@ -403,16 +396,15 @@ Openworld also has a trigger system whereby its possible to trigger an event. Fo
         cat,1,1, 0, 4);
     OPENWORLD.Space.objTurn(cat,0);
     scene.add(cat);
-    OPENWORLD.BaseObject.setDistanceTrigger(cat, dist: 4);
-    cat.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    OPENWORLD.BaseObject.setDistanceTrigger(cat, dist: 4. event: (action) {
       if (event.action) {
          OPENWORLD.Sound.play(path: "sounds/meow.mp3", volume: 0.2);
       } else {
       }
     });
-!distance triggers changed
 
-The is also a trigger for when a 3D object in the scene is clicked. In the following example when the minorah is clicked it is hidden:
+
+There is also a trigger for when a 3D object in the scene is clicked. In the following example when the minorah is clicked it is hidden:
 
 ```
     var minorah = await OPENWORLD.Model.createModel('assets/models/minorah.glb');
@@ -420,13 +412,11 @@ The is also a trigger for when a 3D object in the scene is clicked. In the follo
     OPENWORLD.Space.worldToLocalSurfaceObjHide(minorah, -0.33, 1.03, 0.0, 4); 
     minorah.scale.set(0.11, 0.11, 0.11);
     OPENWORLD.Space.objTurn(minorah, 0);
-    OPENWORLD.BaseObject.setTouchTrigger(minorah);
-    minorah.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
+    OPENWORLD.BaseObject.setTouchTrigger(minorah,event:(event) {
        minorah.visible=false;
     });
 ```
-!touch triggers changed
-
+<!--
 This is also custom triggers. For example its possible to create your own trigger for when an npc is struck by a player:
 
 ```
@@ -442,6 +432,18 @@ This is also custom triggers. For example its possible to create your own trigge
 
 ```
 =really should change custom triggers to be consitent with the change
+-->
+
+*Portals*
+
+maybe seperatley
+portals
+  useful between levels
+     -angiediff
+     -adjacent
+obstacles
+doors
+
       
 *Movement system*  
 Openworld includes the flutter <a href="https://pub.dev/packages/flutter_joystick">joystick</a> widget that allows a player to control turning and movement on a smartphone.  
