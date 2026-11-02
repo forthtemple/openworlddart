@@ -532,8 +532,19 @@ This widget is used in conjuction with a threejs joystick/ keyboard that has bee
 
 Movement also includes swiping on the screen to turn and pitch the camera.
 
-The threedart code has been modified so that keyboard control can be switched from movement back to flutter widgets so that for example you could type text in a flutter widget.
--keyboardcallbacks
+The threejs code has been modified so that keyboard control can be switched from movement back to flutter widgets so that for example you could type text in a flutter widget.
+
+*Keyboard callbacks*
+allows an event to coniditionally occur when press a key. For example if you are facing a donkey at a certain distance and press 'e' can mount the donkey. Call backs can also be unconditional eg very time a player press space they jump up in the air
+
+```
+// Create a keyboard callback wehre if you are 0.5 units from a horse and facing it with 50 degrees and press 'e' you will mount the horse.
+OPENWORLD.KeyboardCallbacks.createKeyboardCallback(
+          'E', object: _horse, 0.5,facingdiff: 50,
+              (keyboardcallback) {
+             mount();
+          });
+```
 
 
 *Mob System*  
