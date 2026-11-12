@@ -140,7 +140,7 @@ It is possible to specify new textures for cloned actors and models which allows
 
 
 *Models*  
-  Openworld also make it easy to include models that can be cloned and also reused with different texture. Like actors, models are also made with the Blender modelling tool and are available in '/examplesecondtemple/blender' and '/examplerhodes3d/blender'. These are also exported into the assets directory in glb format with blender (except for the terrain which should be exported in wavefront objformat ).
+  Openworld also make it easy to include models that can be cloned and also reused with different textures. Like actors, models are also made with the Blender modelling tool and are available in '/examplesecondtemple/blender' and '/examplerhodes3d/blender'. These are also exported into the assets directory in glb format with blender (except for the terrain which is easier when model groups when wavefront obj format is used ).
 
 ![image](https://github.com/user-attachments/assets/b7c19259-9ead-4e7f-aac7-7ecfea18a19a)
 
@@ -158,17 +158,33 @@ It is possible to specify new textures for cloned actors and models which allows
 
 
 *Shadows*
-for both actors and models
-  each a terrain and the actor casting the shadow on the terrain
-  eg in a terrain set a part of the model   
+
+For actors and models threejs allows shadows to be created and the openworld library makes it easier to set that an object casts a shadow, such as an NPC.
+
   
 <img width="309"  alt="image" src="https://github.com/user-attachments/assets/bc52b1d4-4d14-4131-9532-f815aeb4a8d7" />
 
-```
-  groundsurface= OPENWORLD.BaseObject.getGroupByName(OPENWORLD.Space.mesh, "ground");
-  groundsurface.receiveShadow = true;
+In example below the sun has a shadow map and the terrain (groundsurface) is set to receive shadows and the soldier2 is set to cast a shadow:
 
-  soldier2 = await OPENWORLD.Actor.createActor(
+```
+  
+ var sunlight = new THREE.DirectionalLight(0x888888,1.0);//.PointLight(0x888888);///.PointLight(0x888888); //ffffff);
+ sunlight.target=threeJs.camera;
+   // Set sun shadows
+ sunlight.shadow?.mapSize.width = 1024;
+ sunlight.shadow?.mapSize.height = 1024;
+ sunlight.shadow?.camera?.near = 0.01;
+ sunlight.shadow?.camera?.far = 500;
+ sunlight.castShadow = true;
+ threeJs.scene.add(sunlight);
+ sunlight.shadow!.radius=1;
+
+ // Terrain recieves shadows
+ groundsurface= OPENWORLD.BaseObject.getGroupByName(OPENWORLD.Space.mesh, "ground");
+ groundsurface.receiveShadow = true;
+
+// Soldier casts a shadow
+ soldier2 = await OPENWORLD.Actor.createActor(
         'assets/actors/soldier/soldier2.glb',
         z: actoroffset,
         shareanimations: seller,
