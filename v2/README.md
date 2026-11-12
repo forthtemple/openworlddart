@@ -417,11 +417,10 @@ This is also custom triggers. For example its possible to create your own trigge
 
 *Portals*
 
-Allows you to jump from one part of the game to another. For example if multi level and have a set of stairs when hit a rectangle at bottom of stairs give a destination at a new level and player moves to the new level
+Portals allows a player to jump from one part of the game to another. This is useful for terrains with multiple levels and you want to move the player from one level to another. For example if you have set of stairs and when player walks up the stairs the player moves to a new terrain level on the next floor.
 
+In this example a portal is defined at the bottom of some stairs and takes the player to the top of the stairs and vice versa:
 ```
-
-
      // Take a player to the top of a set of steps to level 1
      // If a player walk into a rectangle at x,y=57.16, 13.35 with width and height 0.04 then take them to x,y 57.7,13.45 on level 1 and have them face 0 degrees when they reach their destination
      OPENWORLD.Portals.createPortal(
@@ -461,7 +460,7 @@ Allows you to jump from one part of the game to another. For example if multi le
 
 *Obstacles*
 
-At run time place a rectangle of certain with and height and stop player from getting past
+At run time a rectangular obstacle can be placed in the scene stopping a player from getting past. For example it can be put in a closed doorway when a door is closed and disabled when the door is opened. It also has a callback for when a player hits the obstacle:
 
 ```
     // Place an obstacle at  hearthposx, hearthposy with a width and height of 0.1
@@ -477,8 +476,9 @@ At run time place a rectangle of certain with and height and stop player from ge
 ```
 
 *Doorways*
-If have a doorway made of multiple doors such as a double door can add the doors to doorway class and set their angle when opened or close so only need to call setOpenClose( to open and
-close a door rather than move the doors individually.
+If a scene has a doorway made of multiple doors such as a double door rather than turn each door individually if the doorway is open or closed, a doorway can be defined to do it automically.
+
+In this example a doorway is set to be open only if its not night night time:
 
 ```
     // For a doorway of two doors create the two door objects
