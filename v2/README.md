@@ -505,7 +505,7 @@ In this example a doorway is set to be open only if its not night night time:
 ```
       
 *Movement system*  
-Openworld includes the flutter <a href="https://pub.dev/packages/flutter_joystick">joystick</a> widget that allows a player to control turning and movement on a smartphone.  
+Openworld includes the flutter <a href="https://pub.dev/packages/flutter_joystick">joystick</a> widget for players to control turning and movement on a smartphone.  
 
 ![image](https://github.com/user-attachments/assets/dcdd75c8-8ba9-43e3-8fdf-cc7b3c559d0c)
 
@@ -516,7 +516,7 @@ Movement also includes swiping on the screen to turn and pitch the camera.
 The threejs code has been modified so that keyboard control can be switched from movement back to flutter widgets so that for example you could type text in a flutter widget.
 
 *Keyboard callbacks*
-allows an event to coniditionally occur when press a key. For example if you are facing a donkey at a certain distance and press 'e' can mount the donkey. Call backs can also be unconditional eg very time a player press space they jump up in the air
+Keyboard callback allow event to conditionally occur when press a key. For example if you are facing a donkey at a certain distance and press 'e' the a callback can be called to mount the donkey. Callbacks can also be unconditional eg very time a player press space they jump up in the air
 
 ```
 // Create a keyboard callback wehre if you are 0.5 units from a horse and facing it with 50 degrees and press 'e' you will mount the horse.
@@ -529,7 +529,7 @@ OPENWORLD.KeyboardCallbacks.createKeyboardCallback(
 
 
 *Mob System*  
-Openworld has procedures specifically for npcs. For example  have  an actor randomly walk around a point of a given distance and frequency like a dog walking around randomly:
+Openworld has procedures specifically for NPCs. For example  have  an actor randomly walk around a point of a given distance and frequency like a dog walking around randomly:
 
 ```
   // Here a journalist will walk a random distance of 1.5 units from where he is at a speed of 0.2m/s, walking 10% of the time
@@ -594,7 +594,9 @@ Its also possible to have an npc say a speech with one sentence spoken after the
   OPENWORLD.Mob.setSpeech(oldlady, ["I can't see very well.","Is someone there?","Try some of my pie"]);
 ```
 
-The speech also allows for placement for example the placement of the text above the npc with z. Or left and right of the npc with x or forward or back with y (eg -50 units forward in the example below). It also includes a callback so when it the speech is finished can have the npc do something else.
+Speech also has text placement allowing for text to be placed in the x,y,z position releative to an NPC. To place the text to the left or right of the NPC use x and forward or back use y.
+
+In the example below the text -50 units forward. Setspaech has a callback for when a speech is finished. In this example the  NPC laughs when saying the speech:
 
   <img width="300" alt="image" src="https://github.com/user-attachments/assets/4687b052-1eac-496b-a4c4-14335e081c75" />
  OPENWORLD.Mob.setSpeech(actor,
@@ -633,8 +635,8 @@ Also the day length can be specified. For example 1 hour to equal 24 hours. Ther
 
 
 *Light*  
-Openworld includes features like specifying that a light should be switched on at night and turned off during the day. Also allows light to flicker and also to lerp turning a light on so its not sudden.
-Light intensity can also be lerped dimmer as move away.
+Openworld includes features like specifying that a light should be switched on at night and turned off during the day. Also allows light to flicker and lerping to fade a Light when a player moves away.
+
 ```
     var homelight= new THREE.PointLight(0xFFA500);
     homelight.intensity = 1.0; 
