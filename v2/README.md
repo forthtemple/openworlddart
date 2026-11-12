@@ -211,8 +211,8 @@ Openworld also make it easy to add sprites, planes and text.
     // Load a plane with the text 'Lindos News'
     var textplane =   await OPENWORLD.Plane.makeTextPlane("Lindos News", Colors.black, backgroundopacity: 0);
 
-   // Create a multitext sprite with the part on the left with a transparent background and the second part of the text black and bold like in the screenshot above
-   var stairsdownicon = await OPENWORLD.Sprite.makeMultiTextSprite( [{'message': 'E', 'textcolor': Colors.white,
+    // Create a multitext sprite with the part on the left with a transparent background and the second part of the text black and bold like in the screenshot above
+    var stairsdownicon = await OPENWORLD.Sprite.makeMultiTextSprite( [{'message': 'E', 'textcolor': Colors.white,
           'backgroundcolor': Colors.black,
           'backgroundopacity': 1.0,
           'paddingLeft': 5, 'paddingRight': 5},
@@ -226,12 +226,11 @@ As with actors and models, these objects can be scaled and placed on the surface
 
 *Instanced Objects*
 
-Can be costly if must render huge number of objects each frame
-   can use instanced models and sprite so one pass
+If a scene has thousands of objects it can be costly to render these objects each frame. Instanced objects allow multiple objects such as models and sprites to be grouped together and rendered in one pass
    
 <img width="400"  alt="image" src="https://github.com/user-attachments/assets/17044f21-63e5-4ef2-a835-de14085beb5b" />
 
-in this example thousands of column models displayed and renderer will be one pass
+In this example thousands of column models displayed and renderer with one pass:
 
 ```
     // Display 300 columns in a row with one column model
@@ -245,7 +244,8 @@ in this example thousands of column models displayed and renderer will be one pa
       instancedColumns.place(-90, 6.82, 14.77 + i * 0.15, 0.0, scale: THREE.Vector3(0.4, 0.4, 0.4));
     instancedColumns.finish();
 
-    //  Display 100 grass sprites at random positions
+    // Use InstanceBilloards for sprites instead of models.
+    // Here display 100 grass sprites at random positions
     var grasstexture = await  AssetPack.loadTexture('assets/models/temple/grass.png');
     instancedGrass = InstancedBillboards.create(grasstexture!, 10, threeJs.scene,color:spritebillboardambiencecolor);
     for (var i=0; i<100; i++)
@@ -257,19 +257,19 @@ in this example thousands of column models displayed and renderer will be one pa
 Openworld allows for a single terrain model to be defined. For example for the Second Temple game the terrain is defined in:
 
 openworld/examplesecondtemple/blender/terrain/temple.blend 
+
+In blender you can defines multple meshes in a model as follows:
+
 <img width="1247" height="546" alt="image" src="https://github.com/user-attachments/assets/58ed0076-f1b3-467a-bc27-e6e2c840f00c" />
 <!--
 ![image](https://github.com/user-attachments/assets/7a1c1422-d8f5-4912-bf91-77e5107c946f)
 
 
-In blender you can defines multple meshes in a model as follows:
  
  ![image](https://github.com/user-attachments/assets/3e4fb79b-1f38-4679-97f5-c2a4313813ad)
 -->
 
-If the mesh contains the name 'surface' then OPENWORLD treats it as a surface and 3D objects can easily be placed onto the surface using opendarts rayscaster.  The OPENWORLD function worldToLocalSurfaceObj places an object on the terrain at the point it intersects the terrain surface. Also you can define levels of surfaces eg a roof with level name 'surface1' in blender. Can also be negative for say below ground
-
-Likewise a mesh with the word 'wall' in it is treated as a wall and OPENWORLD stop a player walking through it. And a 'roof' mesh is used so OPENWORLD knows if a player is indoors and stop showing rain indoors.
+If the mesh contains the name 'surface' then OPENWORLD treats it as a surface and 3D objects can be placed onto the surface using opendarts rayscaster.  The OPENWORLD function worldToLocalSurfaceObj places an object on the terrain at the point it intersects the terrain surface. You can also define levels of surfaces, for example a roof with level name 'surface1' in blender. Even negative surface values can be used for levels below ground.  Also walls can be defined where if the word 'wall' is in a terrain group it is treated like a wall OPENWORLD stops a player walking through it. And a 'roof' mesh is used so OPENWORLD knows if a player is indoors and stop showing rain indoors.
 
 
 Terrains can be exported as glb files but also wavefront obj files. 
