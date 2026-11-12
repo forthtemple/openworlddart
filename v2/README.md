@@ -315,9 +315,9 @@ Alongside using threejs existing spatial placement of objects OPENWORLD has extr
 
 
 ```
-Behind the scenes mesh intersections with surfaces are cached in a small grid. This way say a lot of NPC's walking on a surface will not cost a rayintersection with every frame. If you wish finer more accrate heights can increase grid size.
+Behind the scenes mesh intersections with surfaces are cached in a small grid. This the reduces the compute needed for say if there a lot of NPC's walking on a surface. If you wish smaller grid sizes will give more accurate heights but will increase the number of intersection calculations required.
 
-Also wall intersection are optimized so that if you have a big terrain with a lot of walls, can be expensive to do wall intersection every frame. Behind scenes has bounding box so only check walls in mesh that are within range of the camera rather than everwhere. Therefore it is good if  group your walls into blocks rather than spread over the terrain so dont intersect with every walls.
+Also wall intersection are optimized so that if you have a big terrain with a lot of walls, it can be expensive to do a wall intersection every frame. Bounding box calculations are used so walls within the bounding box are used to calculate intersections. Its is therefore good practice group  walls into blocks rather than spread over the terrain otherwise wall intersections will be calcullated on every wall.
 
 There are many other spatial functions.  For example:
 
@@ -332,7 +332,7 @@ OPENWORLD.Space.faceObjectAlways(knight, camera);
 
 
 ```
-It is also possibly to place an object on a terrain with the same pitch as the terrain using the normal2world parameter. For example a horse and cart going up a hill like below
+And it is possible to place an object on a terrain with the same pitch as the terrain with the normal2world parameter. For example a horse and cart going up a hill like in the screenshot:
 
 <img width="261" height="279" alt="image" src="https://github.com/user-attachments/assets/71d9c89f-65ed-4f06-8b13-a3e4ee273bd2" />
 
@@ -344,14 +344,14 @@ It is also possibly to place an object on a terrain with the same pitch as the t
   OPENWORLD.Space.worldToLocalSurfaceOnlyObjLerp(  cart, 1,5,0, 10.0, normal2world:true);
 ```
 
-It is also possible to lerp the opacity of the object so rather than an object disappear instantly when it is a certain distance from the camera instead if fades
+Another spatial feature is the ability to lerp opacity of the object so rather than an object disappear instantly when it is a certain distance from the camera instead it will fade:
 ```
     // Have a car fade in 1 second when the car is 7 units away from the camera and fade in when you get closer than 7 units
     OPENWORLD.Space.worldToLocalSurfaceObjHide(     car, 1,1, 0.0, 7, lerpopacity:1.0);             
 
 ```
 
-This also applies to light intensity. Rather than have a light abruptly turn off when the camera is a certain distance away from it it can fade using the 'lerplight' parameter:
+This also applies to light intensity and like lerpopacity rather than have a light abruptly turn off when the camera is a certain distance away can fade fade when the 'lerplight' parameter is used:
 
 ```
     // Set up a point light
@@ -368,9 +368,8 @@ This also applies to light intensity. Rather than have a light abruptly turn off
 ```
 
 
-
 *Triggers*  
-Openworld also has a trigger system whereby its possible to trigger an event. For example a trigger for when the camera gets a certain distance from an npc. In the following example a cat has a distance trigger that causes the cat to meow when a player moves within 4 meters of the cat:
+Openworld also has a trigger system where an event can be triggered. For example a trigger for when the camera gets a certain distance from an npc. In the following example a cat has a distance trigger that causes the cat to meow when a player moves within 4 meters of the cat:
 
     Group cat = await OPENWORLD.Actor.createActor('assets/actors/cat.glb', z:0);
     cat.scale.set(0.01,0.01,0.01);
