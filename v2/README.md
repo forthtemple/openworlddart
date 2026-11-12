@@ -64,7 +64,7 @@ One of the demo games is set in Jerusalem at the Second Temple 65AD.
 <img width="400" alt="Screenshotcourtowmen" src="https://github.com/user-attachments/assets/fe084261-9002-4611-b9f4-a45f51108c95" />
 <img width="426" height="240" alt="Video Project 2" src="https://github.com/user-attachments/assets/cea19076-b1ee-47a2-aa2b-7430ac8ccf97" />
 
-This games models, actors and texture are all availabe in this repository and the game can be run on steam  for <a href='https://store.steampowered.com/app/4067520/Second_Temple/'>Steam</a> (Windows and Mac). <a href="https://apps.apple.com/us/app/ark-uncovered/id6593662011">iTunes</a> (iOS, macOS) on  <a href="https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.secondtemple">Amazon</a> (Android), <a href='https://chatgpt.forthtemple.com/secondtemple/'>web</a>, <a href="https://snapcraft.io/secondtemple">snap</a> (Linux) and <a href='https://www.youtube.com/watch?v=v63XYmFEgj8'>Youtube</a>
+This games models, actors and texture are all availabe in this repository and the game can be run on steam  for <a href='https://store.steampowered.com/app/4067520/Second_Temple/'>Steam</a> (Windows and macOS). <a href="https://apps.apple.com/us/app/ark-uncovered/id6593662011">iTunes</a> (iOS, macOS) on  <a href="https://forthtemple.com/secondtemple.apk">TODO secondtemple.apk</a> (Android), <a href='https://secondtemple.org/'>web</a>, <a href="https://snapcraft.io/secondtemple">todo snap</a> (Linux) and <a href='https://www.youtube.com/watch?v=fNuSaUxYvGs'>Youtube</a>
 
 [![secondtemple](https://snapcraft.io/secondtemple/badge.svg)](https://snapcraft.io/secondtemple)
 
