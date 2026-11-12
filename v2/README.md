@@ -902,13 +902,13 @@ when callbackonvisible is called. In the example, when the positionjson label is
 ```
   
 *Common objects*    
-Openworld includes some useful objects like fire, water, flares, smoke and sky. Most are based on those  available in threejs as shaders. 
+Openworld includes some useful objects like fire, water, flares, smoke and sky that will commonly be used in an openworld. Many are based on those  available in threejs as shaders. 
 
 - Water
   The following is an example of water:
 <img width="300" alt="image" src="https://github.com/user-attachments/assets/de67d132-ddea-46c8-b08f-87ad39534f68" />
 
-Here have set to incluseiveonly so that choose what you want to reflect otherwise can choose what to exclude. Also only calculates reflections once every 4 frames
+In this example incluseiveonly is set to true to allow specific objects to be reflected rather than when it is false where you say what you dont want reflected. This example also only calculates reflections once every 4 frames speeding up the water effect greatly:
 
 ```
     final waterGeometryi = THREE.PlaneGeometry(20.0, 20.0);
@@ -940,8 +940,10 @@ Here have set to incluseiveonly so that choose what you want to reflect otherwis
 ```
 
 - Vegeration
+
+The vegetation object allows the rendering of vegetation sprites cheaply including grass and shrubs and also detail the ground.  
   <img width="300" alt="image" src="https://github.com/user-attachments/assets/ffeca468-17f4-4c6e-9737-6d8669980a1c" />
-The vegetation object allows the rendering of vegetation sprites cheaply including grass and shrubs and also detail the ground.
+  
 In the example below the surfaceTexture is is set to detailmap.jpg 
 ```
     // Create vegetation at x,y=5,6 of 20 units in width and height and exclude a point at 2,2 of width and height 0.5
@@ -990,6 +992,7 @@ In the example below the surfaceTexture is is set to detailmap.jpg
     OPENWORLD.Updateables.add(grassiii);
 ```  
 - Trees
+  
   Can cheap trees made up of transparent planes. In example below  has 3 types of tree section and have 128 out of them. Made quite large so fewer leaves.
   
   <img width="300" alt="image" src="https://github.com/user-attachments/assets/974a3ece-0b53-4c1a-83d2-abccc6e2a7a1" />
@@ -1030,10 +1033,12 @@ The following is an example of flares:
 
 *Asset Pack*
 
-If you upload to steam then your assets will have not protection and can be loaded by anyone. There is an asset pack tool that lets you encrypt your assets to offer some encryption.  It is made to be convenient so that in debug mode you can continue to load your assets like normal  in a new /protected folder but when you do a release instead the assets can be loaded from an archive in your assets/pack directory. You will need to add - assets/packs/ to your pubspec.yaml file.
+If you upload a game to steam your assets will not be protected and can be accessed by anyone. Openworld now has an asset pack tool that lets you encrypt your assets to offer some encryption.  It is made to be convenient so that in debug mode you can continue to load your assets like normal in a new /protected folder but when you do a release instead the assets can be loaded from an archive in your assets/pack directory. You will need to add - assets/packs/ to your pubspec.yaml file.
 
 
 You can follow instructions in /lib/ASSET_PACK_README.md
+In example below a key is created for the assets and the protected assets are encrypted into a game.owp file using that key:
+
 ```
 dart run openworld:pack_assets --gen-key
 
