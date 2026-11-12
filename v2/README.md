@@ -138,9 +138,8 @@ It is possible to specify new textures for cloned actors and models which allows
   
 
 
-
 *Models*  
-  Openworld also make it easy to include models that can be cloned and also reused with different textures. Like actors, models are also made with the Blender modelling tool and are available in '/examplesecondtemple/blender' and '/examplerhodes3d/blender'. These are also exported into the assets directory in glb format with blender (except for the terrain which is easier when model groups when wavefront obj format is used ).
+  Openworld also make it easy to include models that can be cloned and also reused with different textures. Like actors, models are also made with the Blender modelling tool and are available in '/examplesecondtemple/blender' and '/examplerhodes3d/blender'. These are also exported into the assets directory in glb format with blender (except for the terrain which is easier for accessing model groups when wavefront obj format is used ).
 
 ![image](https://github.com/user-attachments/assets/b7c19259-9ead-4e7f-aac7-7ecfea18a19a)
 
@@ -159,12 +158,12 @@ It is possible to specify new textures for cloned actors and models which allows
 
 *Shadows*
 
-For actors and models threejs allows shadows to be created and the openworld library makes it easier to set that an object casts a shadow, such as an NPC.
+Threejs has shadows and the openworld library makes it easier to set an object to cast a shadow, such as an NPC.
 
   
 <img width="309"  alt="image" src="https://github.com/user-attachments/assets/bc52b1d4-4d14-4131-9532-f815aeb4a8d7" />
 
-In example below the sun has a shadow map and the terrain (groundsurface) is set to receive shadows and the soldier2 is set to cast a shadow:
+In the example below the sun has a shadow map and the terrain (groundsurface) is set to receive shadows and the soldier2 is set to cast a shadow:
 
 ```
   
@@ -192,7 +191,7 @@ In example below the sun has a shadow map and the terrain (groundsurface) is set
 ```
         
 *Adding sprites, planes and text*  
-Openworld also make it easy to add sprites, planes and text.
+Openworld also makes it easy to add sprites, planes and text.
 
   ![image](https://github.com/user-attachments/assets/8eca92a9-a123-4563-a54e-3cdce4e9f6c6)
   <img width="200" alt="image" src="https://github.com/user-attachments/assets/85480e4e-6ce2-4144-aa4f-1c3f46724b12" />
@@ -226,11 +225,11 @@ As with actors and models, these objects can be scaled and placed on the surface
 
 *Instanced Objects*
 
-If a scene has thousands of objects it can be costly to render these objects each frame. Instanced objects allow multiple objects such as models and sprites to be grouped together and rendered in one pass
+If a scene has thousands of objects it can be costly to render so many objects each frame. Instanced objects allow multiple objects such as models and sprites to be grouped together and rendered in one pass
    
 <img width="400"  alt="image" src="https://github.com/user-attachments/assets/17044f21-63e5-4ef2-a835-de14085beb5b" />
 
-In this example thousands of column models displayed and renderer with one pass:
+In this example thousands of column models are displayed and renderered with one pass:
 
 ```
     // Display 300 columns in a row with one column model
@@ -269,7 +268,7 @@ In blender you can defines multple meshes in a model as follows:
  ![image](https://github.com/user-attachments/assets/3e4fb79b-1f38-4679-97f5-c2a4313813ad)
 -->
 
-If the mesh contains the name 'surface' then OPENWORLD treats it as a surface and 3D objects can be placed onto the surface using opendarts rayscaster.  The OPENWORLD function worldToLocalSurfaceObj places an object on the terrain at the point it intersects the terrain surface. You can also define levels of surfaces, for example a roof with level name 'surface1' in blender. Even negative surface values can be used for levels below ground.  Also walls can be defined where if the word 'wall' is in a terrain group it is treated like a wall OPENWORLD stops a player walking through it. And a 'roof' mesh is used so OPENWORLD knows if a player is indoors and stop showing rain indoors.
+If the mesh contains the name 'surface' then OPENWORLD treats it as a surface and 3D objects can be placed onto the surface using opendarts rayscaster.  The OPENWORLD function worldToLocalSurfaceObj places an object on the terrain at the point it intersects the terrain surface. You can also define levels of surfaces, for example a roof with level name 'surface1' in blender. Negative surface values can be used for levels below ground.  Also walls can be defined where if the word 'wall' is in a terrain group it is treated like a wall OPENWORLD stops a player walking through it. And a 'roof' mesh is used so OPENWORLD knows if a player is indoors and stop showing rain indoors.
 
 
 Terrains can be exported as glb files but also wavefront obj files. 
@@ -315,9 +314,9 @@ Alongside using threejs existing spatial placement of objects OPENWORLD has extr
 
 
 ```
-Behind the scenes mesh intersections with surfaces are cached in a small grid. This the reduces the compute needed for say if there a lot of NPC's walking on a surface. If you wish smaller grid sizes will give more accurate heights but will increase the number of intersection calculations required.
+Behind the scenes mesh intersections with surfaces are cached in a small grid. This the reduces the compute needed for example if there is a lot of NPC's walking on a surface. By setting a smaller grid size more  accurate heights can be calculated but will increase the number of intersection calculations required.
 
-Also wall intersection are optimized so that if you have a big terrain with a lot of walls, it can be expensive to do a wall intersection every frame. Bounding box calculations are used so walls within the bounding box are used to calculate intersections. Its is therefore good practice group  walls into blocks rather than spread over the terrain otherwise wall intersections will be calcullated on every wall.
+Also wall intersection are optimized so that if you have a big terrain with a lot of walls, it can be expensive to do a wall intersection every frame. Bounding box calculations are used so walls within the bounding box are used to calculate intersections. Its is therefore good practice to group  walls into localized blocks rather than spread  walls over the terrain otherwise wall intersections will be calculated on every wall.
 
 There are many other spatial functions.  For example:
 
