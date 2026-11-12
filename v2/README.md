@@ -416,7 +416,7 @@ This is also custom triggers. For example its possible to create your own trigge
 
 *Portals*
 
-Portals allows a player to jump from one part of the game to another. This is useful for terrains with multiple levels and you want to move the player from one level to another. For example if you have set of stairs and when player walks up the stairs the player moves to a new terrain level on the next floor.
+Portals allows a player to jump from one part of the game to another. This is useful for a terrain with multiple levels where you may want to move the player from one level to another. For example if you have set of stairs and when a player walks up the stairs the player is moved to a new terrain level on the next floor.
 
 In this example a portal is defined at the bottom of some stairs and takes the player to the top of the stairs and vice versa:
 ```
@@ -475,7 +475,7 @@ At run time a rectangular obstacle can be placed in the scene stopping a player 
 ```
 
 *Doorways*
-If a scene has a doorway made of multiple doors such as a double door rather than turn each door individually if the doorway is open or closed, a doorway can be defined to do it automically.
+If a scene has a doorway made of multiple doors such as a double door rather than turn each door individually if the doorway is open or closed, a doorway can be defined to open and close all doors with one call.
 
 In this example a doorway is set to be open only if its not night night time:
 
@@ -515,7 +515,7 @@ Movement also includes swiping on the screen to turn and pitch the camera.
 The threejs code has been modified so that keyboard control can be switched from movement back to flutter widgets so that for example you could type text in a flutter widget.
 
 *Keyboard callbacks*
-Keyboard callback allow event to conditionally occur when press a key. For example if you are facing a donkey at a certain distance and press 'e' the a callback can be called to mount the donkey. Callbacks can also be unconditional eg very time a player press space they jump up in the air
+Keyboard callback allows for an event to conditionally occur when a key is pressed. For example if you are looking at a donkey from a certain distance and press 'e' the a callback is called to mount the donkey. Callbacks can also be unconditional eg very time a player presses space they jump up in the air
 
 ```
 // Create a keyboard callback wehre if you are 0.5 units from a horse and facing it with 50 degrees and press 'e' you will mount the horse.
@@ -709,7 +709,7 @@ Many of the openworld procedures have a delay so that for example, have an actor
   OPENWORLD.Sound.play(path: "sounds/meow.mp3", volume: 0.2, delay:10);
 ```
 
-The allows for a sequence of actions to be performed. For example have a knight spin in 1 second, jump in 2 seconds and then laugh in 3 seconds.
+The following demonstrates a sequence of actions to be performed using delays. For example have a knight spin in 1 second, jump in 2 seconds and then laugh in 3 seconds.
 ```
 // Knight turns east in 1 seconds
 OPENWORLD.Space.objTurnLerp(knight, 90, 0.5, delay:1);
@@ -720,7 +720,7 @@ OPENWORLD.Sound.play(path: "sounds/laugh.mp3", volume: 0.2, delay:3);
 ```
 
 *Persistence*  
-Openworld has persistence so data can be stored when an app is closed and all game information can be retrieved. For example remember the state of the weather:
+Openworld has persistence so data can be stored when an app is closed and all game information can be retrieved when restarted. For example remember the state of the weather:
 
 ```
    // Store the rain level
@@ -754,7 +754,7 @@ It also has exitroom so when you leave a room it'll take you do another room eg 
 ```
 
 *Maps*  
-Openworld has maps that show the players position with a marker. It is possible to have multiple maps where you can have a map for say a city and then a larger encompassing for wilderness. Each map is an image and you specify two points with a pixel position and a corresponding world position. With the two points openworld  calculates the image position from the world position through interpolation and can place a marker in the correct position:
+Openworld has maps that shows the players position with a marker. It is possible to have multiple maps where you can have a map for say a city and then a larger encompassing for wilderness. Each map is an image and you specify two points with a pixel position and a corresponding world position. With the two points openworld  calculates the image position from the world position through interpolation and can place a marker in the correct position:
 
 <img src="https://github.com/user-attachments/assets/816b8b2d-b8d5-4a8c-80a2-e73cb7077fc4" width="350">
 
@@ -826,7 +826,7 @@ Rather than hard code all 3D objects in flutter it is possible to specify 3D obj
 }
 ```
 
-The config file also has  pool objects. This is useful for example with a forest with thousands of trees. Its possible to show only the closest 40 trees at anyone on time instead of clone 1000 trees. In the example below a tree object is created. There are two pool positions at two different positions with 500 trees defined in each that are randomly placed within 30 units of the position of the pool object. They are randomly scaled by 0.4 (scaled randomly between 0.8 to 1.2). So the example below defines 1000 trees but only creates 40 and displays only the closest 40 to the player.
+The config file also has  pool objects. This is useful for example with a forest with thousands of trees. Its possible to show only the closest 40 trees at anyone one time instead of clone 1000 trees. In the example below a tree object is created. There are two pool positions at two different positions with 500 trees defined in each that are randomly placed within 30 units of the position of the pool object. They are randomly scaled by 0.4 (scaled randomly between 0.8 to 1.2). So the example below defines 1000 trees but only creates 40 and displays only the closest 40 to the player.
 
 ```
 {"objects": [
@@ -844,7 +844,7 @@ The config file also has  pool objects. This is useful for example with a forest
   }
 }
 ```
-Config pool objects can also be used run time with pool objects not needing to be created in the  config.json file. For example its possible to create a crowd of 100 NPC actors. In  the example below  they are randomly placed in a 10x10 grid facing in random directions. Pool object can also have callbackonvisible and callbackonhide  events so when a pool object appears or disappears you could have them for example say a speech, jump up in the air. And when they are no longer visible you can clear it on callbackonhide. It is important remember to undo any modifications you do in callbackonvisible so it doesnt appear  when the pool object is reused. In the example below animation throttling is used so that actors that are furtuher away have less frames computed the those closer to the camera allowing for large crowds without expensive animation pose calcualtions.
+Config pool objects can also be used run time with pool objects not needing to be created in the  config.json file. For example it is possible to create a crowd of 100 NPC actors. In  the example below pooled actors are randomly placed in a 10x10 grid facing in random directions. Pool object can also have callbackonvisible and callbackonhide  events so when a pool object appears or disappears you could have them for example say a speech, jump up in the air. And when they are no longer visible you can clear the change on callbackonhide. It is important remember to undo any modifications you do in callbackonvisible so the change doesnt appear  when the pool object is reused. In the example below animation throttling is used so that actors that are furtuher away have less frames computed the those closer to the camera allowing for large crowds without expensive animation pose calcualtions.
 
 ```
     // Create 100 pool object in a 10x10 units area
@@ -877,7 +877,7 @@ Config can also reteive the position information of a given pool object. In the 
 ppositionjson['p'] as 10,10,0 and 
 ppositionjson['t'] will be 35
 and label 'blacksmith'
-when callbackonvisible is called. In the example, when the positionjson label is blacksmith a hammering sound will be played.
+when callbackonvisible is called. In the example, when the positionjson label is blacksmith a hammering sound will be played. This allow pool object information to be retrieved.
 ```
    OPENWORLD.Config
             .config['positions']['poolpositions'][1]['positions'].add(
@@ -907,7 +907,7 @@ Openworld includes some useful objects like fire, water, flares, smoke and sky t
   The following is an example of water:
 <img width="300" alt="image" src="https://github.com/user-attachments/assets/de67d132-ddea-46c8-b08f-87ad39534f68" />
 
-In this example incluseiveonly is set to true to allow specific objects to be reflected rather than when it is false where you say what you dont want reflected. This example also only calculates reflections once every 4 frames speeding up the water effect greatly:
+In this example incluseiveonly is set to true to allow specific objects to be reflected. If it is set to false it means you specify what you don't want reflected. This example also only calculates reflections once every 4 frames speeding up the water effect:
 
 ```
     final waterGeometryi = THREE.PlaneGeometry(20.0, 20.0);
@@ -940,7 +940,7 @@ In this example incluseiveonly is set to true to allow specific objects to be re
 
 - Vegeration
 
-The vegetation object allows the rendering of vegetation sprites cheaply including grass and shrubs and also detail the ground.  
+The vegetation object allows the rendering of vegetation sprites cheaply including grass and shrubs and also detail on the ground.  
   <img width="300" alt="image" src="https://github.com/user-attachments/assets/ffeca468-17f4-4c6e-9737-6d8669980a1c" />
   
 In the example below the surfaceTexture is is set to detailmap.jpg 
@@ -992,7 +992,7 @@ In the example below the surfaceTexture is is set to detailmap.jpg
 ```  
 - Trees
   
-  Can cheap trees made up of transparent planes. In example below  has 3 types of tree section and have 128 out of them. Made quite large so fewer leaves.
+  Can cheap trees made up of transparent planes. In example below  has 3 types of tree sections and has 128 out of them. The example below has the sections quite large so fewer sections are needed for a more realistic looking tree:
   
   <img width="300" alt="image" src="https://github.com/user-attachments/assets/974a3ece-0b53-4c1a-83d2-abccc6e2a7a1" />
 ```
@@ -1032,7 +1032,7 @@ The following is an example of flares:
 
 *Asset Pack*
 
-If you upload a game to steam your assets will not be protected and can be accessed by anyone. Openworld now has an asset pack tool that lets you encrypt your assets to offer some encryption.  It is made to be convenient so that in debug mode you can continue to load your assets like normal in a new /protected folder but when you do a release instead the assets can be loaded from an archive in your assets/pack directory. You will need to add - assets/packs/ to your pubspec.yaml file.
+If you upload a game to steam your assets will not be protected and can be accessed by anyone. Openworld now has an asset pack tool that lets you encrypt your assets to offer some encryption.  It is made to be convenient so that in debug mode you can continue to load your assets like normal in a  /protected folder but when you do a release instead the assets can be loaded from an archive in your assets/pack directory. You will need to add - assets/packs/ to your pubspec.yaml file.
 
 
 You can follow instructions in /lib/ASSET_PACK_README.md
