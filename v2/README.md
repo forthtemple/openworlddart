@@ -3,44 +3,11 @@ This a draft I'm writing for the future version of the openworld library so plea
 
 This is a library to make openworld games with the dart package threejs. This library is based upon an older threejs openworld library just for web using javascript [openworldthreejs](https://github.com/forthtemple/openworldthreejs). The advantages of flutter for an openworld game is with one code base you can create a multi platform (iOS, Windows,Android, MacOS, Linux, Web). Also there is a huge number of flutter widgets that can be incorporated into the game. There is also hotloading making it possible to place objects in a scene, hit hotload and the 3D object will appear in your game within seconds. 
 
-This version of the library is an update of the previous openworld library that used [three_dart](https://github.com/wasabia/three_dart) instead of [three_js](https://github.com/Knightro63/three_js)/ Threejs is more up to date and have found it works better across platforms. The openworld library itself has been updated to work better on desktops as opposed to smartphones. This has been showcased by an improved version of the Second Temple game on  [steam](https://store.steampowered.com/app/4067520/Second_Temple/). This new version is available on [windows, mac](https://store.steampowered.com/app/4067520/Second_Temple/),  linux,[iPhone](https://apps.apple.com/us/app/second-temple/id6593662011) and android and [web](https://secondtemple.org).
+This version of the library is an update of the previous openworld library that used [three_dart](https://github.com/wasabia/three_dart) instead of [three_js](https://github.com/Knightro63/three_js)/ Threejs is more up to date and have found it works better across platforms. The openworld library itself has been updated to work better on desktops as opposed to smartphones. This has been showcased by an improved version of the Second Temple game on  [steam](https://store.steampowered.com/app/4067520/Second_Temple/). This new version is available on [windows, mac](https://store.steampowered.com/app/4067520/Second_Temple/),  linux,[iPhone](https://apps.apple.com/us/app/second-temple/id6593662011) and android and [web](https://secondtemple.org). As with the previous version, this library includes two demo games, Second Temple and Rhodes 3D.
 
-The openworld library has many new features added such terrain levels which allows for example, a multi story building where you can place objects on different levels of the building. There are also shadows built into model and actor creation. There is a new vegetation object using cheap sprites to generate realistic vegetation like grass and shrubs. It can also add detail to the ground. There are also a tree object using many sprites and plains to create branches and leaves. And the water2 object of threejs has been made faster with the ability to skip reflection updates and also choose which objects to reflect. There is also an asset encrypter so when you deploy a game, your assets have some protection. The config class has been updated so pooled objects are not only created from a static text file but also runtime. This allows for example crowds of people with for example 1000 actors, only showing the closest 50 near the camera. There is now actor animation throttling so when theres lots of actors the CPU only actors close to the camera have every animation frame calculated with those further away having frames skipped. The new openworld library includes being able to add actor animations run time by combining existing animations. The library also has the addition of extra callbacks. For example allow for say an npc o give a speech and when finished run a callback to have the npc jump up in the air. For large meshes, mesh intersection calculations for walking on a terrain or finding a wall can get expensive and the library has optimization of intersections including caching height positions and using and using bounding boxes for walls so interesctions. Run time obstacles have also been added so you can block off an area and then reenable it such as for a door that has been closed. For multiple doors, a doorsway class has have been added to allows that multiple doors eg two grand doors to be opened or closed with one call coding to manually opening each door. Keyboard callbacks have been added so that for a keypress a callback can be conditionally called for example when a player in near a horse and presses 'E' to mount hte horse. Another feature is fading objects as they move away from the camera rather than abruplty making them invisible. Simnilarly lights can also be dimmed as they move away from the camera. 
+The openworld library has many new features added such terrain levels which allows for example, a multi story building where you can place objects on different levels of the building. There are also shadows built into model and actor creation. There is a new vegetation object using cheap sprites to generate realistic vegetation like grass and shrubs. It can also add detail to the ground. There are also a tree object using many sprites and plains to create branches and leaves. And the water2 object of threejs has been made faster with the ability to skip reflection updates and also choose which objects to reflect. There is also an asset encrypter so when you deploy a game, your assets have some protection. The config class has been updated so pooled objects are not only created from a static text file but also runtime. This allows for example crowds of people with for example 1000 actors, only showing the closest 50 near the camera. There is now actor animation throttling so when theres lots of actors the CPU only actors close to the camera have every animation frame calculated with those further away having frames skipped. Also the new openworld library includes being able to add actor animations run time by combining existing animations. The library also has the addition of extra callbacks. For example allow when an npc has given a speech you can add callback when finished to say have the npc jump up in the air. Also callbacks for keypresses have been added. For example a keypress callback can be  called when a player gets near a horse and presses 'E' to mount the horse. For large meshes, mesh intersection calculations for walking on a terrain or finding a wall can be expensive and openworld is now far more optimized for calculating intersections using caching and bounding boxes. Run time obstacles have also been added so you can block off an area and then reenable. This is useful for say a door that has been closed. For multiple doors, a doorsway class has have been added to allows that multiple doors eg two grand doors to be opened or closed with one call coding to manually opening each door.  Another feature is fading objects as they move away from the camera rather than abruplty making them invisible. Simnilarly lights can also be dimmed as they move away from the camera. 
 
-new features
-levels eg have a building with multi stories and walk 
-   can use mutlilevel portals to go between levels
-shadows
-vegetation  fast sprites
-trees fast sprite
-water3 customized faster - skip frames to update reflection - choose what objects to include in the reflection
-asset encrypter
-   develop as normal with protected folder but can encrypt for release
-    It has been designed to allow development in debug mode and simple encyprtion into an asset that can be deployed with the release.
-config can be used runtime so can say have a crowd of 1000 actors and only show those close to the camera
-
-addition of callbacks eg moveltoop can say walk and do an action and callback eg walks to a house, knocks and play knocking sound
-  speech
-  moveto
-  portals
-optimized surface, wall intersections, touch intersections
-
-obstacles, doorways, keyboardcallbacks
-
-lerp opacity for objects so fade
-light lerp so lights can fade instead of suddenly turning off
-
-create new animations on the fly - if squating and have a look left animation can have squatting and looking left
-
-iosntalced models and instanced sprite (billboard) make easy for lots of models so dont have huge number of render calls
-
-lerp across surfaces
-
-normal2world eg a car going down a hill will pitch down
-
-multitext
-
-This small sample code demonstrates a small part of openworld showing how to add a skydome but suggest you look at the example games in github to see how the library works in its entirety with weather, actor animations, terrains, chatter etc.
+This small code snippet emonstrates a small part of openworld showing how to add a skydome but but it'd be better to look at the example games to see how the library works in its entirety with weather, actor animations, terrains, chatter etc.
 
 
 ### Import
@@ -90,15 +57,14 @@ import 'package:openworld/openworld.dart' as OPENWORLD;
     OPENWORLD.Time.init(sunSphere, skyMat, ambience);
 
 ```   
-This gaming library includes two demo games with full source and all resources including blender models, sound, textures being freely available in this repository.
 
-One game is set in Jerusalem at the Second Temple 65AD. 
+One of the demo games is set in Jerusalem at the Second Temple 65AD. 
 
 <img src="https://github.com/user-attachments/assets/87d3e8a2-fd28-428f-807e-733b0f1bbef2" width="400"/>
 
 ![secondtemple](https://github.com/user-attachments/assets/49e647e9-a4b4-463b-a97a-8012a9cdcf60)
 
-This game is not only available in this repository but also on <a href='https://store.steampowered.com/app/4067520/Second_Temple/'>Steam</a> (Windows, Mac, Linux). <a href="https://apps.apple.com/us/app/ark-uncovered/id6593662011">iTunes</a> (iOS, macOS) on  <a href="https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.secondtemple">Amazon</a> (Android), <a href='https://chatgpt.forthtemple.com/secondtemple/'>web</a>, <a href="https://snapcraft.io/secondtemple">snap</a> (Linux) and <a href='https://www.youtube.com/watch?v=v63XYmFEgj8'>Youtube</a>
+This games models, actors and texture are all availabe in this repository and the game can be run on steam  for <a href='https://store.steampowered.com/app/4067520/Second_Temple/'>Steam</a> (Windows and Mac). <a href="https://apps.apple.com/us/app/ark-uncovered/id6593662011">iTunes</a> (iOS, macOS) on  <a href="https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.secondtemple">Amazon</a> (Android), <a href='https://chatgpt.forthtemple.com/secondtemple/'>web</a>, <a href="https://snapcraft.io/secondtemple">snap</a> (Linux) and <a href='https://www.youtube.com/watch?v=v63XYmFEgj8'>Youtube</a>
 
 [![secondtemple](https://snapcraft.io/secondtemple/badge.svg)](https://snapcraft.io/secondtemple)
 
