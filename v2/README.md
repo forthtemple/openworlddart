@@ -77,12 +77,12 @@ It is also available on <a href="https://apps.apple.com/us/app/lindos-1522/id673
 [![rhodes3d](https://snapcraft.io/rhodes3d/badge.svg)](https://snapcraft.io/rhodes3d)
 -------
 
-The philosophy of the engine it should not get bloated and only include features that typical openworld games would require on a smartphone or desktop. For example most openworld games will have animated actors, such as a person or monster walking. Most openworld games would include models,  planes and sprites, sound, light, weather, time of day, maps, music and rooms. But not all would include, for example, a players inventory system or a combat system or a monetary system. So these less used features are excluded.
+The philosophy of the library is it should not get too bloaded and only include features that typical openworld games would require on a smartphone or desktop. For example most openworld games will have animated actors, such as a person or monster walking. Most openworld games would include models,  planes and sprites, sound, light, weather, time of day, maps, music and rooms. But not all would include, for example, a players inventory system or a combat system or a monetary system. So these less used features are excluded.
 
 Alongside threejs existing 3D functions such as loading models, lighting, texturing, shaders it also includes features that are useful in openword games such as:
 
 *Animated actors*  
-  Openworld has easy actor animation including duration, looping, cloning existing actors, assigning new textures to cloned actor, sharing animations between actors with the same skeleton, doing one acion and then transitioning to an idling action.  All actors  made with the Blender modelling tool and are available in '/examplesecondtemple/blender' and '/examplerhodes3d/blender'. These are then exported into the assets directory in glb format.
+  Openworld makes actor animation easy and includes duration, looping, cloning existing actors, assigning new textures to cloned actor, sharing animations between actors with the same skeleton, doing an action and then transitioning to an idling action.  All actors  made with the Blender modelling tool and are available in '/examplesecondtemple/blender' and '/examplerhodes3d/blender'. These are then exported into the assets directory in glb format.
 
 ![image](https://github.com/user-attachments/assets/41a0a204-c41a-4115-9605-f8039a7d1bad)
 
@@ -115,7 +115,7 @@ It is possible to specify new textures for cloned actors and models which allows
 
 - Create new animations
   
-   You can create new animations from existing ones such as combining a squat animation with a look right animation instead of manually creating an infinite number of combinations in blender. For example
+   It is possible to create new animations from existing ones such as combining a squat animation with a look right animation. This reduces the need to manually creating an infinite number of combinations of animations in blender. For example rather than in blender creating a squat look right animation combine two animations like below:
 
 ```
       // Create a new animation squatright using the squat animation and the lookright animation just copying the pose on the head
@@ -127,7 +127,7 @@ It is possible to specify new textures for cloned actors and models which allows
 
 - Animation throttling
   
-     When there is  a large number of actors, such in a crowd the compute can be high to animate each actors new pose each frame. To reduce this compute frames can be skipped if the actor is a certain distance away from the camera. For example if the actor is 0.5 units away then skip 6 frames before doing the next animation.
+     If there are  a large number of actors, such as a crowd it can be expensive to animate every actors new pose each frame. To reduce CPU expense frames can be skipped if the actor is a certain distance away from the camera. For example if the actor is 0.5 units away then skip 6 frames before doing the next animation.
   
 ```
      // Have every 6th frame skipped if 0.5 units from the camera
