@@ -703,11 +703,11 @@ do something like give information when the player clicks the highlighted object
 
 
 *Delays*  
-There are many openworld procedures that have a delay. For example it is possible to have an actor wave his hand in 5 seconds or have cat meow in 5 seconds
+Many of the openworld procedures have a delay so that for example, have an actor wave his hand after 5 seconds or have cat meow in 10 seconds
 
 ```
-  // Cat meows in 5 seconds
-  OPENWORLD.Sound.play(path: "sounds/meow.mp3", volume: 0.2, delay:5);
+  // Cat meows in 10 seconds
+  OPENWORLD.Sound.play(path: "sounds/meow.mp3", volume: 0.2, delay:10);
 ```
 
 The allows for a sequence of actions to be performed. For example have a knight spin in 1 second, jump in 2 seconds and then laugh in 3 seconds.
@@ -845,7 +845,7 @@ The config file also has  pool objects. This is useful for example with a forest
   }
 }
 ```
-Config pool objects can also be used run time creating pool objects on the fly without using ocnfig.json file. For example you could create a crowd of 100 npc actors like below randomly placed in a 10x10 grid facing at random directions.  They also have an callbackonvisible and callbackonhide so when they appear you could have them for example say a speech, jump up in the air. And when they are no longer visible you can clear it on callbackonhide. You should always remember to to undo whatever youve done on callbackonvisible or it'll appear when the pool object is reused. In the example below animation throttling is used so that actors that are furtuher away have less frames computed the those closer to the camera allowing for large crowds without expensive animation pose calcualtions.
+Config pool objects can also be used run time with pool objects not needing to be created in the  config.json file. For example its possible to create a crowd of 100 NPC actors. In  the example below  they are randomly placed in a 10x10 grid facing in random directions. Pool object can also have callbackonvisible and callbackonhide  events so when a pool object appears or disappears you could have them for example say a speech, jump up in the air. And when they are no longer visible you can clear it on callbackonhide. It is important remember to undo any modifications you do in callbackonvisible so it doesnt appear  when the pool object is reused. In the example below animation throttling is used so that actors that are furtuher away have less frames computed the those closer to the camera allowing for large crowds without expensive animation pose calcualtions.
 
 ```
     // Create 100 pool object in a 10x10 units area
@@ -874,8 +874,11 @@ Config pool objects can also be used run time creating pool objects on the fly w
     OPENWORLD.Config.forceShowPoolObjects();
 ```
 
-It is also possible given an pool object you get find its positionjson information. In the example below ppositionjson will have ppositionjson['p'] as 10,10,0 and 't' will be 35 so for example in callbackonvisible know what positionjson it belongs to and below if its a blacksmith will play a hammering sound.
-   -getting the json based on the actor so can know position and vice versa, given an position get the actor associated if visible
+Config can also reteive the position information of a given pool object. In the example below ppositionjson will have 
+ppositionjson['p'] as 10,10,0 and 
+ppositionjson['t'] will be 35
+and label 'blacksmith'
+when callbackonvisible is called. In the example, when the positionjson label is blacksmith a hammering sound will be played.
 ```
    OPENWORLD.Config
             .config['positions']['poolpositions'][1]['positions'].add(
