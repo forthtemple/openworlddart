@@ -7,7 +7,7 @@ This version of the library is an update of the previous openworld library that 
 
 The openworld library has many new features added such terrain levels allowing for example, a multi story building where you can place objects on different floors of the building. There are also shadows built into model and actor creation. There is a new vegetation object using cheap sprites to generate vegetation like grass and shrubs. It can also add detail to the ground. There are also a tree object that uses many sprites and plains to create branches and leaves. And the water2 object of threejs has been made faster being able to skip reflection updates and also choose which objects to reflect. There is also an asset encrypter so when you deploy a game, your assets have some protection. The config class has been updated so pooled objects are not only created from a static text file but also runtime. This allows for example a crowd of say 1000 NPC's only showing the closest 50 near the camera. Alos actor animation throttling can be used so when there is lots of actors the CPU only actors close to the camera have every animation frame calculated while those further away having frames skipped. Also the new openworld library includes being able to add actor animations run time by combining existing animations. The library also has the addition of extra callbacks. For example when an npc has given a speech a callback can be called when the speech is finished have the npc for example jump up in the air. There are also callbacks for keypresses. For example a keypress callback for when a player gets near a horse and presses 'E' which calls a callback to mount the horse. For large meshes, mesh intersection calculations for walking on a terrain or finding a wall can be expensive and openworld is now far more optimized for calculating intersections with caching and bounding boxes. Run time obstacles have also been added so you can block off an area and then reenable. This is useful for say a door that has been closed. For multiple doors, a doorsway class has have been added to allows that multiple doors eg two grand doors to be opened or closed with one call coding to manually opening each door.  Another feature is fading objects as you move away from the camera rather than abruplty making them invisible the object fades. Simnilarly lights can also be dimmed as they move away from the camera. 
 
-This small code snippet emonstrates a small part of openworld showing how to add a skydome but but it'd be better to look at the example games to see how the library works in its entirety with weather, actor animations, terrains, chatter etc.
+The following code snippet demonstrates a small part of openworld showing how to add a skydome but it is recommended you look at some of the sample games to see how openworld works with weather, actor animations, terrains, chatter etc.
 
 
 ### Import
@@ -64,7 +64,7 @@ One of the demo games is set in Jerusalem at the Second Temple 65AD.
 <img width="400" alt="Screenshotcourtowmen" src="https://github.com/user-attachments/assets/fe084261-9002-4611-b9f4-a45f51108c95" />
 <img width="426" height="240" alt="Video Project 2" src="https://github.com/user-attachments/assets/cea19076-b1ee-47a2-aa2b-7430ac8ccf97" />
 
-This games models, actors and texture are all availabe in this repository and the game can be run on steam  for <a href='https://store.steampowered.com/app/4067520/Second_Temple/'>Steam</a> (Windows and macOS). <a href="https://apps.apple.com/us/app/ark-uncovered/id6593662011">iTunes</a> (iOS, macOS) on  <a href="https://forthtemple.com/secondtemple.apk">TODO secondtemple.apk</a> (Android), <a href='https://secondtemple.org/'>web</a>, <a href="https://snapcraft.io/secondtemple">todo snap</a> (Linux) and <a href='https://www.youtube.com/watch?v=fNuSaUxYvGs'>Youtube</a>
+This games models, actors and texture are all availabe in this repository and the game can be run on <a href='https://store.steampowered.com/app/4067520/Second_Temple/'>Steam</a> (Windows and macOS). <a href="https://apps.apple.com/us/app/ark-uncovered/id6593662011">iTunes</a> (iOS, macOS) on  <a href="https://forthtemple.com/secondtemple.apk">TODO secondtemple.apk</a> (Android), <a href='https://secondtemple.org/'>web</a>, <a href="https://snapcraft.io/secondtemple">todo snap</a> (Linux) and <a href='https://www.youtube.com/watch?v=fNuSaUxYvGs'>Youtube</a>
 
 [![secondtemple](https://snapcraft.io/secondtemple/badge.svg)](https://snapcraft.io/secondtemple)
 
@@ -77,12 +77,12 @@ It is also available on <a href="https://apps.apple.com/us/app/lindos-1522/id673
 [![rhodes3d](https://snapcraft.io/rhodes3d/badge.svg)](https://snapcraft.io/rhodes3d)
 -------
 
-The philosophy of the library is it should not get too bloaded and only include features that typical openworld games would require on a smartphone or desktop. For example most openworld games will have animated actors, such as a person or monster walking. Most openworld games would include models,  planes and sprites, sound, light, weather, time of day, maps, music and rooms. But not all would include, for example, a players inventory system or a combat system or a monetary system. So these less used features are excluded.
+The philosophy of the library is it should not get too bloated and only include features that typical openworld games would require on a smartphone or desktop. For example most openworld games will have animated actors, such as a person or monster walking. Most openworld games would include models,  planes and sprites, sound, light, weather, time of day, maps, music and rooms. But not all would include, for example, a players inventory system or a combat system or a monetary system. So these less used features are excluded.
 
 Alongside threejs existing 3D functions such as loading models, lighting, texturing, shaders it also includes features that are useful in openword games such as:
 
 *Animated actors*  
-  Openworld makes actor animation easy and includes duration, looping, cloning existing actors, assigning new textures to cloned actor, sharing animations between actors with the same skeleton, doing an action and then transitioning to an idling action.  All actors  made with the Blender modelling tool and are available in '/examplesecondtemple/blender' and '/examplerhodes3d/blender'. These are then exported into the assets directory in glb format.
+  Openworld makes actor animation easy and includes duration, looping, cloning existing actors, assigning new textures to cloned actor, sharing animations between actors with the same skeleton, doing an action and then transitioning to an idling action.  All actors are  made with the Blender modelling tool and are available in '/examplesecondtemple/blender' and '/examplerhodes3d/blender'. These are then exported into the assets directory in glb format.
 
 ![image](https://github.com/user-attachments/assets/41a0a204-c41a-4115-9605-f8039a7d1bad)
 
@@ -115,7 +115,7 @@ It is possible to specify new textures for cloned actors and models which allows
 
 - Create new animations
   
-   It is possible to create new animations from existing ones such as combining a squat animation with a look right animation. This reduces the need to manually creating an infinite number of combinations of animations in blender. For example rather than in blender creating a squat look right animation combine two animations like below:
+   It is possible to create new animations from existing ones such as combining a squat animation with a look right animation. This makes it unnecessary to manually create large numbers of combinations of animations in blender. For example rather than using blender to create a squat look right animation combine two animations like below:
 
 ```
       // Create a new animation squatright using the squat animation and the lookright animation just copying the pose on the head
