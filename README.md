@@ -1,9 +1,5 @@
 # Open World for dart
 
-This a draft I'm writing for the future version of the openworld library so ignore for the time being.
-
-refer to \games\openworldthreejs\PATCHES md file for patches!
-
 This is a library to make openworld games using the dart package threejs. This library is based upon an older threejs openworld library just for web using javascript [openworldthreejs](https://github.com/forthtemple/openworldthreejs). The advantages of flutter for an openworld game is with one code base you can create a multi platform (iOS, Windows,Android, MacOS, Linux, Web). Also there is a huge number of flutter widgets that can be incorporated into the game. There is also hotloading making it possible to place objects in a scene, hit hotload and the 3D object will appear in your game within seconds. 
 
 This version of the library is an update of the previous openworld library that used [three_dart](https://github.com/wasabia/three_dart) instead of [three_js](https://github.com/Knightro63/three_js)/ Threejs is more up to date and have found it works better across platforms. The openworld library itself has been updated to work better on desktops as opposed to smartphones. This has been showcased by an improved version of the Second Temple game on  [steam](https://store.steampowered.com/app/4067520/Second_Temple/). This new version is available on [windows, mac](https://store.steampowered.com/app/4067520/Second_Temple/),  linux,[iPhone](https://apps.apple.com/us/app/second-temple/id6593662011) and android and [web](https://secondtemple.org). As with the previous version, this library includes two demo games, Second Temple and Rhodes 3D.
