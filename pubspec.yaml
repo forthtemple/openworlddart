@@ -4,8 +4,8 @@ version: 0.1.0
 homepage: https://github.com/forthtemple/openworlddart
 
 environment:
-  #sdk: ">=2.18.0 <4.0.0"
-  sdk: '>=3.0.0'
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.32.0"
 dependencies:
   flutter:
     sdk: flutter
@@ -22,7 +22,10 @@ dependencies:
   shared_preferences: ^2.2.3
   #openworld_gl: ^0.0.26
   archive: ^4.0.7
-  three_js: 0.2.4
+  three_js: ^0.2.4
+  three_js_core: ^0.2.4          # use the versions shown in pubspec.lock
+  three_js_core_loaders: ^0.2.1
+  three_js_math: ^0.2.6
   #three_js:
   #  path: ../three_js-main/packages/three_js
   three_js_helpers: ^0.2.2
