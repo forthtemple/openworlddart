@@ -1,12 +1,23 @@
 # Second Temple
 
-Repository and support for *Second Temple* game. Demonstrates flutter based openworld game engine for iOS, macos, Android, Linux, Windows and Web. All game logic is in lib/SecondTemplePage.dart
+Repository and support for *Second Temple* game. Demonstrates flutter based openworld game engine for iOS, macos, Android, Linux, Windows and Web.
 
-You've been transported back to Jerusalem 70CE within the Second Temple. For over 600 years the ark of the covenant has been missing. Can you find the ark in time to save Jerusalem from the calamities to come? Game is completely offline so can play without internet though there is an online capability.
+Journey through the Second Temple in Jerusalem in 65 AD as a priest, pilgrim or shopkeeper, or roam as you please.
+Gameplay Overview:
 
-![image](https://github.com/user-attachments/assets/5e43c5b4-b02d-4467-a649-c5f431d095d8)
+ - As a new priest you wake up in the Chamber of the Hearth with the other priests at the Second Temple. A friend is there to show you the Mikveh, the lotteries,  rituals like the Tamid and Ketoret (incense offering).
 
-This game is not only available in this repository but also on <a href="https://apps.apple.com/us/app/ark-uncovered/id6593662011">iTunes</a> (iOS, macOS) on  <a href="https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.secondtemple">Amazon</a> (Android), <a href='https://chatgpt.forthtemple.com/secondtemple/'>web</a>, <a href="https://snapcraft.io/secondtemple">snap</a> (Linux) and <a href='https://www.youtube.com/watch?v=v63XYmFEgj8'>Youtube</a>
+ - As a pilgrim, wake up at your home in Bethphage on the Mount of Olives and ride your donkey to the Temple for the Tamid
+
+ - As a new mother seek purification after childbirth visiting the pool of Bethesda and making an offering at the Temple as described in Leviticus 12
+
+ - As a shopkeeper, wake up with your husband and set up shop along the bustling Pilgrimage Road
+
+ - Or, explore freely at your own pace visiting the Pool of Siloam, witnessing Jerusalem lit up at night during Sukkot or visiting the Western wall of the Temple Mount.
+
+<img width="400" alt="Screenshotcourtowmen" src="https://github.com/user-attachments/assets/fe084261-9002-4611-b9f4-a45f51108c95" />
+
+This game is not only available in this repository but also on  [Steam](https://store.steampowered.com/app/4067520/Second_Temple/). <a href="https://apps.apple.com/us/app/ark-uncovered/id6593662011">iTunes</a> (iOS, macOS) on  <a href="https://forthtemple.com/secondtemple/secondtemple-release.apk">Android</a>, <a href='https://secondtemple.org/'>web</a>, <a href="https://snapcraft.io/secondtemple">snap</a> (Linux)
 
 [![secondtemple](https://snapcraft.io/secondtemple/badge.svg)](https://snapcraft.io/secondtemple)
 
