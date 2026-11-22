@@ -4,7 +4,7 @@
 
 This is a library to make openworld games using the dart package threejs. This library is based upon an older threejs openworld library just for web using javascript [openworldthreejs](https://github.com/forthtemple/openworldthreejs). The advantages of flutter for an openworld game is with one code base you can create a multi platform (iOS, Windows,Android, MacOS, Linux, Web). Also there is a huge number of flutter widgets that can be incorporated into the game. There is also hotloading making it possible to place objects in a scene, hit hotload and the 3D object will appear in your game within seconds. 
 
-When using the pubdev package for Openworld include the following in your pubspec.yaml file. I have found that using threejs that is newer than 0.2.4 that there is flickering on windows. These patches update some of the issues:
+When using the pubdev package for Openworld include the following in your pubspec.yaml file. I have found that using threejs that is newer than 0.2.4 that there is flickering on windows. These patches include many of the bug fixes done past 0.2.4 while still using threejs 0.2.4:
 
 ```
 dependencies:
