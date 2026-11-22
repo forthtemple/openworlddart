@@ -1,6 +1,33 @@
 # Open World for dart
 
+ 
+
 This is a library to make openworld games using the dart package threejs. This library is based upon an older threejs openworld library just for web using javascript [openworldthreejs](https://github.com/forthtemple/openworldthreejs). The advantages of flutter for an openworld game is with one code base you can create a multi platform (iOS, Windows,Android, MacOS, Linux, Web). Also there is a huge number of flutter widgets that can be incorporated into the game. There is also hotloading making it possible to place objects in a scene, hit hotload and the 3D object will appear in your game within seconds. 
+
+When using the pubdev package for Openworld include the following in your pubspec.yaml file. I have found that using threejs that is newer than 0.2.4 that there is flickering on windows. These patches update some of the issues:
+
+```
+dependencies:
+  openworld: ^0.1.0
+
+dependency_overrides:
+  three_js_core:
+    git:
+      url: https://github.com/forthtemple/openworlddart
+      path: packages/three_js_core
+  three_js_animations:
+    git:
+      url: https://github.com/forthtemple/openworlddart
+      path: packages/three_js_animations
+  three_js_helpers:
+    git:
+      url: https://github.com/forthtemple/openworlddart
+      path: packages/three_js_helpers
+  flutter_angle:
+    git:
+      url: https://github.com/forthtemple/openworlddart
+      path: packages/flutter_angle
+```
 
 This version of the library is an update of the previous openworld library that used [three_dart](https://github.com/wasabia/three_dart) instead of [three_js](https://github.com/Knightro63/three_js)/ Threejs is more up to date and have found it works better across platforms. The openworld library itself has been updated to work better on desktops as opposed to smartphones. This has been showcased by an improved version of the Second Temple game on  [steam](https://store.steampowered.com/app/4067520/Second_Temple/). This new version is available on [windows, mac](https://store.steampowered.com/app/4067520/Second_Temple/),  [linux](https://snapcraft.io/secondtemple) ,[iPhone](https://apps.apple.com/us/app/second-temple/id6593662011) and [android](https://forthtemple.com/secondtemple/secondtemple-release.apk) and [web](https://secondtemple.org). As with the previous version, this library includes two demo games, Second Temple and Rhodes 3D.
 
