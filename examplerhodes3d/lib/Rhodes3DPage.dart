@@ -1,11 +1,8 @@
 
 import 'dart:async';
-import 'dart:collection';
 import 'dart:convert';
 import 'dart:developer';
-
-
-import 'dart:ui';
+import 'dart:math' as math;
 
 import 'package:audioplayers/audioplayers.dart' as audioplayers;
 
@@ -13,43 +10,33 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:openworld_gl/openworld_gl.dart';
 import 'package:flutter_joystick/flutter_joystick.dart';
 import 'package:flutter_user_guildance/flutter_user_guildance.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import 'package:openworld/three_dart/three3d/objects/index.dart';
-import 'package:openworld/three_dart/three_dart.dart' as THREE;
-import 'package:openworld/three_dart_jsm/three_dart_jsm.dart' as THREE_JSM;
+import 'package:http/http.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:widget_and_text_animator/widget_and_text_animator.dart';
 import 'package:widget_zoom/widget_zoom.dart';
-import 'package:openworld/objects/fire.dart';
 
-import 'package:openworld/objects/flares.dart';
-import 'package:openworld/objects/smoke.dart';
-//import 'openworld/objects/watersimple.dart';
+import 'package:three_js/three_js.dart' as THREE;
 
-import 'package:openworld/objects/watersimple.dart';
-//import 'openworld/shaders/outline.dart';
-import 'package:openworld/shaders/water2.dart';
+import 'package:openworld/asset_pack.dart';
 import 'package:openworld/openworld.dart' as OPENWORLD;
 import 'package:openworld/client.dart' as CLIENT;
+import 'package:openworld/objects/fire.dart';
+import 'package:openworld/objects/flares.dart';
+import 'package:openworld/objects/watersimple.dart';
+import 'package:openworld/objects/water3.dart';
 import 'package:openworld/shaders/SkyShader.dart';
 
-import 'package:openworld/three_dart_jsm/three_dart_jsm/controls/index.dart';
-import 'package:openworld/three_dart_jsm/extra/dom_like_listenable.dart';
-import 'package:http/http.dart';
-import 'dart:math' as math;
+import 'main.dart' show restartApplication;
 
-String gamename='Lindos 1522';
+String gamename='Rhodes 3D';//Lindos 1522';
 
 
 class Rhodes3DPage extends StatefulWidget {
 
-  Rhodes3DPage({Key? key}) //, required this.fileName})
-      : super(key: key);
+  const Rhodes3DPage({super.key});
 
   @override
   createState() => _StateRhodes3D();
@@ -61,45 +48,101 @@ late audioplayers.AudioPlayer roomdefaultsound12;
 late audioplayers.AudioPlayer roomdefaultsound21;
 late audioplayers.AudioPlayer roomdefaultsound22;
 
+// ---------------------------------------------------------------------------
+// Trigger event helpers
+//
+// In the three_dart version of openworld the distance, touch and custom
+// triggers were EventDispatchers, so the game could attach as many
+// 'trigger' / 'triggermenu' listeners as it liked with addEventListener and
+// call triggermenu() to fire a menu command.
+// In the three_js version of openworld each trigger takes a single event
+// callback instead. These small dispatchers sit between the openworld
+// triggers and the game so the game logic below can keep using several
+// listeners per object, exactly like it did before.
+// ---------------------------------------------------------------------------
+
+/// Dispatches distance trigger events. Listeners get a THREE.Event whose
+/// action is true when the player enters and false when the player leaves.
+class DistanceEvents with THREE.EventDispatcher {
+  trigger(val) {
+    dispatchEvent(THREE.Event(type: 'trigger', action: val));
+  }
+}
+
+/// Dispatches touch trigger events.
+/// 'trigger' listeners get the pointer event in event.action and
+/// 'triggermenu' listeners get the menu command in event.action.
+class TouchEvents with THREE.EventDispatcher {
+  dynamic _lastevent;
+
+  trigger(val) {
+    // The same tap can reach both the object and one of its children so
+    // only dispatch a pointer event once
+    if (val != null && identical(val, _lastevent)) return;
+    _lastevent = val;
+    dispatchEvent(THREE.Event(type: 'trigger', action: val));
+  }
+
+  triggermenu(val) {
+    dispatchEvent(THREE.Event(type: 'triggermenu', action: val));
+  }
+}
+
+/// Dispatches custom triggers such as 'strucktrigger', 'deadtrigger' and
+/// 'nodtrigger' and remembers which ones have listeners.
+class CustomEvents with THREE.EventDispatcher {
+  final Set<String> names = {};
+
+  @override
+  void addEventListener(String type, Function listener) {
+    names.add(type);
+    super.addEventListener(type, listener);
+  }
+
+  bool hasTrigger(String name) {
+    return names.contains(name);
+  }
+
+  void removeTrigger(String name) {
+    names.remove(name);
+  }
+
+  trigger(name, val) {
+    if (!names.contains(name)) return;
+    print('custom trigger ' + name);
+    dispatchEvent(THREE.Event(type: name, action: val));
+  }
+}
+
 class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin */ {
   UserGuidanceController userGuidanceController = UserGuidanceController();
 
-  late OpenworldGlPlugin three3dRender;
-  THREE.WebGLRenderer? renderer;
+  // three_js viewer - replaces OpenworldGlPlugin, the WebGLRenderer and the render target of the three_dart version
+  late THREE.ThreeJS threeJs;
 
-  int? fboId;
-  late double width;
-  late double height;
+  // The scene, camera and screen size now belong to threeJs
+  THREE.Scene get scene => threeJs.scene;
+  set scene(THREE.Scene newscene) => threeJs.scene = newscene;
+  THREE.Camera get camera => threeJs.camera;
+  set camera(THREE.Camera newcamera) => threeJs.camera = newcamera;
+  double get width => threeJs.width;
+  double get height => threeJs.height;
+
   bool black = false;
 
   late Timer _timer;
-  Size? screenSize;
-
-  late THREE.Scene scene;
-  late THREE.Camera camera;
-  late THREE.Mesh mesh;
+  bool timerstarted = false;
 
   late THREE.Clock clock;
-
-  double dpr = 1.0;
 
   bool verbose = false;
   bool disposed = false;
 
-  late THREE.Object3D object;
-
-  late THREE.Texture texture;
-
-  late THREE.WebGLMultisampleRenderTarget renderTarget;
-
-  dynamic? sourceTexture;
-
   bool loaded = false;
 
-  late THREE.Object3D model;
-
-  static GlobalKey<DomLikeListenableState> _globalKey =
-  GlobalKey<DomLikeListenableState>();
+  // Only add the animation loop and the keyboard and mouse listeners once even if initPage is called again on restart
+  bool addedanimation = false;
+  bool addedlisteners = false;
 
   OPENWORLD.VirtualJoystick? _joystick;
   int pointerdowntick = -1;
@@ -150,7 +193,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
   late THREE.Object3D roomNewsroom;
   late THREE.Object3D journalist2;
   late THREE.Object3D journalist2board;
-  late Group trixie;
+  late THREE.Group trixie;
 
   // State of quest
   var journalist2newsroomseen=false;
@@ -165,7 +208,10 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
   late PopupMenuButton bottlebutton;
 
-  Group _hotload = Group();
+  THREE.Group _hotload = THREE.Group();
+
+  // Water shader for the sea - needs its reflections updated every frame
+  Water? water;
 
   String roomname = "";
 
@@ -177,11 +223,11 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
   late String mapfile;
   late int mapwidth;
   late int mapheight;
-  THREE.Color seacolor = THREE.Color(0x064273);
+  THREE.Color seacolor = THREE.Color.fromHex32(0x064273);
   bool hidewidgets = false; // useful if want to do screenshots without controls etc showing
   bool showfps = false; // show frames per second
   int fps = -1;
-  int framedelay = 40;
+  int framedelay = 40;  // no longer used - three_js drives the animation loop
   double defaultcameraoffset = 0.35;   // Default player height about ground
   double horsecameraoffset= 0.35+0.2;  // How high off ground if ride horse
   // Menu variables
@@ -210,83 +256,150 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
   bool resurrect=false;  // show ressurect
   bool restart=false;    // show restart game
 
-  var defaultspeed=8.0; //2m/s
-  var horsespeed=25.0;
+  // In the three_dart version the joystick was given a tiny frame time (the time between two calls of
+  // clock.getDelta() in the same frame) so the speeds had to be large. The three_js version passes the real
+  // frame time so these speeds are much smaller. Tweak these if walking or riding feels too fast or slow
+  var basedefaultspeed=1.2;//8.0; //2m/s
+  var defaultspeed=1.2*1.5;
+  var horsespeed=3.75;//25.0;
   var defaultdrag=0.5;
   var inventoryiconwidth=60.0;  // defautl width of icon for inventory
 
+  // ---------------------------------------------------------------------------
+  // Distance triggers
+  // ---------------------------------------------------------------------------
+
+  /// Get the distance trigger dispatcher for [obj] - creating it if necessary
+  DistanceEvents _distanceEvents(obj) {
+    if (!(obj.extra['distanceevents'] is DistanceEvents))
+      obj.extra['distanceevents'] = DistanceEvents();
+    return obj.extra['distanceevents'];
+  }
+
+  /// Same as the old OPENWORLD.BaseObject.setDistanceTrigger
+  /// If the trigger is new (or was disabled) then old listeners are forgotten like the old openworld did
+  setDistanceTrigger(obj, {dist, ndist, edist, wdist, sdist, ignoreifhidden=true}) {
+    if (obj.extra['distanceactive'] != true)
+      obj.extra['distanceevents'] = DistanceEvents();
+    obj.extra['distanceactive'] = true;
+    OPENWORLD.BaseObject.setDistanceTrigger(obj, dist: dist, ndist: ndist, edist: edist, wdist: wdist, sdist: sdist,
+        ignoreifhidden: ignoreifhidden,
+        event: (action) {
+          _distanceEvents(obj).trigger(action);
+        });
+  }
+
+  /// Same as the old OPENWORLD.Room.setDistanceTrigger
+  setRoomDistanceTrigger(room, {minx, maxx, miny, maxy, dist}) {
+    if (room.extra['distanceactive'] != true)
+      room.extra['distanceevents'] = DistanceEvents();
+    room.extra['distanceactive'] = true;
+    OPENWORLD.Room.setDistanceTrigger(room, minx: minx, maxx: maxx, miny: miny, maxy: maxy, dist: dist,
+        event: (action) {
+          // In the old openworld the room's own listener ran first (setting You.room etc) so run the games listeners after it
+          scheduleMicrotask(() {
+            _distanceEvents(room).trigger(action);
+          });
+        });
+  }
+
+  /// Add a listener to [obj] distance trigger. Replaces obj.extra['trigger'].addEventListener('trigger', ...)
+  onDistanceTrigger(obj, Function listener) {
+    _distanceEvents(obj).addEventListener('trigger', listener);
+  }
+
+  /// Same as the old OPENWORLD.BaseObject.disableDistanceTrigger
+  disableDistanceTrigger(obj) {
+    OPENWORLD.BaseObject.removeDistanceTrigger(obj);
+    obj.extra['distanceactive'] = false;
+  }
+
+  /// Same as the old OPENWORLD.BaseObject.reenableDistanceTrigger
+  reenableDistanceTrigger(obj) {
+    OPENWORLD.BaseObject.reenableDistanceTrigger(obj);
+    if (obj.extra.containsKey('trigger'))
+      obj.extra['distanceactive'] = true;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Touch triggers
+  // ---------------------------------------------------------------------------
+
+  /// Same as the old OPENWORLD.BaseObject.setTouchTrigger
+  /// obj.extra['touchtrigger'] becomes a TouchEvents so can still use
+  /// obj.extra['touchtrigger'].addEventListener('trigger'/'triggermenu', ...) and obj.extra['touchtrigger'].triggermenu(command)
+  setTouchTrigger(obj) {
+    var events = TouchEvents();
+    OPENWORLD.BaseObject.setTouchTrigger(obj, event: (clickevent) {
+      events.trigger(clickevent);
+    });
+    obj.extra['touchtrigger'] = events;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Custom triggers
+  // ---------------------------------------------------------------------------
+
+  /// Same as the old OPENWORLD.BaseObject.setCustomTrigger
+  setCustomTrigger(obj) {
+    obj.extra['customtrigger'] = CustomEvents();
+  }
+
+  /// Same as the old OPENWORLD.BaseObject.hasCustomTrigger
+  hasCustomTrigger(obj, name) {
+    return obj.extra['customtrigger'] is CustomEvents && obj.extra['customtrigger'].hasTrigger(name);
+  }
+
+  /// Same as the old OPENWORLD.BaseObject.removeCustomTrigger
+  removeCustomTrigger(obj, name) {
+    if (obj.extra['customtrigger'] is CustomEvents)
+      obj.extra['customtrigger'].removeTrigger(name);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Toast - fluttertoast isn't used anymore so show a snackbar instead
+  // ---------------------------------------------------------------------------
+  showToast(String msg) {
+    if (!mounted)
+      return;
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(msg, textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 17)),
+      backgroundColor: Colors.black.withOpacity(0.7),
+      behavior: SnackBarBehavior.floating,
+      width: 450,
+      duration: const Duration(seconds: 4),
+    ));
+  }
   @override
   void initState() {
     super.initState();
+    setup();
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    width = screenSize!.width;
-    height = screenSize!.height;
-
-    print("width" + width.toString() + " height" +
-        height.toString()); // 896.0 height414.0
-
-    three3dRender = OpenworldGlPlugin();
-
-    Map<String, dynamic> _options = {
-      "antialias": true,
-      "alpha": false,
-      "width": width.toInt(),
-      "height":height.toInt(),
-      "dpr": dpr
-    };
-
-    await three3dRender.initialize(options: _options);
-
-    setState(() {});
-
-    // TODO web wait dom ok!!!
-    Future.delayed(const Duration(milliseconds: 100), () async {
-      await three3dRender.prepareContext();
-
-      initScene();
-    });
+  // Create the three_js viewer. Once the viewer has its GL context ready it calls initPage
+  // This replaces initPlatformState, initSize, initRenderer and initScene of the three_dart version
+  setup() {
+    threeJs = THREE.ThreeJS(
+      settings: THREE.Settings(
+        enableShadowMap: true,
+      ),
+      onSetupComplete: () {},
+      setup: initPage,
+    );
   }
-
-  initSize(BuildContext context) {
-    if (screenSize != null) {
-      return;
-    }
-    final mqd = MediaQuery.of(context);
-
-    screenSize = mqd.size;
-    dpr = mqd.devicePixelRatio;
-
-    initPlatformState();
-  }
-
 
   @override
   void reassemble() {
     super.reassemble();
     print("hotload");
-    hotload();  // If hotload then call hotload to display object in hotload straight away
+    if (loaded)
+      hotload();  // If hotload then call hotload to display object in hotload straight away
   }
 
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
-    return Scaffold(
-
-      body:
-      DomLikeListenable(
-        key: _globalKey,
-        builder: (BuildContext context) {
-          initSize(context);
-          return _build(context);
-        },
-      ),
-    );
-  }
-
-  Widget _build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
@@ -316,29 +429,15 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
               body: Container(
                 child: Stack(
                   children: [
-                    //  Text("hi"),
-                    Container(
-                        child: loaded ? Container(
-                            width: width,
-                            height: height,
-                            color: Colors.black,
-                            child: Builder(builder: (BuildContext context) {
-                              if (black)
-                                return Container();
-                              else if (kIsWeb) {
-                                return three3dRender.isInitialized
-                                    ? HtmlElementView(
-                                    viewType: three3dRender.textureId!
-                                        .toString())
-                                    : Container();
-                              } else {
-                                return three3dRender.isInitialized
-                                    ? Texture(
-                                    textureId: three3dRender.textureId!)
-                                    : Container();
-                              }
-                            })) :
-                       Stack( // Load screen
+                    // The 3D view rendered by three_js
+                    threeJs.build(),
+
+                    // Black out the screen eg when you die
+                    black ? Positioned.fill(child: Container(color: Colors.black)) : SizedBox.shrink(),
+
+                    !loaded ? Positioned.fill(child: Container(
+                        color: Colors.black,
+                        child: Stack( // Load screen
                             children: [
                               Center(child: Image.asset(
                                 "icons/rhodes3d2.jpg", fit: BoxFit.fitWidth, width:1600)),
@@ -412,9 +511,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
                               )
 
                               )
-                            ])
-                    ),
-
+                            ]))) : SizedBox.shrink(),
                     // Display menu at position menuposx, menuposy
                     menuposx >= 0 ? Positioned(
                         top: menuposy,
@@ -642,7 +739,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
                                   actorStruck(minnpc); // Animation to strike the npc
                                   OPENWORLD.Sound.play(
                                       path: 'sounds/struck.mp3', volume: 1);  // Struck sound when hit npc
-                                  if (OPENWORLD.BaseObject.hasCustomTrigger(minnpc, "strucktrigger")) {
+                                  if (hasCustomTrigger(minnpc, "strucktrigger")) {
                                     // If npc has customer struck trigger then call it
                                     print("actor struck custom strucktrigger" + OPENWORLD.Mob.getName(minnpc));
 
@@ -667,8 +764,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
                                       actorDie(
                                           minnpc); // This is where sets to dead
                                       // remove any distance triggers the npc has
-                                      OPENWORLD.BaseObject
-                                          .disableDistanceTrigger(minnpc);
+                                      disableDistanceTrigger(minnpc);
                                       // clear any text the npc is showing
                                       OPENWORLD.Mob.clearText(minnpc);
                                       // Clear all timers that npc has such as moving and lerping
@@ -812,7 +908,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
                                                 // If already riding then dismount
                                                 var worldpos = OPENWORLD.You
                                                     .getWorldPos();
-                                                var dismountpos=OPENWORLD.Math.vectorMoveFoward(worldpos.x, worldpos.y,OPENWORLD.Camera.turn, 0.52);
+                                                var dismountpos=OPENWORLD.Math.vectorMoveForward(worldpos.x, worldpos.y,OPENWORLD.Camera.turn, 0.52);
                                                 OPENWORLD.Space
                                                     .worldToLocalSurfaceObjLerp(
                                                     camera,
@@ -879,26 +975,20 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
                                                   print("dist" +dist.toString());
                                                   if (dist < 1) {
                                                     Flares flares = Flares();
-                                                    Group flaresobj = await flares.createFlares(
+                                                    THREE.Group flaresobj = await flares.createFlares(
                                                         "assets/textures/flares/lensflare2.jpg",
                                                         "assets/textures/flares/lensflare0.png");
                                                     OPENWORLD.Space.worldToLocalSurfaceObj(flaresobj, 374.846,272.103, 5);
-                                                    flaresobj.scale.set(0.1, 0.1, 0.1);
+                                                    flaresobj.scale.setValues(0.1, 0.1, 0.1);
                                                     scene.add(flaresobj);
                                                     OPENWORLD.Space.worldToLocalSurfaceObjLerp(flaresobj, 374.846,272.103, 0.2, 8);
-                                                    Fluttertoast.showToast(
-                                                        msg: "You pray to the almighty...",
-                                                        toastLength: Toast
-                                                            .LENGTH_LONG);
+                                                    showToast("You pray to the almighty...");
                                                     Future.delayed(
                                                         const Duration(
                                                             milliseconds: 5 *
                                                                 1000), () async {
                                                       OPENWORLD.Sound.play(path: "sounds/god.mp3", volume: 1);
-                                                      Fluttertoast.showToast(
-                                                          msg: "You feel your life force return to you...",
-                                                          toastLength: Toast
-                                                              .LENGTH_LONG);
+                                                      showToast("You feel your life force return to you...");
                                                       OPENWORLD.You.immobile = false;
                                                       setState(() {
                                                         weaponicon=defaultweaponicon;
@@ -935,10 +1025,12 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
                                                child: IconButton(
                                                 tooltip: "Restart",
                                                 icon: Icon(Icons.restart_alt),
-                                                onPressed: ()  {
+                                                onPressed: () async {
 
-                                                  OPENWORLD.Persistence.reset();
-                                                  close(pop:false);
+                                                  // Restart the game in the same three_js viewer
+                                                  await OPENWORLD.Persistence.reset();
+                                                  await close(pop:false);
+                                                  resetGameState();
                                                   setHealth(1);
                                                   initPage();
 
@@ -1120,13 +1212,12 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
                                             onPressed: () async {
                                               setState(() {
                                                 // loaded=true;
-                                                _globalKey.currentState?.pause =
-                                                true;
+                                                // _globalKey.currentState?.pause = true; (DomLikeListenable not used with three_js)
                                               });
                                               await settings(context);
                                               setState(() {
                                                 // loaded=true;
-                                                //   _globalKey.currentState?.pause = false;
+                                                //   // _globalKey.currentState?.pause = false; (DomLikeListenable not used with three_js)
                                               });
                                             },
                                           ),
@@ -1277,43 +1368,18 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
   var lastclosewalltick=-1;
 
-  render() {
-    int _t = DateTime
-        .now()
-        .millisecondsSinceEpoch;
-
-
-    final _gl = three3dRender.gl;
-
-    renderer!.render(scene, camera);
-
-    int _t1 = DateTime
-        .now()
-        .millisecondsSinceEpoch;
-
-    if (verbose) {
-      print("render cost: ${_t1 - _t} ");
-      print(renderer!.info.memory);
-      print(renderer!.info.render);
-    }
-
-    _gl.flush();
-
-    if (verbose) print(" render: sourceTexture: $sourceTexture ");
-
-    if (!kIsWeb) {
-      three3dRender.updateTexture(sourceTexture);
-    }
-
-    var delta = clock.getDelta();
+  // This was render() in the three_dart version.
+  // three_js now does the actual rendering so this just does the movement, wall detection, boat and horse riding each frame
+  // [delta] is the frame time from three_js
+  updateMovement(delta) {
     if (delta > 0.2) {
-      print("delta too long" + delta.toString() + " " + camera.far.toString());
+      print("delta too long" + delta.toString());
     }
     if (this._joystick != null) this._joystick?.update(delta);
 
     // All openworld updates
     OPENWORLD.Space.update(delta);
-    OPENWORLD.Light.update();  // must be before space update otherwise night only will override hide
+    OPENWORLD.Light.update(delta);  // must be before space update otherwise night only will override hide
     OPENWORLD.BaseObject.update(delta);
     OPENWORLD.Texture.update(delta);
 
@@ -1337,9 +1403,6 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
         } else {
 
         }
-      } else if (disposed == -2) {
-        // what is this for?
-        prevlocalx = -1;
       }
       // If riding horse speed up
       var usespeed;
@@ -1371,7 +1434,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
               camera, OPENWORLD.You.getMoveDir(), 2,
               OPENWORLD.Camera.cameraoffset);
 
-          OPENWORLD.BaseObject.reenableDistanceTrigger(boat2);
+          reenableDistanceTrigger(boat2);
         } else {
           // move boat forward along with camera while sailing
           OPENWORLD.Camera.cameraoffset = 0.15;
@@ -1396,12 +1459,11 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
           OPENWORLD.Camera.cameraoffset = defaultcameraoffset;
 
           OPENWORLD.Sound.play( path: 'sounds/horse.mp3', volume: 0.5);
-
           if (horse.parent==scene) {
             scene.remove(horse);
             horse.visible=false;
           }
-          OPENWORLD.BaseObject.reenableDistanceTrigger(horse);
+          reenableDistanceTrigger(horse);
         } else {
           // Move horse along with camera and set camera higher
           OPENWORLD.Camera.cameraoffset = horsecameraoffset;// 0.15;
@@ -1414,38 +1476,6 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
       OPENWORLD.You.update();
 
     }
-  }
-
-  initRenderer() {
-    Map<String, dynamic> _options = {
-      "width": width,
-      "height": height,
-      "gl": three3dRender.gl,
-      "antialias": true,
-      "canvas": three3dRender.element
-    };
-    renderer = THREE.WebGLRenderer(_options);
-    renderer!.setPixelRatio(dpr);
-    renderer!.setSize(width, height, false);
-
-    renderer!.shadowMap.enabled = true;
-
-    // renderer!.outputEncoding = THREE.sRGBEncoding;
-
-    if (!kIsWeb) {
-      var pars = THREE.WebGLRenderTargetOptions({"format": THREE.RGBAFormat});
-      renderTarget = THREE.WebGLMultisampleRenderTarget(
-          (width * dpr).toInt(), (height * dpr).toInt(), pars);
-      renderTarget.samples = 4;
-      renderer!.setRenderTarget(renderTarget);
-
-      sourceTexture = renderer!.getRenderTargetGLTexture(renderTarget);
-    }
-  }
-
-  initScene() {
-    initRenderer();
-    initPage();
   }
 
   /// Called whenever you hotload
@@ -1483,9 +1513,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     // Display trees
     var cypresstreeorig = await OPENWORLD.Model.createModel(
         'assets/models/tree2.glb');
-    OPENWORLD.Texture.setEmissive(cypresstreeorig,THREE.Color(0x222222));
-    cypresstreeorig.scale.set(0.015,0.015,0.015);
-    //cypresstreeorig.scale.set(0.15,0.15,0.15);
+    OPENWORLD.Texture.setEmissive(cypresstreeorig,THREE.Color.fromHex32(0x222222));
+    cypresstreeorig.scale.setValues(0.015,0.015,0.015);
+    //cypresstreeorig.scale.setValues(0.15,0.15,0.15);
     var trees=[
     [470.51, 349.06],
     [474.98, 351.08],
@@ -1517,7 +1547,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     // Display rock
     var rockorig = await OPENWORLD.Model.createModel(
         'assets/models/rock.glb');
-    rockorig.scale.set(0.007,0.007,0.007);
+    rockorig.scale.setValues(0.007,0.007,0.007);
     var rocks=[
       [471.86, 353.02],
       [474.31, 351.48],
@@ -1683,7 +1713,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
                   ),
                   TextButton(
                     child: const Text('Ok'),
-                    onPressed: () {
+                    onPressed: () async {
                       OPENWORLD.Persistence.set("mute", !soundon);
                       OPENWORLD.Sound.setMute(!soundon); //mute=!soundon;
                       OPENWORLD.Persistence.set("musicmute", !musicon);
@@ -1699,7 +1729,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
                       Navigator.of(context).pop();
                       if (reset) {
-                        OPENWORLD.Persistence.reset();
+                        // Wait for the reset to be saved before the game restarts
+                        await OPENWORLD.Persistence.reset();
                         close();
                       }
                     },
@@ -1840,7 +1871,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
   // Set the default size of an actor and share animations with armourer
   setDefaultActor(actor) {
-    actor.scale.set(0.006, 0.006, 0.006); //25, 0.0025, 0.0025);
+    actor.scale.setValues(0.006, 0.006, 0.006); //25, 0.0025, 0.0025);
     if (actor != armourer)
       OPENWORLD.Actor.shareAnimations(actor, armourer);
   }
@@ -1872,7 +1903,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
       });
 
 
-      if (OPENWORLD.BaseObject.hasCustomTrigger(actor, "deadtrigger")) {
+      if (hasCustomTrigger(actor, "deadtrigger")) {
         print("Has dead trigger");
         actor.extra['customtrigger'].trigger('deadtrigger',null);
       } else {
@@ -1964,7 +1995,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
   }
 
   // Set the actor to attacks you
-  actorAttack(actor, {attackaction:"punch"})
+  actorAttack(actor, {attackaction="punch"})
   {
     if (actorIsDead(actor)) {
       print("actor is already dead");
@@ -2006,9 +2037,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
         setHealth(health - getActorDamage(actor));
         if (isDead()) { //health<=0) {
           // If you die go to the endo
-          Fluttertoast.showToast(
-              msg: "Your life force drifts away from you...",
-              toastLength: Toast.LENGTH_LONG);
+          showToast("Your life force drifts away from you...");
           youDie();
           endo(delay: 10);
           timer.cancel();
@@ -2032,19 +2061,13 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
   callHorse()
   {
     if (underSea()) {
-      Fluttertoast.showToast(
-          msg: "Unfortunately you cannot call your horse while underwater",
-          toastLength: Toast.LENGTH_LONG);
+      showToast("Unfortunately you cannot call your horse while underwater");
 
     } else if (boatriding) {
-      Fluttertoast.showToast(
-          msg: "Unfortunately you cannot call your horse while sailing a boat",
-          toastLength: Toast.LENGTH_LONG);
+      showToast("Unfortunately you cannot call your horse while sailing a boat");
 
     } else if (OPENWORLD.You.indoors()) {
-      Fluttertoast.showToast(
-          msg: "Unfortunately you cannot call your horse while indoors",
-          toastLength: Toast.LENGTH_LONG);
+      showToast("Unfortunately you cannot call your horse while indoors");
     } else {
       if (horse.parent != scene)
         scene.add(horse);
@@ -2056,9 +2079,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
       OPENWORLD.Mob.placeBeforeCamera(
           horse, 1.3, time: 2, action: "walk", stopaction: "idle", delay: 1.1);
       Future.delayed(Duration(milliseconds: (3000).round()), () {
-        OPENWORLD.BaseObject.setDistanceTrigger(horse, dist: 0.5);
+        setDistanceTrigger(horse, dist: 0.5);
         // Ride horse when you get within 0.5 of it
-        horse.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+        onDistanceTrigger(horse, (THREE.Event event) {
           //print("horse trigger");
           if (event.action) {
             if (!horseridingcloploaded) {
@@ -2130,17 +2153,17 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
             action: "walk",
             stopaction: "idle2");
         OPENWORLD.Space.faceObjectAlways(amon, camera, delay: 9);
-        OPENWORLD.Actor.playAction(amon, name: "clap",
+        OPENWORLD.Actor.playAction(amon, action: "clap",
             duration: 1,
             randomduration: 0.1,
             delay: 12,
             loopmode: THREE.LoopOnce);
         OPENWORLD.Actor.playAction(
-            amon, name: "idle2", stopallactions: true, delay: 16);
+            amon, action: "idle2", stopallactions: true, delay: 16);
 
 
         OPENWORLD.BaseObject.clearAll(trixie);
-        OPENWORLD.BaseObject.disableDistanceTrigger(trixie);
+        disableDistanceTrigger(trixie);
         OPENWORLD.Space.worldToLocalSurfaceObjHide(
             trixie, 304.83, 422.32, 0, 8);
         OPENWORLD.Space.objTurn(trixie, 0); //n
@@ -2161,7 +2184,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
             randwait: 0,
             minwait: 5,
             delay: 12 + 5 * 5);
-        OPENWORLD.Actor.playAction(trixie, name: "clap",
+        OPENWORLD.Actor.playAction(trixie, action: "clap",
             duration: 1,
             randomduration: 0.2,
             loopmode: THREE.LoopOnce,
@@ -2169,7 +2192,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
 
         OPENWORLD.BaseObject.clearAll(jobknight);
-        OPENWORLD.BaseObject.disableDistanceTrigger(jobknight);
+        disableDistanceTrigger(jobknight);
 
         OPENWORLD.Space.faceObjectLerp(jobknight, camera, 1, delay: 1);
 
@@ -2186,13 +2209,13 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
             stopaction: "idle2",
             delay: 10);
         OPENWORLD.Space.faceObjectLerp(jobknight, camera, 1, delay: 13);
-        OPENWORLD.Actor.playAction(jobknight, name: "clap",
+        OPENWORLD.Actor.playAction(jobknight, action: "clap",
             duration: 1,
             randomduration: 0.2,
             loopmode: THREE.LoopOnce,
             delay: 12.2);
         OPENWORLD.Actor.playAction(
-            jobknight, name: "idle2", stopallactions: true, delay: 16);
+            jobknight, action: "idle2", stopallactions: true, delay: 16);
         OPENWORLD.Sound.play(path: 'sounds/clap.mp3', volume: 1, delay: 12);
 
         OPENWORLD.Mob.setSpeech(jobknight, [
@@ -2211,8 +2234,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
         OPENWORLD.Space.faceObjectLerp(
             jobknight, horse, 1, delay: 12 + 5 * 5 + 1);
         OPENWORLD.Actor.playAction(
-            jobknight, name: "point", delay: 12 + 5 * 5 + 1);
-        OPENWORLD.Actor.playAction(jobknight, name: "idle2",
+            jobknight, action: "point", delay: 12 + 5 * 5 + 1);
+        OPENWORLD.Actor.playAction(jobknight, action: "idle2",
             stopallactions: true,
             delay: 12 + 5 * 5 + 1 + 1);
         OPENWORLD.Space.faceObjectAlways(
@@ -2281,7 +2304,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
   addcitizennpc(actor, name, cankill)
   {
     addnpc(actor,name,false, deathsoundpath: "sounds/die.mp3");
-    OPENWORLD.BaseObject.setCustomTrigger(actor);//, dist: 1.5);
+    setCustomTrigger(actor);//, dist: 1.5);
     // postie.extra['strucktrigger']=StruckTrigger();
     print("add citizennpc"+name);
     actor.extra['customtrigger'].addEventListener('strucktrigger', (THREE.Event event) {
@@ -2309,7 +2332,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
           print(name+"actor dead");
           OPENWORLD.BaseObject.clearAll(actor);
           actorDie(actor); //,diesoundpath:"sounds/die.mp3");
-          OPENWORLD.BaseObject.disableDistanceTrigger(actor);
+          disableDistanceTrigger(actor);
 
         } else
            actorAttack(actor);
@@ -2381,24 +2404,24 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     if (wield) {
       OPENWORLD.You.wield=name;
       if (name == 'sword') {
-        sword.scale.set(1.0, 1.0, 1.0);
+        sword.scale.setValues(1.0, 1.0, 1.0);
         OPENWORLD.Space.objTurn(sword, 0);
         OPENWORLD.Space.objPitch(sword, 0);
         OPENWORLD.Space.objRoll(sword, 0);
         sword.position.x = 0.0;
         sword.position.y = 0.0;
         sword.position.z = 0.0;
-        sword.children[0].scale.set(0.15, 0.15, 0.15);
+        sword.children[0].scale.setValues(0.15, 0.15, 0.15);
         OPENWORLD.Space.objRoll(sword.children[0], 90.0);
         OPENWORLD.Space.objTurn(sword.children[0], 20 + 180.0);
       } else if (name == 'torch') {
-        sword.scale.set(1.0, 1.0, 1.0);
+        sword.scale.setValues(1.0, 1.0, 1.0);
 
         sword.position.x = 20.0;
         sword.position.y = 0.0;
         sword.position.z = 0.0;
       } else if (name == 'battleaxe' || name == 'flute' || name == 'dagger') {
-        sword.scale.set(1.0, 1.0, 1.0);
+        sword.scale.setValues(1.0, 1.0, 1.0);
         OPENWORLD.Space.objTurn(sword, 0);
         OPENWORLD.Space.objPitch(sword, 0);
         OPENWORLD.Space.objRoll(sword, 0);
@@ -2423,15 +2446,15 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
   // This just shows the get icon on the object
   // Set the obj so that it can be selected on the ground and touched
   // When touched show a get menu item so can take it
-  setGetObject(obj, {scalenotselected: 1.025, scaleselected: 1.05, on: true, takelabel: "Take", color}) {
+  setGetObject(obj, {scalenotselected = 1.025, scaleselected = 1.05, on = true, takelabel = "Take", color}) {
 
     if (color==null)
-      color=THREE.Color(0x0000ff);
+      color=THREE.Color.fromHex32(0x0000ff);
     OPENWORLD.BaseObject.setHighlight(obj, scene, color, 1.0, deselectopacity: 0.5); //, scalex:1.4, scaley:1, scalez:1.4);
     OPENWORLD.BaseObject.highlight(
         obj, on, scale: scalenotselected, opacity: 0.5);
 
-    OPENWORLD.BaseObject.setTouchTrigger(obj);
+    setTouchTrigger(obj);
     obj.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
       //  print("touched");
       if (OPENWORLD.Actor.getWielding(me)==obj) { //&&.containsKey('wieldling')&&obj.extra['wielding']==obj) {
@@ -2648,7 +2671,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
   }
 
   // Menu button to drop and read an item in your inventory
-  dropReadButton(name, obj, lines, {label:"Read", extracustomlabel, extracustomfunc, icon})
+  dropReadButton(name, obj, lines, {label="Read", extracustomlabel, extracustomfunc, icon})
   {
     if (icon==null)
        icon="icons/arrow.png";
@@ -2781,7 +2804,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
   // When click on the item on the ground eat it and get a health increase
   // Eg soup kitchen when click on the soup bowl you set it straight away
-  setEatObject(obj,increase, minamt, {sound:true})
+  setEatObject(obj,increase, minamt, {sound=true})
   {
     obj.extra['touchtrigger'].addEventListener('triggermenu', (THREE.Event event) {
       print("triggermenu eat"+health.toString()+" "+increase.toString());
@@ -2790,9 +2813,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
       OPENWORLD.BaseObject.highlight(obj, false);
      // scene.remove(obj);
       removeObject(obj);
-      Fluttertoast.showToast(
-          msg: "Yummy",
-          toastLength: Toast.LENGTH_LONG);
+      showToast("Yummy");
       if (sound) {
         OPENWORLD.Sound.play( path: 'sounds/eat.mp3', volume: 0.2);
         OPENWORLD.Sound.play( path: 'sounds/burp2.wav', volume: 0.2, delay:5);
@@ -2921,8 +2942,34 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     return health<=0;
   }
 
+  // When restart the game in place (restart button after going to prison) forget the old inventory, npcs etc
+  // because initPage creates all of them again
+  resetGameState()
+  {
+    inventory.clear();
+    inventorynames.clear();
+    inventoryvalues.clear();
+    inventoryobjectids.clear();
+    npcs.clear();
+    players.clear();
+    players_removed.clear();
+    horseriding=false;
+    horse2riding=false;
+    boatriding=false;
+    OPENWORLD.You.wield="";
+    OPENWORLD.Camera.cameraoffset=defaultcameraoffset;
+    displayInventory();
+    setState(() {
+      black=false;
+      resurrect=false;
+      nod=false;
+      menuposx=-1;
+      weaponicon='';
+    });
+  }
+
   // Add a message to an object such as read me to a book
-  addMsgToObj(obj,msg, {scale:0.3, z:20})
+  addMsgToObj(obj,msg, {scale=0.3, z=20})
   {
     OPENWORLD.Mob.setText(obj,msg,textcolor:Colors.blue,scale:scale,z:z, backgroundopacity:0);
   }
@@ -3013,13 +3060,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
   // Call the guide and get information on where you are from the room you are in
   callGuide() {
     if (boatriding) {
-      Fluttertoast.showToast(
-          msg: "Amon the guide isn't able to walk on water",
-          toastLength: Toast.LENGTH_LONG);
+      showToast("Amon the guide isn't able to walk on water");
     } else if (underSea()) {
-      Fluttertoast.showToast(
-          msg: "Amon can't find you when your underwater",
-          toastLength: Toast.LENGTH_LONG);
+      showToast("Amon can't find you when your underwater");
     } else {
       OPENWORLD.Sound.play( path: 'sounds/whistle.mp3', volume: 1);
       var dist = OPENWORLD.Space.getDistanceBetweenObjs(camera, amon);
@@ -3027,7 +3070,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
         amon.visible = true;
         OPENWORLD.BaseObject.clearTimers(amon);
         OPENWORLD.Mob.clearText(amon);
-        OPENWORLD.BaseObject.disableDistanceTrigger(amon);
+        disableDistanceTrigger(amon);
         OPENWORLD.Space.faceObjectAlways(amon, camera);
         OPENWORLD.Mob.placeBeforeCamera(amon, 2, time: 1,
             action: "walk", offset: 2, stopaction: "idle");
@@ -3049,7 +3092,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
             amon, "bow", "idle2", duration: 0.5, delay: 4);
 
         new Timer(new Duration(milliseconds: (2 * 1000).floor()), () async {
-          OPENWORLD.BaseObject.reenableDistanceTrigger(amon);
+          reenableDistanceTrigger(amon);
           // Get speech for the room you are in
           // If you are not in a room or in a room without a speech generate general speech based on about where you are
           var speech;
@@ -3110,12 +3153,14 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
      return camera.position.y<0;//-22.5;
   }
 
-  initPage() async {
+  Future<void> initPage() async {
 
     var starttick=OPENWORLD.System.currentMilliseconds();
     OPENWORLD.System.active = true;
     // Set the time of day - random if first time
-    OPENWORLD.Time.setTime(await OPENWORLD.Persistence.get("time", def:OPENWORLD.Math.random()*24));//OPENWORLD.Math.random()*24);//);//12.0); //);
+   // OPENWORLD.Time.setTime(await OPENWORLD.Persistence.get("time", def:OPENWORLD.Math.random()*24));//OPENWORLD.Math.random()*24);//);//12.0); //);
+    OPENWORLD.Time.setTime( 12);//OPENWORLD.Math.random()*24);//);//12.0); //);
+    print("game time"+OPENWORLD.Time.time.toString());
     OPENWORLD.Time.daylength=1.0;  // Takes an hour to do 24 hours
     restart=false;
 
@@ -3138,7 +3183,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     OPENWORLD.Room.init();
     //if (!kIsWeb) {
-      defaultspeed*= 1.5; //8; //2m/s
+      defaultspeed = basedefaultspeed * 1.5; //8; //2m/s  (set from base so restarting doesnt keep increasing it)
     //}
     OPENWORLD.You.speed = defaultspeed; //8; //2m/s
     OPENWORLD.You.drag = defaultdrag; //0.5;
@@ -3159,11 +3204,13 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     camera.position.y = 999;
 
     clock = THREE.Clock();
+    OPENWORLD.Light.clock=clock;
 
     print("create scene");
     scene = THREE.Scene();
-    scene.rotation.order = "YXZ";
+    scene.rotation.order = THREE.RotationOrders.yxz;//"YXZ";
 
+    _hotload.clear();
     scene.add(_hotload);
 
     // Set the ambient light in the scene
@@ -3173,9 +3220,10 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     print("create sky");
     var skyGeo = THREE.SphereGeometry(-1000, 32, 15);
 
-    var skyMat = new THREE.ShaderMaterial(SkyShader);
+    var skyMat = new THREE.ShaderMaterial.fromMap(SkyShader);
 
     var sky = THREE.Mesh(skyGeo, skyMat);
+    sky.name='skymesh';
 
     scene.add(sky);
 
@@ -3195,16 +3243,21 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     };
 
     // Add Sun
-    var sunSphere = THREE.Mesh(THREE.SphereGeometry(20000, 16, 8),
-        THREE.MeshBasicMaterial({'color': THREE.Color.fromHex(0xffffff)}));
-    sunSphere.position.y = -700000;
-    sunSphere.visible = true;
-    var sunlight = new THREE.SpotLight(0x888888);//ffffff);
-    sunlight.intensity = 0.4;
-    sunlight.penumbra = 1;
-    sunSphere.add(sunlight);
-
-    scene.add(sunSphere);
+    // In the three_js version of openworld the time of day moves a sun light rather than a sun sphere
+    var sunlight = new THREE.DirectionalLight(0x888888,1.0);
+    sunlight.target=camera;
+    sunlight.shadow?.mapSize.width = 1024;
+    sunlight.shadow?.mapSize.height = 1024;
+    sunlight.shadow?.camera?.near = 0.01;
+    sunlight.shadow?.camera?.far = 500;
+    sunlight.castShadow = true;
+    scene.add(sunlight);
+    sunlight.shadow!.radius=1;
+    var d=3.0;
+    sunlight.shadow!.camera!.right =d;
+    sunlight.shadow!.camera!.left = - d;
+    sunlight.shadow!.camera!.top	= d;
+    sunlight.shadow!.camera!.bottom = - d;
 
     // Specify the maps for the game
     // Each map has an map image with two points with a world position and corresponding pixel position on the map
@@ -3255,33 +3308,34 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Musics.setMute(await OPENWORLD.Persistence.get("musicmute", def:false));
     OPENWORLD.Sound.setMute(await OPENWORLD.Persistence.get("mute",def:false));
 
-    // Initialize the time with the sunsphere, skymat and ambience so that can change these based upon the time of day giving a realistic sky
+    // Initialize the time with the sunlight, skymat and ambience so that can change these based upon the time of day giving a realistic sky
     print("init time");
-    OPENWORLD.Time.init(sunSphere, skyMat, ambience);
+    OPENWORLD.Time.init(sunlight, skyMat, ambience);
+
+    // Initialise the rest of openworld
+    OPENWORLD.Updateables.init();
+    OPENWORLD.BaseObject.init();
+    OPENWORLD.Actor.init();
+    OPENWORLD.Light.init();
+    OPENWORLD.Obstacles.init();
+    OPENWORLD.Portals.init();
+    OPENWORLD.KeyboardCallbacks.init();
 
     // Load the terrain that everything is place on top of
     print("load terrain");
-    var manager = THREE.LoadingManager();
-    var mtlLoader = THREE_JSM.MTLLoader(manager);
-    mtlLoader.setPath('assets/models/rhodes/');
-    print("loading terrain materials");
-    var materials = await mtlLoader.loadAsync('rhodes.mtl');
-    print("loaded terrain materials");
-    await materials.preload();
-    var loader = THREE_JSM.OBJLoader(null);
-    loader.setMaterials(materials);
-    Group mesh = await loader.loadAsync('assets/models/rhodes/rhodes.obj');
+    THREE.Group? mesh = await AssetPack.loadOBJ(
+        'assets/models/rhodes/rhodes.obj',
+        mtlPath: 'assets/models/rhodes/rhodes.mtl');
 
     // Create a detail texture applied to the terrain surface only
     print("load terrain detail");
-    var textureaerial = await THREE.TextureLoader()
-        .loadAsync('assets/models/rhodes/detailaerial.png');
+    var textureaerial = (await AssetPack.loadTexture('assets/models/rhodes/detailaerial.png'))!;
     textureaerial.wrapS = THREE.RepeatWrapping;
     textureaerial.wrapT = THREE.RepeatWrapping;
     textureaerial.needsUpdate = true;
-    textureaerial.repeat.set(64, 64);
+    textureaerial.repeat.setValues(64, 64);
 
-    var mataerial = new THREE.MeshBasicMaterial({
+    var mataerial = new THREE.MeshBasicMaterial.fromMap({
       'map': textureaerial,
       'transparent': true,
       //  'alphaTest': .5
@@ -3289,13 +3343,12 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     mataerial.opacity=0.5;
 
     // Create a detail texture applied to the acropolis surface only
-    var textureacropolis=await THREE.TextureLoader()
-        .loadAsync('assets/models/rhodes/detailmap.png');//textureaerial.clone();
+    var textureacropolis=(await AssetPack.loadTexture('assets/models/rhodes/detailmap.png'))!;//textureaerial.clone();
     textureacropolis.wrapS = THREE.RepeatWrapping;
     textureacropolis.wrapT = THREE.RepeatWrapping;
-    textureacropolis.repeat.set(1,1);
+    textureacropolis.repeat.setValues(1,1);
     textureacropolis.needsUpdate = true;
-    var matacropolis = new THREE.MeshBasicMaterial({
+    var matacropolis = new THREE.MeshBasicMaterial.fromMap({
       'map': textureacropolis,
       'transparent': true,
       //  'alphaTest': .5
@@ -3303,38 +3356,44 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     matacropolis.opacity=0.4;
 
     // Create a detail texture applied to the beach only
-    var textureiii = await THREE.TextureLoader()
-        .loadAsync('assets/models/rhodes/detailbeach.png');
+    var textureiii = (await AssetPack.loadTexture('assets/models/rhodes/detailbeach.png'))!;
     textureiii.wrapS = THREE.RepeatWrapping;
     textureiii.wrapT = THREE.RepeatWrapping;
     textureiii.needsUpdate = true;
-    textureiii.repeat.set(64, 64);
-    var matbeach = new THREE.MeshBasicMaterial({
+    textureiii.repeat.setValues(64, 64);
+    var matbeach = new THREE.MeshPhongMaterial.fromMap({//new THREE.MeshBasicMaterial.fromMap({
       'map': textureiii,
       'transparent': true,
+      'opacity':0.4 //4
+      //'bumpMap': bumpTexture,
+      //'normalMap': bumpTexture,
+      //'bumpScale': 0.015
+      //  'alphaTest': .5
       //  'alphaTest': .5
     }); // Fudge to remove unnecessary alphamap that causes wood to be transparent
 
-    scene.add(mesh);
+    scene.add(mesh!);
 
     OPENWORLD.Space.init(  mesh, scene);
 
     mesh.traverse((object) {
-      if (object is Mesh && object.material is THREE.Material) {
+      if (object is THREE.Mesh && object.material is THREE.Material && !(object.material is THREE.GroupMaterial)) {
 
-        THREE.MeshPhongMaterial mat = object.material as THREE
-            .MeshPhongMaterial; // as THREE.MeshPhongMaterial).alphaMap.toString()
-        if (mat.alphaMap != null) mat.alphaMap = null;
-        mat.shininess = 0;
-        mat.emissive = THREE.Color(0x000000);
+        var mat = object.material; // MeshPhongMaterial from the mtl file
+        if (mat?.alphaMap != null) mat?.alphaMap = null;
+        mat?.shininess = 0.0;
+        mat?.emissive = THREE.Color.fromHex32(0x000000);
+        mat?.map?.colorSpace = THREE.SRGBColorSpace;
 
+        // In three_dart could set object.material=[mat, detailmaterial] to add a detail texture
+        // In three_js openworld uses a GroupMaterial to do the same thing
         if (object.name.contains("acropolis"))
-          object.material = [mat, matacropolis];  // Set the detail to acropolis detail
+          OPENWORLD.Texture.setGroupMaterial(object, matacropolis);  // Set the detail to acropolis detail
         else if (object.name.contains("beach")) {
-          object.material = [mat, matbeach];   // Set the detail to beach material
+          OPENWORLD.Texture.setGroupMaterial(object, matbeach);   // Set the detail to beach material
           print("found beach"+object.name.toString());
         } else if (object.name.contains("surface")&&!object.name.contains("lindos")) {
-          object.material = [mat, mataerial];  // Set the detail to terrain material
+          OPENWORLD.Texture.setGroupMaterial(object, mataerial);  // Set the detail to terrain material
           print("found surface"+object.name.toString());
         }
       }
@@ -3343,9 +3402,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     // Get a sea floor the extends further out than the mesh so looks like the sea goes out much further
     var geometryseafloor = new THREE.PlaneGeometry(2000, 2000);
     var materialseafloor = THREE.MeshStandardMaterial();
-    materialseafloor.color.setHex( 0x8e816e );
+    materialseafloor.color = THREE.Color.fromHex32( 0x8e816e );
     var seafloor = new THREE.Mesh(geometryseafloor, materialseafloor);
-    seafloor.rotateX(THREE.MathUtils.degToRad(-90));
+    seafloor.rotateX(THREE.MathUtils.degToRad(-90).toDouble());
     scene.add(seafloor);
     OPENWORLD.Space.worldToLocalSurfaceObj(seafloor, 7.7, 1.0, -6);
 
@@ -3353,18 +3412,19 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     print("create cloud");
     var geometry = new THREE.PlaneGeometry(2000, 2000);
     var texturei =
-        await THREE.TextureLoader(null).loadAsync('assets/textures/clouds.png');
+        (await AssetPack.loadTexture('assets/textures/clouds.png'))!;
     texturei.wrapS = THREE.RepeatWrapping;
     texturei.wrapT = THREE.RepeatWrapping;
     texturei.needsUpdate = true;
 
     texturei.matrixAutoUpdate = true;
-    texturei.repeat.set(25,25);//50, 50);
+    texturei.repeat.setValues(25,25);//50, 50);
     var material =
-        THREE.MeshStandardMaterial({'map': texturei, 'transparent': true});
+        THREE.MeshStandardMaterial.fromMap({'map': texturei, 'transparent': true});
 
     var clouds = new THREE.Mesh(geometry, material);
-    clouds.rotateX(THREE.MathUtils.degToRad(90));
+    clouds.name='clouds';
+    clouds.rotateX(THREE.MathUtils.degToRad(90).toDouble());
     scene.add(clouds);
 
     OPENWORLD.Space.worldToLocalSurfaceObj(clouds, 7.7, 1.0, 25);
@@ -3387,104 +3447,109 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     _joystick = OPENWORLD.VirtualJoystick();
     _joystick?.joysticksize=200;
 
-    var fpsControl = PointerLockControls(camera, _globalKey);
+    // The keyboard and mouse now come from the three_js viewer instead of PointerLockControls/DomLikeListenable
+    // Only add the listeners once otherwise if restart the game get every key press twice
+    if (!addedlisteners) {
+      addedlisteners = true;
 
-    fpsControl.domElement.addEventListener('keyup', (event) {
-      _joystick?.keyboard.onKeyChange(event, 'keyup');
-
-    }, false);
-    fpsControl.domElement.addEventListener('keydown', (event) {
-      _joystick?.keyboard.onKeyChange(event, 'keydown');
-    }, false);
-
-    fpsControl.domElement.addEventListener('pointerdown', (event) {
-
-      pointerdowntick=OPENWORLD.System.currentMilliseconds();
-
-      _joystick?.onTouchDown(event.clientX, event.clientY);
-
-    }, false);
-    //  if (!kIsWeb) {
-    fpsControl.domElement.addEventListener('pointerup', (event) {
-      var numpoints;
-      if (lastframes<10&&!(event.clientX<_joystick?.joysticksize&&event.clientY<_joystick?.joysticksize))
-        numpoints=40;
-      else
-        numpoints=1;
-      print("numpoints"+numpoints.toString()+" fps"+lastframes.toString());
-      if (!OPENWORLD.BaseObject.touchup(pointerdowntick, event, scene, width, height, numpoints)) {
-        OPENWORLD.BaseObject.deselectHighLights();//hidehighlights();
-        setState(() {
-          menuposx=-1;
-        });
-      }
-
-      _joystick?.onTouchUp();
-      //print("mmm");
-
-      pointerdowntick=-1;
-    }, false);
-    fpsControl.domElement.addEventListener('pointermove', (event) {
-      // this should be in openworld!!
-      if (!_joystick?.getStickPressed()) {
-
-        _joystick?.onTouch(
-            event.clientX, event.clientY, width, height, clock.getDelta());
-
-      }
-    }, false);
-
-    if (!kIsWeb) {
-      // If smartphone then create sea using water shader
-      final waterGeometry = THREE.PlaneGeometry(20, 20);
-
-      final Map<String, dynamic> params = {
-        'color': THREE.Color(0.25,0.3,0.35),//0xffffff, //0000ff,  0.25,0.3,0.35
-        'scale': 80,
-        'flowX': 0.1, //1.0,
-        'flowY': 0.1, //1.0
-      };
-
-      final water = Water(waterGeometry, {
-        'color': params['color'],
-        'scale': params['scale'],
-        'flowDirection': THREE.Vector2(params['flowX'], params['flowY']),
-        'textureWidth': 256, //512,//1024,
-        'textureHeight': 256, //512,//1024,
-        'reflectivity': 0.0,
-        'clipBias':3.0
+      threeJs.domElement.addEventListener(THREE.PeripheralType.keyup, (event) {
+        _joystick?.keyboard.onKeyChange(event, 'keyup');
       });
 
-      water.scale.set(200, 200, 200);
-      // water.position.y = 1;
-      water.rotation.x = math.pi * -0.5;
+      threeJs.domElement.addEventListener(THREE.PeripheralType.keydown, (event) {
+        var keyCode;
+        if (event.keyId < 255)
+          keyCode = String.fromCharCode(event.keyId).toUpperCase();
+        else
+          keyCode = event.keyId;
+        OPENWORLD.KeyboardCallbacks.keydown(keyCode);
+        _joystick?.keyboard.onKeyChange(event, 'keydown');
+      });
 
-      scene.add(water);
-    } else {
+      threeJs.domElement.addEventListener(THREE.PeripheralType.pointerdown, (event) {
+
+        pointerdowntick=OPENWORLD.System.currentMilliseconds();
+
+        _joystick?.onTouchDown(event.clientX, event.clientY);
+
+      });
+
+      threeJs.domElement.addEventListener(THREE.PeripheralType.pointerup, (event) {
+        var numpoints;
+        if (lastframes<10&&!(event.clientX<_joystick!.joysticksize&&event.clientY<_joystick!.joysticksize))
+          numpoints=40;
+        else
+          numpoints=1;
+        print("numpoints"+numpoints.toString()+" fps"+lastframes.toString());
+        if (!OPENWORLD.BaseObject.touchup(pointerdowntick, event, width, height, numpoints)) {
+          OPENWORLD.BaseObject.deselectHighLights();//hidehighlights();
+          setState(() {
+            menuposx=-1;
+          });
+        }
+
+        _joystick?.onTouchUp();
+
+        pointerdowntick=-1;
+      });
+
+      threeJs.domElement.addEventListener(THREE.PeripheralType.pointermove, (event) {
+        // this should be in openworld!!
+        if (!_joystick?.getStickPressed()) {
+
+          _joystick?.onTouch(
+              event.clientX, event.clientY, width, height, clock.getDelta());
+
+        }
+      });
+    }
+
+   // water = null;
+   // if (!kIsWeb) {
+      // If smartphone or desktop then create sea using water shader
+      final waterGeometry = THREE.PlaneGeometry(20, 20);
+
+      water = Water(waterGeometry, WaterOptions(
+        color: 0x404c59, // Same as THREE.Color(0.25,0.3,0.35) in the three_dart version
+        scale: 80,
+        flowDirection: THREE.Vector2(0.1, 0.1),
+        textureWidth: 256, //512,//1024,
+        textureHeight: 256, //512,//1024,
+        reflectivity: 0.0,
+      //  clipBias: 3.0,
+      ));
+      // The sea is huge so only update the reflection every couple of frames
+      water!.reflectionUpdateInterval = 2;
+
+      water!.scale.setValues(200, 200, 200);
+      // water.position.y = 1;
+      water!.rotation.x = math.pi * -0.5;
+
+      scene.add(water!);
+   /* } else {
       // If web use simple water
       // For some reason doens't work for web
       WaterSimple.initVertexData();
-      var water = WaterSimple();
-      var water1 = water.createWater();
-      water1.scale.set(3000.0, 1.0, 3000.0);
+      var watersimple = WaterSimple();
+      var water1 = watersimple.createWater();
+      water1.scale.setValues(3000.0, 1.0, 3000.0);
       scene.add(water1);
 
-      OPENWORLD.Updateables.add(water); // only need to do one
-    }
+      OPENWORLD.Updateables.add(watersimple); // only need to do one
+    }*/
 
     // Is this sea so when looking up dont see sky?
     // This might be redundant
-    geometry = new THREE.PlaneGeometry(1,1);
-    material = THREE.MeshStandardMaterial();
-    material.transparent=true;
-    material.color=seacolor;//THREE.Color(0x064273);//1da2d8);
-    material.opacity=0.5;
-    var sea = new THREE.Mesh(geometry, material);
-    sea.rotateX(THREE.MathUtils.degToRad(90));
-    sea.scale.set(1000,1000,1000);
+    var geometrysea = new THREE.PlaneGeometry(1,1);
+    var materialsea = THREE.MeshStandardMaterial();
+    materialsea.transparent=true;
+    materialsea.color=seacolor;//THREE.Color(0x064273);//1da2d8);
+    materialsea.opacity=0.5;
+    var sea = new THREE.Mesh(geometrysea, materialsea);
+    sea.rotateX(THREE.MathUtils.degToRad(90).toDouble());
+    sea.scale.setValues(1000,1000,1000);
     scene.add(sea);
     sea.position.y -= 22.5;
-
     hotload();
 
     print("load config");
@@ -3492,12 +3557,12 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     await OPENWORLD.Config.loadconfig();
 
     await OPENWORLD.Config.createAllObjects(scene);
-    await OPENWORLD.Config.createPoolObjects(scene);
+    await OPENWORLD.Config.createPoolObjects();
 
     // Create default room that extends over the whole terrain  which you go in if you exit say a shop
     // Have its own sound system - though better if could modify the openworld room so that reuse that instead of redoing it
     var roomDefault = OPENWORLD.Room.createRoom(mudwidth/2, mudheight/2);//, beforeenter:defaultBeforeEnter); //THREE.Object3D();
-    OPENWORLD.Room.setDistanceTrigger( roomDefault , dist:mudwidth/2);
+    setRoomDistanceTrigger( roomDefault , dist:mudwidth/2);
 
     // Allow fading of room sound in default eg beach to underwater
     var is1=true;
@@ -3522,7 +3587,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
          return [roomdefaultsound21,roomdefaultsound22];
     }
 
-    roomDefault.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    onDistanceTrigger(roomDefault, (THREE.Event event) {
 
       if (event.action) {
        print("in default--");
@@ -3629,7 +3694,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
                    path: path,
                    volume:volume,
                    loop: true,
-                   seek: duration / 2.0,
+                   seek: duration != null ? duration / 2.0 : null,  // play returns null if muted
                   // fadein: 1
                );
                currentpath = path;
@@ -3648,26 +3713,26 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     });
 
     // Enable distance trigger only when you're in room default since roomdefault overlaps all other rooms
-    OPENWORLD.BaseObject.disableDistanceTrigger(roomDefault);
+    disableDistanceTrigger(roomDefault);
 
     // The introduction room on the beach with a horse to ride and amon explaining
     var roomIntro= OPENWORLD.Room.createRoom(380,339,//-74,-57,
         soundpath: "sounds/surf.mp3", volume: 0.05, exitroom: roomDefault); //THREE.Object3D();
 
     // Set the room size to be 6
-    OPENWORLD.Room.setDistanceTrigger(roomIntro,
+    setRoomDistanceTrigger(roomIntro,
         minx: OPENWORLD.Room.getX(roomIntro)-6, maxx: OPENWORLD.Room.getX(roomIntro)+6,miny: OPENWORLD.Room.getY(roomIntro)-6, maxy:OPENWORLD.Room.getY(roomIntro)+6);
 
     // Show the welcome lindos sign
     var lindossign=THREE.Group();
     var brandm= await OPENWORLD.Model.createModel('assets/models/sign.glb');
-    brandm.scale.set(0.015, 0.015, 0.015);
+    brandm.scale.setValues(0.015, 0.015, 0.015);
     lindossign.add(brandm);
-    var plane =   await OPENWORLD.Plane.makeTextPlane("Welcome to Lindos", Colors.white,backgroundopacity: 0);//scale:0.01);//THREE.Color(0xff0000));
+    var plane =   await OPENWORLD.Plane.makeTextPlane("Welcome to Lindos", Colors.white,backgroundopacity: 0);//scale:0.01);//THREE.Color.fromHex32(0xff0000));
     lindossign.add( plane );
     plane.position.y+=0.3;
     plane.position.x=-0.05;
-    plane.scale.set(0.35,0.35,0.35);//.x=0.1;
+    plane.scale.setValues(0.35,0.35,0.35);//.x=0.1;
     lindossign.add(plane);
     scene.add(lindossign);
 
@@ -3694,8 +3759,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     addcitizennpc(amon,"amon",false);
 
     // If 1.5 meters from amon then give speech about quest if at the beach
-    OPENWORLD.BaseObject.setDistanceTrigger(amon, dist: 1.5);
-    amon.extra['trigger'].addEventListener('trigger', (THREE.Event event) async {
+    setDistanceTrigger(amon, dist: 1.5);
+    onDistanceTrigger(amon, (THREE.Event event) async {
       if (event.action) {
         var dist=OPENWORLD.Space.getDistanceBetweenObjs(camera, roomIntro);
         if (dist<4) {
@@ -3744,10 +3809,10 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     });
 
     // Put crabs near intro room that can kill
-    Group craborig = await OPENWORLD.Actor.createActor('assets/actors/crab.glb',
+    THREE.Group craborig = await OPENWORLD.Actor.createActor('assets/actors/crab.glb',
         z: 0.1//actoroffset
          );
-    craborig.scale.set(0.01, 0.01, 0.01);
+    craborig.scale.setValues(0.01, 0.01, 0.01);
     var crabs=[];
 
     var crabposx=383.39;
@@ -3765,7 +3830,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     }
 
     // When enter intro room start crabs moving
-     roomIntro.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+     onDistanceTrigger(roomIntro, (THREE.Event event) {
       if (event.action) {
         print("in room intro");
         for (var crab in crabs)
@@ -3782,18 +3847,18 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     });
 
     // Create dog so can share animations with cat and wilddog but dont add to scene
-    Group dog =
+    THREE.Group dog =
     await OPENWORLD.Actor.createActor('assets/actors/dog.glb',
       //  texture: "assets/actors/citizen/bodycf3.png", z: 50);
       //   texture: "assets/actors/citizen/bodyc4.png",
     );
-    dog.scale.set(0.005,0.005,0.005);//25, 0.0025, 0.0025);
+    dog.scale.setValues(0.005,0.005,0.005);//25, 0.0025, 0.0025);
 
     // Create the horse you can ride if you complete the quest - dont add it to the scene
     horse = await OPENWORLD.Actor.createActor('assets/actors/horse.glb');
     OPENWORLD.Space.objTurn(horse.children[0],0);
     OPENWORLD.Space.objTurn(horse,0);//OPENWORLD.Math.random()*360);
-    horse.scale.set(0.014,0.014,0.014);//25, 0.0025, 0.0025);
+    horse.scale.setValues(0.014,0.014,0.014);//25, 0.0025, 0.0025);
 
     // Create the horse you can ride to lindos and acropolis only
     horse2= await OPENWORLD.Actor.copyActor(horse);
@@ -3803,13 +3868,13 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // Create the saddle which you can click and show a menu that lets you choose where to ride to
     var saddle=await OPENWORLD.Model.createModel('assets/models/saddle.glb');
-    saddle.scale.set(0.65,0.65,0.65);
-    saddle.position.set(0.0,22.0,0.0);
+    saddle.scale.setValues(0.65,0.65,0.65);
+    saddle.position.setValues(0.0,22.0,0.0);
     OPENWORLD.Space.objTurn(saddle,-90);
     horse2.add(saddle);
 
-    OPENWORLD.BaseObject.setDistanceTrigger(horse2, dist: 4);
-    horse2.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(horse2, dist: 4);
+    onDistanceTrigger(horse2, (THREE.Event event) {
 
         if (event.action) {
           // If the horse is near amon then show text above saddle telling player to click the saddle to ride it
@@ -3835,12 +3900,12 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
                     Colors.blue,
                     bold: true,
                     backgroundopacity: 0,
-                    width: 300); //,scale:0.01);//THREE.Color(0xff0000));
+                    width: 300); //,scale:0.01);//THREE.Color.fromHex32(0xff0000));
                 saddlemsg.add(saddlesprite);
                 saddle.add(saddlemsg);
                 saddle.extra['saddlemsg'] = saddlemsg;
                 saddlemsg.position.y = 25.0;
-                saddlemsg.scale.set(0.25, 0.25, 1.0);
+                saddlemsg.scale.setValues(0.25, 0.25, 1.0);
                 inc++;
               } else
                 OPENWORLD.BaseObject.clearTimers(saddle);
@@ -3857,9 +3922,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Space.worldToLocalSurfaceObjHide(lindossign, 380.3,338.7,0,10); //3.7);
 
     // Set highlight on saddle so know that can click it
-    OPENWORLD.BaseObject.setHighlight(saddle, horse2, THREE.Color(0x0000ff), 0.5);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(saddle, horse2, THREE.Color.fromHex32(0x0000ff), 0.5);//, scalex:1.4, scaley:1, scalez:1.4);
     OPENWORLD.BaseObject.highlight(saddle, true, opacity:0.5, scale:1.02);
-    OPENWORLD.BaseObject.setTouchTrigger(saddle);
+    setTouchTrigger(saddle);
 
     // Handle user clicking the saddle and show menu that can ride to lindos or to acropolis
     var horsestate="beach";
@@ -3886,9 +3951,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     saddle.extra['touchtrigger'].addEventListener('triggermenu', (THREE.Event event) async {
       if (donequest) {
         // If you already have a horse dont ride this one
-        Fluttertoast.showToast(
-            msg: "You are now a knight and have your own horse!",
-            toastLength: Toast.LENGTH_LONG);
+        showToast("You are now a knight and have your own horse!");
       } else {
         print(
             "triggermenu horsestate" + horsestate + " ride to" + event.action);
@@ -4045,10 +4108,10 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     });
 
     // Add fish to the sea near the intro
-    Group fishorig = await OPENWORLD.Actor.createActor('assets/actors/fish.glb',
+    THREE.Group fishorig = await OPENWORLD.Actor.createActor('assets/actors/fish.glb',
         z: 0.1//actoroffset
     );
-    fishorig.scale.set(0.01, 0.01, 0.01);
+    fishorig.scale.setValues(0.01, 0.01, 0.01);
     for (var i=0; i<4; i++) {
       var fish= await OPENWORLD.Actor.copyActor(fishorig);
       OPENWORLD.Space.worldToLocalSurfaceObjHide(
@@ -4057,8 +4120,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
       OPENWORLD.Space.objTurn(fish.children[0], 0);
       //  OPENWORLD.Space.objTurn(crab  ,90);  //e
       scene.add(fish);
-      OPENWORLD.BaseObject.setDistanceTrigger(fish, dist: 4);
-      fish.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+      setDistanceTrigger(fish, dist: 4);
+      onDistanceTrigger(fish, (THREE.Event event) {
         if (event.action) {
           // Have fish swim around when you are near them
           OPENWORLD.Mob.randomwalk(fish, 0.5, 0.2, 0.9,
@@ -4073,7 +4136,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // create a corpse that can be dropped if you loot a corpse
     corpse= await OPENWORLD.Model.createModel('assets/models/corpse.glb');
-    corpse.scale.set(0.005, 0.005, 0.005);
+    corpse.scale.setValues(0.005, 0.005, 0.005);
 
 
     // Room in lindos for the armourer
@@ -4091,7 +4154,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     scene.add(roomArmourer);
 
     // Add the armourer to the scene which was created earlier since it has all the animations
-    OPENWORLD.Room.setDistanceTrigger(roomArmourer, dist:0.5);
+    setRoomDistanceTrigger(roomArmourer, dist:0.5);
 
     setDefaultActor(armourer);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
@@ -4102,8 +4165,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     addcitizennpc(armourer,"armourer",false);//,false);
 
     // For the job by the jobknight and player has the card then remind about the order
-    OPENWORLD.BaseObject.setDistanceTrigger(armourer, dist: 1);
-    armourer.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(armourer, dist: 1);
+    onDistanceTrigger(armourer, (THREE.Event event) {
       if (event.action&&inventorynames.contains("card")) {
         OPENWORLD.Mob.setSpeech(armourer, ["Do you have an order for me?","I'm expecting one from Gerard at the acropolis"], z: 80, width: 300,  scale:0.4);
       } else {
@@ -4121,9 +4184,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     addMsgToObj(armourshop, "Click for armour", scale:0.0017, z:0.22);
 
     // Highlight the cabinet to show can click
-    OPENWORLD.BaseObject.setHighlight(armourshop, scene, THREE.Color(0x0000ff), 1.0, scale:1.02);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(armourshop, scene, THREE.Color.fromHex32(0x0000ff), 1.0, scale:1.02);//, scalex:1.4, scaley:1, scalez:1.4);
     OPENWORLD.BaseObject.highlight(armourshop, true,scale:1.01, opacity:0.7);
-    OPENWORLD.BaseObject.setTouchTrigger(armourshop);
+    setTouchTrigger(armourshop);
     var markup=1.2;
     var markdown=0.8;
     var helmetprice=80;
@@ -4153,7 +4216,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     // Create the items the armourer sells including the menu buttons so can wear it, drop it etc
     var helmet= await OPENWORLD.Model.createModel('assets/models/helmet.glb');
     setValue(helmet,"helmet",helmetprice);
-    helmet.scale.set(0.005, 0.005, 0.005);
+    helmet.scale.setValues(0.005, 0.005, 0.005);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         helmet,OPENWORLD.Room.getX(roomArmourer),OPENWORLD.Room.getY(roomArmourer),0.0,4);//409.66, 328.47,0,4);//408.75,327.88,0.1, 4);
     setGetObject(helmet);// {scalenotselected:1.025, scaleselected:1.05})
@@ -4166,7 +4229,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     var hauberk= await OPENWORLD.Model.createModel('assets/models/hauberk.glb');
     setValue(hauberk,"hauberk",hauberkprice);
-    hauberk.scale.set(0.009, 0.009, 0.009);
+    hauberk.scale.setValues(0.009, 0.009, 0.009);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         hauberk,OPENWORLD.Room.getX(roomArmourer)+0.5,OPENWORLD.Room.getY(roomArmourer),0.0,4);//409.66, 328.47,0,4);//408.75,327.88,0.1, 4);
     setGetObject(hauberk);// {scalenotselected:1.025, scaleselected:1.05})
@@ -4218,7 +4281,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // Baccarat room in Lindos - doesnt do anything
     var roomBaccarat = OPENWORLD.Room.createRoom(364.010,246.390,
-        soundpath: "sounds/shop.mp3",  randomsoundpath:"sounds/dice.mp3", randomsoundgap:30, volume: 0.05); //THREE.Object3D();
+        soundpath: "sounds/shop.mp3",  randomsoundpaths: ["sounds/dice.mp3"], randomsoundgap:30, volume: 0.05); //THREE.Object3D();
     roomBaccarat.extra['guide'] = [
       "This is a gaming room",
       "and is only available to",
@@ -4228,7 +4291,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     scene.add(roomBaccarat);
 
-    OPENWORLD.Room.setDistanceTrigger(roomBaccarat, dist:0.5);
+    setRoomDistanceTrigger(roomBaccarat, dist:0.5);
 
     // Show dealers and players plyaing cards
     var dealer= await OPENWORLD.Actor.copyActor(amon, texture: "assets/actors/citizen3h4.jpg",action:"carddeal");
@@ -4245,9 +4308,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
         playingcards,364.09,246.19,0.27, 4);
     OPENWORLD.Space.setTurnPitchRoll(playingcards,0,90,0);
     scene.add(playingcards);
-    OPENWORLD.BaseObject.setHighlight(playingcards, scene, THREE.Color(0x0000ff), 1.0);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(playingcards, scene, THREE.Color.fromHex32(0x0000ff), 1.0);//, scalex:1.4, scaley:1, scalez:1.4);
     OPENWORLD.BaseObject.highlight(playingcards, true,scale:1.05, opacity:0.5);
-    OPENWORLD.BaseObject.setTouchTrigger(playingcards);
+    setTouchTrigger(playingcards);
     // If click the playing cards indicate not playable
     playingcards.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
 
@@ -4262,7 +4325,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
       });
     });
 
-    Group citizen6 = await OPENWORLD.Actor.createActor('assets/actors/citizen6.glb',
+    THREE.Group citizen6 = await OPENWORLD.Actor.createActor('assets/actors/citizen6.glb',
         shareanimations: armourer,
         action:"idle2",
         z: actoroffset);
@@ -4275,14 +4338,14 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     scene.add(citizen6);
     var board= await OPENWORLD.Model.createModel('assets/models/board.glb');
   //  "sx": 0.45 ,"sz": 0.8
-    board.scale.set(0.015*0.45, 0.015, 0.015* 0.8);
+    board.scale.setValues(0.015*0.45, 0.015, 0.015* 0.8);
     OPENWORLD.Space.objTurn(board,190);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         board, 365.10,249.35,0.2,4);
     scene.add(board);
-    OPENWORLD.BaseObject.setHighlight(board, scene, THREE.Color(0x0000ff), 1.0);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(board, scene, THREE.Color.fromHex32(0x0000ff), 1.0);//, scalex:1.4, scaley:1, scalez:1.4);
     OPENWORLD.BaseObject.highlight(board, true,scale:1.02, opacity:0.5);
-    OPENWORLD.BaseObject.setTouchTrigger(board);
+    setTouchTrigger(board);
     // Indicate that the jackpot isn't working
     board.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
 
@@ -4310,8 +4373,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     scene.add(roomBank);
 
-    OPENWORLD.Room.setDistanceTrigger(roomBank, dist:0.5);
-    Group bankmanager =
+    setRoomDistanceTrigger(roomBank, dist:0.5);
+    THREE.Group bankmanager =
     await OPENWORLD.Actor.createActor('assets/actors/bankmanager.glb',
         shareanimations: armourer,
         action:"idle2",
@@ -4319,8 +4382,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     setDefaultActor( bankmanager);
 
     // Set bank manager chatter - can be three different sets of chat chosen at random
-    OPENWORLD.BaseObject.setDistanceTrigger(bankmanager, dist: 1);
-    bankmanager.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(bankmanager, dist: 1);
+    onDistanceTrigger(bankmanager, (THREE.Event event) {
       if (event.action) {
         var chatters=[
           ["How can I help you?",],
@@ -4343,15 +4406,15 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // Show money on bank  bench
     var money= await OPENWORLD.Model.createModel('assets/models/money.glb');
-    money.scale.set(0.004, 0.004,0.004);
+    money.scale.setValues(0.004, 0.004,0.004);
 
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         money, 375.77, 254.11,0,4);//409.66, 328.47,0,4);//408.75,327.88,0.1, 4);
     //moneyg.add(money);
     scene.add(money);
-    OPENWORLD.BaseObject.setHighlight(money, scene, THREE.Color(0x0000ff), 1.0);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(money, scene, THREE.Color.fromHex32(0x0000ff), 1.0);//, scalex:1.4, scaley:1, scalez:1.4);
     OPENWORLD.BaseObject.highlight(money, true,scale:1.05, opacity:0.7);
-    OPENWORLD.BaseObject.setTouchTrigger(money);
+    setTouchTrigger(money);
 
     addMsgToObj(money, "Click for banking");
     // When click money show banking options
@@ -4378,13 +4441,13 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
       if (event.action=='deposit') {
         setState(() {
           // Disable DomLikeListenable so can type
-          _globalKey.currentState?.pause = true;
+          // _globalKey.currentState?.pause = true; (DomLikeListenable not used with three_js)
 
         });
         var depositstr=await promptDialog('Deposit','Enter amount to deposit out of your total of \$'+gold.toString(),gold.toString());
         setState(() {
           // Disable DomLikeListenable so can type
-          _globalKey.currentState?.pause = false;
+          // _globalKey.currentState?.pause = false; (DomLikeListenable not used with three_js)
 
         });
         if (int.tryParse(depositstr) != null) {
@@ -4409,13 +4472,13 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
       } else  if (event.action=='withdraw') {
         setState(() {
           // Disable DomLikeListenable so can type
-          _globalKey.currentState?.pause = true;
+          // _globalKey.currentState?.pause = true; (DomLikeListenable not used with three_js)
 
         });
         var widthdrawstr=await promptDialog('Withdraw','Enter amount to withdraw out of your total of \$'+bank.toString(),bank.toString());
         setState(() {
           // Disable DomLikeListenable so can type
-          _globalKey.currentState?.pause = false;
+          // _globalKey.currentState?.pause = false; (DomLikeListenable not used with three_js)
 
         });
         if (int.tryParse(widthdrawstr) != null) {
@@ -4446,7 +4509,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
         soundpath: "sounds/courtyard.mp3", volume: 0.05, exitroom: roomDefault); //THREE.Object3D();
     scene.add(roomBeggar);
 
-    OPENWORLD.Room.setDistanceTrigger(roomBeggar, dist:0.5);
+    setRoomDistanceTrigger(roomBeggar, dist:0.5);
 
     // Beggar sits on the ground
     var beggar = await OPENWORLD.Actor.createActor('assets/actors/citizen4.glb',
@@ -4477,10 +4540,10 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     // Can kill the beggar
     addnpc(beggar, "begger", false, deathsoundpath: "sounds/die.mp3");
 
-    OPENWORLD.BaseObject.setDistanceTrigger(beggar, dist: 2);
+    setDistanceTrigger(beggar, dist: 2);
 
     // If get close to beggar will try to kill you
-    beggar.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    onDistanceTrigger(beggar, (THREE.Event event) {
       if (event.action) {
 
         OPENWORLD.Actor.playActionThen(beggar, "sit", "sitidle",   durationthen:2);
@@ -4494,9 +4557,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
           youStruck();
           setHealth(health-getActorDamage(beggar));
           if (isDead()) {//health<=0) {
-            Fluttertoast.showToast(
-                msg: "Your life force drifts away...",
-                toastLength: Toast.LENGTH_LONG);
+            showToast("Your life force drifts away...");
             youDie();
 
           }
@@ -4536,7 +4597,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // Blackjack room in Lindos that does nothing
     var roomBlackjack = OPENWORLD.Room.createRoom(364.310,247.710,
-        soundpath: "sounds/shop.mp3", randomsoundpath:"sounds/dice.mp3", randomsoundgap:30, volume: 0.05, exitroom: roomDefault); //THREE.Object3D();
+        soundpath: "sounds/shop.mp3", randomsoundpaths: ["sounds/dice.mp3"], randomsoundgap:30, volume: 0.05, exitroom: roomDefault); //THREE.Object3D();
     roomBlackjack.extra['guide'] = [
       "Gaming room is currently",
       "only available to Lindos",
@@ -4547,7 +4608,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     scene.add(roomBlackjack);
 
     // Show dealer and player playing cards
-    OPENWORLD.Room.setDistanceTrigger(roomBlackjack, dist:0.5);
+    setRoomDistanceTrigger(roomBlackjack, dist:0.5);
     var dealer2= await OPENWORLD.Actor.copyActor(amon, texture: "assets/actors/citizen3h4.jpg",action:"carddeal");
 
     setDefaultActor(dealer2);
@@ -4558,8 +4619,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     addcitizennpc(dealer2,"dealer2",false);
 
-    OPENWORLD.BaseObject.setDistanceTrigger(dealer2, dist: 1);
-    dealer2.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(dealer2, dist: 1);
+    onDistanceTrigger(dealer2, (THREE.Event event) {
       if (event.action) {
         chatter=[
           "Are you going to make a bet",
@@ -4588,9 +4649,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Room.setAutoIndoors(roomBottleshop, true);
     scene.add(roomBottleshop);
 
-    OPENWORLD.Room.setDistanceTrigger(roomBottleshop, dist:0.5);
+    setRoomDistanceTrigger(roomBottleshop, dist:0.5);
 
-    Group bottleshopowner =
+    THREE.Group bottleshopowner =
     await OPENWORLD.Actor.createActor('assets/actors/citizen7.glb',
         action:"idle2",
         shareanimations: armourer,
@@ -4603,7 +4664,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     scene.add(bottleshopowner);
     addcitizennpc(bottleshopowner,"bottleshopowner",false);
     // When enter room bottleshop owner will randomly burp
-    roomBottleshop.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    onDistanceTrigger(roomBottleshop, (THREE.Event event) {
       if (event.action) {
         var delay=OPENWORLD.Math.random()*20;
         OPENWORLD.Sound.play( path: 'sounds/burp.wav', volume: 0.1, delay:delay);
@@ -4634,9 +4695,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     scene.add(bottleshop);
     addMsgToObj(bottleshop, "Click for drinks", scale:0.0017, z:0.27);
 
-    OPENWORLD.BaseObject.setHighlight(bottleshop, scene, THREE.Color(0x0000ff), 1.0, scale:1.025);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(bottleshop, scene, THREE.Color.fromHex32(0x0000ff), 1.0, scale:1.025);//, scalex:1.4, scaley:1, scalez:1.4);
     OPENWORLD.BaseObject.highlight(bottleshop, true,scale:1.01, opacity:0.7);
-    OPENWORLD.BaseObject.setTouchTrigger(bottleshop);
+    setTouchTrigger(bottleshop);
     var rieslingprice=15;
     var beerprice=10;
     var wineprice=10;
@@ -4656,7 +4717,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     });
 
     var bottle= await OPENWORLD.Model.createModel('assets/models/bottle.glb');
-    bottle.scale.set(0.04, 0.04, 0.04);
+    bottle.scale.setValues(0.04, 0.04, 0.04);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         bottle,OPENWORLD.Room.getX(roomBottleshop),OPENWORLD.Room.getY(roomBottleshop),0.0,4);//409.66, 328.47,0,4);//408.75,327.88,0.1, 4);
     setGetObject(bottle);// {scalenotselected:1.025, scaleselected:1.05})
@@ -4695,9 +4756,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
               setHealth(health*fct);
 
               removeInventory(inventorynames[i]);
-              Fluttertoast.showToast(
-                  msg: "You feel a little tipsy",
-                  toastLength: Toast.LENGTH_LONG);
+              showToast("You feel a little tipsy");
             }
           }
         }
@@ -4783,8 +4842,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     });
     // Bottle shop owner holds a bottle of drink
     var bottle3=bottle.clone();
-    bottle3.scale.set(5.0,5.0,5.0);
-    bottle3.position.set(0.0,0.0,0.0);
+    bottle3.scale.setValues(5.0,5.0,5.0);
+    bottle3.position.setValues(0.0,0.0,0.0);
     OPENWORLD.Actor.wield(bottleshopowner,bottle3,"Bip01_R_Finger11");
 
     // Brewery in Lindos for brewing beer. Doesnt actually do anything
@@ -4800,9 +4859,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     scene.add(roomBrewery);
 
-    OPENWORLD.Room.setDistanceTrigger(roomBrewery, dist:0.5);
+    setRoomDistanceTrigger(roomBrewery, dist:0.5);
 
-    Group citizen =
+    THREE.Group citizen =
     await OPENWORLD.Actor.createActor('assets/actors/citizen.glb',
         shareanimations: armourer,
         action:"idle2",
@@ -4815,8 +4874,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     scene.add(citizen);
     addcitizennpc(citizen,"citizen",false);  // Cannot kill owner
 
-    OPENWORLD.BaseObject.setDistanceTrigger(citizen, dist: 1);
-    citizen.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(citizen, dist: 1);
+    onDistanceTrigger(citizen, (THREE.Event event) {
       if (event.action) {
         OPENWORLD.Space.faceObjectAlways(citizen, camera,delay:5);
 
@@ -4836,18 +4895,18 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
         var chatter=chatters[OPENWORLD.Math.randInt(chatters.length)];
         OPENWORLD.Mob.setSpeech(citizen, chatter, z: 80, width: 300,  scale:0.4, randwait:0, minwait:5, delay:10);
       } else {
-        OPENWORLD.Space.faceObjectAlwaysRemove(citizen);
+        OPENWORLD.Space.removeFaceObjectAlways(citizen);
       }
     });
 
     // Indicate that the brewery doesnt actually sell anything
     var barrel= await OPENWORLD.Model.createModel('assets/models/barrel.glb');
-    barrel.scale.set(0.005, 0.005, 0.005);
+    barrel.scale.setValues(0.005, 0.005, 0.005);
     OPENWORLD.Space.worldToLocalSurfaceObj(barrel,373.6,243,0);
     scene.add(barrel);
-    OPENWORLD.BaseObject.setHighlight(barrel, scene, THREE.Color(0x0000ff), 1.0);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(barrel, scene, THREE.Color.fromHex32(0x0000ff), 1.0);//, scalex:1.4, scaley:1, scalez:1.4);
     OPENWORLD.BaseObject.highlight(barrel, true,scale:1.025, opacity:0.5);
-    OPENWORLD.BaseObject.setTouchTrigger(barrel);
+    setTouchTrigger(barrel);
 
     barrel.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
 
@@ -4866,7 +4925,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     // There is a blow fly that randomly makes a sound
     var roomButcher = OPENWORLD.Room.createRoom(389.520,245.900,
         soundpath:"sounds/shop.mp3",
-        randomsoundpath: "sounds/fly.mp3", volume: 0.05, exitroom: roomDefault); //THREE.Object3D();
+        randomsoundpaths: ["sounds/fly.mp3"], volume: 0.05, exitroom: roomDefault); //THREE.Object3D();
     roomButcher.extra['guide'] = [
       "The butcher will",
       "buy any sort of meat",
@@ -4876,9 +4935,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     scene.add(roomButcher);
 
-    OPENWORLD.Room.setDistanceTrigger(roomButcher, minx:389, maxx:391.2, miny:244.25, maxy:248.1);// dist:0.5);
+    setRoomDistanceTrigger(roomButcher, minx:389, maxx:391.2, miny:244.25, maxy:248.1);// dist:0.5);
 
-    Group butcher =
+    THREE.Group butcher =
     await OPENWORLD.Actor.createActor('assets/actors/butcher.glb',
         shareanimations: armourer,
         action:"idle2",
@@ -4891,8 +4950,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     scene.add(butcher);
     addcitizennpc(butcher,"butcher",false);
 
-    OPENWORLD.BaseObject.setDistanceTrigger(butcher, dist: 1.0);
-    butcher.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(butcher, dist: 1.0);
+    onDistanceTrigger(butcher, (THREE.Event event) {
       print("butcher dist" + event.action.toString());
       if (event.action) {
         chatter=["Pleased to meet you & meat to please you",
@@ -4905,9 +4964,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // Rat moves around the butchers - can kill it and sell the corpse
     // Perhaps should have cat and rat like in mud?
-    Group rat = await OPENWORLD.Actor.createActor('assets/actors/rat.glb',
+    THREE.Group rat = await OPENWORLD.Actor.createActor('assets/actors/rat.glb',
         z:0);
-    rat.scale.set(0.01,0.01,0.01);
+    rat.scale.setValues(0.01,0.01,0.01);
     var ratposs=[[389.76, 245.18],
       [390.08, 247.31],
       [389.45, 246.78]];
@@ -4917,8 +4976,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     setActorHealth(rat,0.3);// rat should be easy to kil
     OPENWORLD.Space.objTurn(rat,OPENWORLD.Math.random()*360);
     scene.add(rat);
-    OPENWORLD.BaseObject.setDistanceTrigger(rat, dist: 4);
-    rat.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(rat, dist: 4);
+    onDistanceTrigger(rat, (THREE.Event event) {
       if (event.action) {
         OPENWORLD.Mob.randomwalk(rat, 0.2, 0.15, 0.1,
             action: "walk", actionduration: 0.5,
@@ -4932,7 +4991,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // Show meat in butchers
     var meat3=await OPENWORLD.Model.createModel('assets/models/meat.glb');
-    meat3.scale.set(0.04, 0.04, 0.04);
+    meat3.scale.setValues(0.04, 0.04, 0.04);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         meat3,390.07, 245.45,0,4);//409.66, 328.47,0,4);//408.75,327.88,0.1, 4);
     OPENWORLD.Space.objTurn(meat3,0);
@@ -4954,13 +5013,13 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     var meat=await OPENWORLD.Model.createModel('assets/models/meat3.glb');
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         meat,390.04,246.33,0,4);//389.91, 245.83,0, 4);
-    meat.scale.set(0.2, 0.2, 0.2);
+    meat.scale.setValues(0.2, 0.2, 0.2);
     OPENWORLD.Space.objPitch(meat,-90);
     scene.add(meat);
     addMsgToObj(meat, "Click to sell meat\n", scale:0.007, z:1.5);
-    OPENWORLD.BaseObject.setHighlight(meat, scene, THREE.Color(0x0000ff), 0.2, scale:1.08);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(meat, scene, THREE.Color.fromHex32(0x0000ff), 0.2, scale:1.08);//, scalex:1.4, scaley:1, scalez:1.4);
     OPENWORLD.BaseObject.highlight(meat, true,scale:1.08, opacity:0.2);
-    OPENWORLD.BaseObject.setTouchTrigger(meat);
+    setTouchTrigger(meat);
 
     meat.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
       OPENWORLD.BaseObject.highlight( meat, true, scale:1.2, opacity:0.2);
@@ -5065,11 +5124,11 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
         citizen4,389.76, 245.47, 0, 4);  //389.55,245.42
     OPENWORLD.Space.objTurn(citizen4,90);  //e
     scene.add(citizen4);
-    OPENWORLD.BaseObject.setCustomTrigger(citizen4);
+    setCustomTrigger(citizen4);
 
     OPENWORLD.Space.faceObjectAlways(citizen4, rat);
-    OPENWORLD.BaseObject.setDistanceTrigger(citizen4, dist: 1.0);
-    citizen4.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(citizen4, dist: 1.0);
+    onDistanceTrigger(citizen4, (THREE.Event event) {
       print("citizen4 dist" + event.action.toString());
       if (event.action) {
         chatter=["Did you see that, a big rat?",
@@ -5094,10 +5153,10 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     ];
     scene.add(roomCourtyard);
 
-    OPENWORLD.Room.setDistanceTrigger(roomCourtyard, dist:1.0);
+    setRoomDistanceTrigger(roomCourtyard, dist:1.0);
     // have sound of prisoners doing starjumps in the courtyard
     var soundstarjump; //=OPENWORLD.Sound.getAudioPlayer();
-    roomCourtyard.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    onDistanceTrigger(roomCourtyard, (THREE.Event event) {
       if (event.action) {
         soundstarjump=OPENWORLD.Sound.getAudioPlayer();
         print("in courtyard");
@@ -5115,7 +5174,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     });
 
     // Prisoner doing star jumps
-    Group citizen2 =
+    THREE.Group citizen2 =
     await OPENWORLD.Actor.createActor('assets/actors/citizen2.glb',
         shareanimations: armourer,
         action:"starjump",
@@ -5135,8 +5194,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     scene.add(prisoner);
     addcitizennpc(prisoner,"prisoner",true);  // You can kill the prisoner
 
-    OPENWORLD.BaseObject.setDistanceTrigger(prisoner, dist: 2.0);
-    prisoner.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(prisoner, dist: 2.0);
+    onDistanceTrigger(prisoner, (THREE.Event event) {
       if (event.action) {
         chatter = ["Can I have a rest soon? I've been doing this for hours.",
           "Please have mercy. When can I have a breather?",
@@ -5159,7 +5218,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     addcitizennpc(prisoner2,"prisoner2",true);
 
     // Guard watching the prisoners
-    Group guard = await OPENWORLD.Actor.createActor('assets/actors/knight.glb',
+    THREE.Group guard = await OPENWORLD.Actor.createActor('assets/actors/knight.glb',
         shareanimations: armourer,
         action:"idle2",
         z: actoroffset);
@@ -5169,8 +5228,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Space.objTurn(guard,360-45+90);  //nw
     scene.add(guard);
 
-    OPENWORLD.BaseObject.setDistanceTrigger(guard, dist: 2.0);
-    guard.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(guard, dist: 2.0);
+    onDistanceTrigger(guard, (THREE.Event event) {
       if (event.action) {
         chatter = ["Lift those legs & one & two & three &",
           "Keep it going",
@@ -5195,10 +5254,10 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     ];
     scene.add(roomEndo);
 
-    OPENWORLD.Room.setDistanceTrigger(roomEndo, dist:0.5);
+    setRoomDistanceTrigger(roomEndo, dist:0.5);
 
     // Have a citizen praying the church
-    Group citizen5 =
+    THREE.Group citizen5 =
     await OPENWORLD.Actor.createActor('assets/actors/citizen5.glb',action:"pray",
         shareanimations: armourer,
         z: actoroffset);
@@ -5210,8 +5269,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     scene.add(citizen5);
     addcitizennpc(citizen5,"citizen5",true); // Can kill the citizen
 
-    OPENWORLD.BaseObject.setDistanceTrigger(citizen5, dist: 2.0);
-    citizen5.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(citizen5, dist: 2.0);
+    onDistanceTrigger(citizen5, (THREE.Event event) {
       if (event.action) {
         chatter = ["An eye for an eye makes everyone blind",
           "Please God, save us from Sulamein",
@@ -5243,9 +5302,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     scene.add(roomGeneralstore);
 
-    OPENWORLD.Room.setDistanceTrigger(roomGeneralstore, dist:0.5);
+    setRoomDistanceTrigger(roomGeneralstore, dist:0.5);
 
-    Group storeman =
+    THREE.Group storeman =
     await OPENWORLD.Actor.createActor('assets/actors/storeman.glb',
         z: actoroffset);
 
@@ -5258,7 +5317,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // If click on newspapers show general store buy/sell options
     var newspapers= await OPENWORLD.Model.createModel('assets/models/newspapers.glb');
-    newspapers.scale.set(0.005, 0.005, 0.005);
+    newspapers.scale.setValues(0.005, 0.005, 0.005);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(newspapers,380.34,259.14,0,4);
     scene.add(newspapers);
     addMsgToObj(newspapers, "Click for store");//, scale:0.15, z:15);
@@ -5269,9 +5328,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     var bucketprice=20;
     var broomprice=20;
 
-    OPENWORLD.BaseObject.setHighlight(newspapers, scene, THREE.Color(0x0000ff), 1.0);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(newspapers, scene, THREE.Color.fromHex32(0x0000ff), 1.0);//, scalex:1.4, scaley:1, scalez:1.4);
     OPENWORLD.BaseObject.highlight(newspapers, true,scale:1.05, opacity:0.5);
-    OPENWORLD.BaseObject.setTouchTrigger(newspapers);
+    setTouchTrigger(newspapers);
     newspapers.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
 
       OPENWORLD.BaseObject.highlight( newspapers, true, scale:1.1, opacity:1);
@@ -5298,7 +5357,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     // Create general store items that can buy and sell
     var bucket= await OPENWORLD.Model.createModel('assets/models/bucket.glb');
     setValue(bucket, "bucket",bucketprice);
-    bucket.scale.set(0.005, 0.005, 0.005);
+    bucket.scale.setValues(0.005, 0.005, 0.005);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(bucket,OPENWORLD.Room.getX(roomGeneralstore), OPENWORLD.Room.getY(roomGeneralstore),0.0,4);
     setGetObject(bucket,on:false);// {scalenotselected:1.025, scaleselected:1.05})
     var bucketbutton=dropButton("bucket",bucket,icon:"icons/bucket.png");
@@ -5306,7 +5365,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     var broom= await OPENWORLD.Model.createModel('assets/models/broom.glb');
     setValue(broom,"broom", broomprice);
-    broom.scale.set(0.01, 0.01, 0.01);
+    broom.scale.setValues(0.01, 0.01, 0.01);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(broom,OPENWORLD.Room.getX(roomGeneralstore), OPENWORLD.Room.getY(roomGeneralstore),0.0,4);
     setGetObject(broom,on:false);// {scalenotselected:1.025, scaleselected:1.05})
     var broombutton=dropButton("broom",broom, icon:"icons/broom.png");
@@ -5319,7 +5378,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     var sliceSpacing = 0.5;
     var torch= await OPENWORLD.Model.createModel('assets/models/torch.glb');
     setValue(torch,"torch", torchprice);
-    torch.scale.set(0.007, 0.007, 0.007);
+    torch.scale.setValues(0.007, 0.007, 0.007);
     var brandfire = new VolumetricFire(
         fireWidth, fireHeight, fireDepth, sliceSpacing, camera);
     await brandfire.init();
@@ -5418,7 +5477,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Room.setAutoIndoors(roomHomeroom, true);
     scene.add(roomHomeroom);
 
-    OPENWORLD.Room.setDistanceTrigger(roomHomeroom, dist:1.5);
+    setRoomDistanceTrigger(roomHomeroom, dist:1.5);
 
     // Put knights flag and coat of arms on wall
     var coatarms = await OPENWORLD.Plane.loadPlane(
@@ -5428,7 +5487,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     scene.add(coatarms);
 
    var banner=await OPENWORLD.Model.createModel('assets/models/banner.glb');
-    banner.scale.set(0.005, 0.005, 0.005);
+    banner.scale.setValues(0.005, 0.005, 0.005);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         banner,386.1, 248.2,0.6,5);
     OPENWORLD.Space.setTurnPitchRoll(banner, 90,90,0);//turn, pitch, roll)Space.objPitch(banner,90);
@@ -5448,12 +5507,12 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     var ladycard = await OPENWORLD.Plane.loadPlane(
         "assets/textures/lady.jpg", 120*0.05,120*0.15, ambient: false);
     OPENWORLD.Space.objPitch(ladycard.children[0],90);
-    ladycard.children[0].position.set(0.0,0.0,-10.0);
+    ladycard.children[0].position.setValues(0.0,0.0,-10.0);
     OPENWORLD.Actor.wield(knight15, ladycard, "Bip01_L_Finger11");
-    OPENWORLD.BaseObject.setDistanceTrigger(knight15, dist: 1.3);
+    setDistanceTrigger(knight15, dist: 1.3);
     // When knight sees you gets up and walks away and then sits back down when you leave
     var sitting=true;
-    knight15.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    onDistanceTrigger(knight15, (THREE.Event event) {
       print("knight15 dist"+event.action.toString());
       if (event.action) {
         if (sitting) {
@@ -5470,7 +5529,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
         if (!sitting) {
           sitting=true;
           OPENWORLD.BaseObject.clearAll(knight15);
-          OPENWORLD.Space.faceObjectAlwaysRemove(knight15);
+          OPENWORLD.Space.removeFaceObjectAlways(knight15);
           OPENWORLD.Mob.moveTo(knight15, [ [ 383.5,251.81]] , action:"walk", stopaction:"idle");
           OPENWORLD.Space.objTurnLerp(knight15,180, 1,delay:4);  //sw
 
@@ -5490,9 +5549,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Room.setAutoIndoors(roomHome, true);
     scene.add(roomHome);
 
-    OPENWORLD.Room.setDistanceTrigger(roomHome, dist:1.5);
+    setRoomDistanceTrigger(roomHome, dist:1.5);
 
-    Group oldlady =
+    THREE.Group oldlady =
     await OPENWORLD.Actor.createActor('assets/actors/citizenf2.glb',
         z: actoroffset);
     setDefaultActor(oldlady);
@@ -5501,8 +5560,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Space.faceObjectAlways(oldlady, camera);
     scene.add(oldlady);
     addnpc(oldlady,"oldlady",false);
-    OPENWORLD.BaseObject.setDistanceTrigger(oldlady, dist: 1.5);
-    oldlady.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(oldlady, dist: 1.5);
+    onDistanceTrigger(oldlady, (THREE.Event event) {
       if (event.action) {
         OPENWORLD.Mob.setSpeech(oldlady, ["I can't see very well.","Is someone there?","Try some of my pie"], z: 80, randwait:10, width: 300,  scale:0.4);
       } else {
@@ -5513,7 +5572,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     });
     var applepie= await OPENWORLD.Model.createModel('assets/models/applepie.glb');
-    applepie.scale.set(0.003, 0.003, 0.003);
+    applepie.scale.setValues(0.003, 0.003, 0.003);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(applepie,OPENWORLD.Room.getX(roomHome)+0.4, OPENWORLD.Room.getY(roomHome),0.2,4);
     scene.add(applepie);
     addMsgToObj(applepie, "Click eat");
@@ -5560,8 +5619,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     scene.add(roomHome2);
 
-    OPENWORLD.Room.setDistanceTrigger(roomHome2, dist:0.5);
-    Group leanne =
+    setRoomDistanceTrigger(roomHome2, dist:0.5);
+    THREE.Group leanne =
     await OPENWORLD.Actor.createActor('assets/actors/citizenf.glb',
         z: actoroffset);
 
@@ -5573,8 +5632,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     scene.add(leanne);
     addcitizennpc(leanne,"leanne",true);
 
-    OPENWORLD.BaseObject.setDistanceTrigger(leanne, dist: 1.5);
-    leanne.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(leanne, dist: 1.5);
+    onDistanceTrigger(leanne, (THREE.Event event) {
       if (event.action) {
         OPENWORLD.Mob.setSpeech(leanne, ["Hi gorgeous","Wanna have some fun?"], z: 80, width: 300,  scale:0.4);
       } else {
@@ -5619,8 +5678,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     addcitizennpc(sarah,"sarah",true);
 
     // Have banter between Jeremy and Sandra when you enter the room
-    OPENWORLD.Room.setDistanceTrigger(roomHome3, dist:0.5);
-    roomHome3.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setRoomDistanceTrigger(roomHome3, dist:0.5);
+    onDistanceTrigger(roomHome3, (THREE.Event event) {
       if (event.action) {
         print("in home3");
         OPENWORLD.Mob.setSpeech(jeremy, [
@@ -5645,7 +5704,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
               OPENWORLD.Room.getY(roomHome3) - 0.5, -0.05, 4);
           OPENWORLD.Space.objTurn(jeremy, 90); //e
           OPENWORLD.Actor.playAction(
-              jeremy, name: "sittableidle", duration: 1, stopallactions: true);
+              jeremy, action: "sittableidle", duration: 1, stopallactions: true);
 
       }
     });
@@ -5675,7 +5734,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     // If you try to take the bread jeremy kicks you out of his house
     // If you come in a second time he'll attack you
     var bread= await OPENWORLD.Model.createModel('assets/models/bread.glb');
-    bread.scale.set(0.003, 0.003, 0.003);
+    bread.scale.setValues(0.003, 0.003, 0.003);
     OPENWORLD.Space.worldToLocalSurfaceObj(bread,OPENWORLD.Room.getX(roomHome3)+0.3, OPENWORLD.Room.getY(roomHome3)-0.5,0.15);
     scene.add(bread);
     setGetObject(bread,scaleselected: 1.1, scalenotselected: 1.1);
@@ -5710,12 +5769,12 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // If you go past the bed Jeremy kicks you out
     var woodbed= await OPENWORLD.Model.createModel('assets/models/bed.glb', texture:"assets/textures/wood.jpg",);
-    woodbed.scale.set(0.0017, 0.0017, 0.0017);
+    woodbed.scale.setValues(0.0017, 0.0017, 0.0017);
     OPENWORLD.Space.worldToLocalSurfaceObj(woodbed,398,302.1,0);
     OPENWORLD.Space.objTurn(woodbed ,-103);
     scene.add(woodbed);
-    OPENWORLD.BaseObject.setDistanceTrigger(woodbed, dist: 0.5);
-    woodbed.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(woodbed, dist: 0.5);
+    onDistanceTrigger(woodbed, (THREE.Event event) {
       if (event.action) {
        // print("woodbed in");
         jeremyKickout(["Hey. Where do you think you're going?"]);
@@ -5739,7 +5798,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Room.setAutoIndoors(roomTradingpost, true);
 
     scene.add(roomTradingpost);
-    OPENWORLD.Room.setDistanceTrigger(roomTradingpost,minx:381.9, maxx:386.1, miny:283.5, maxy:287.5);// dist:0.5);
+    setRoomDistanceTrigger(roomTradingpost,minx:381.9, maxx:386.1, miny:283.5, maxy:287.5);// dist:0.5);
     // minx: -3.47, maxx: 10.1, miny: -12.4, maxy: -2.1);
 
     var storeman2 =
@@ -5755,8 +5814,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     scene.add(storeman2 );
     addcitizennpc(storeman2,"storeman2",false);
 
-    OPENWORLD.BaseObject.setDistanceTrigger(storeman2, dist: 1.5);
-    storeman2.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(storeman2, dist: 1.5);
+    onDistanceTrigger(storeman2, (THREE.Event event) {
       if (event.action) {
         print("storeman in");
         chatter = ["We buy & sell anything of value",
@@ -5771,14 +5830,14 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     // If click on clothes on bench can buy and sell your items
     // Only lists items if they have been bought and sold
     var clothes= await OPENWORLD.Model.createModel('assets/models/clothes.glb');
-    clothes.scale.set(0.005, 0.005, 0.005);
+    clothes.scale.setValues(0.005, 0.005, 0.005);
     OPENWORLD.Space.worldToLocalSurfaceObj(clothes,384.14, 285.03,0.24);
     scene.add(clothes);
     addMsgToObj(clothes, "Click to trade");
 
-    OPENWORLD.BaseObject.setHighlight(clothes, scene, THREE.Color(0x0000ff),  1.0,scale:1.15);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(clothes, scene, THREE.Color.fromHex32(0x0000ff),  1.0,scale:1.15);//, scalex:1.4, scaley:1, scalez:1.4);
     OPENWORLD.BaseObject.highlight(clothes, true,scale:1.15, opacity:0.5);
-    OPENWORLD.BaseObject.setTouchTrigger(clothes);
+    setTouchTrigger(clothes);
     markup=1.3;
     markdown=0.7;
 
@@ -5886,12 +5945,12 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     scene.add(roomNewsroom);
 
     // Put sign on building
-    plane =   await OPENWORLD.Plane.makeTextPlane("Lindos News", Colors.black, backgroundopacity: 0);//scale:0.01);//THREE.Color(0xff0000));
+    plane =   await OPENWORLD.Plane.makeTextPlane("Lindos News", Colors.black, backgroundopacity: 0);//scale:0.01);//THREE.Color.fromHex32(0xff0000));
     var newsroomsign=THREE.Group();
     newsroomsign.add( plane );
   //  plane.position.y+=0.3;
    // plane.position.x=-0.05;
-    plane.scale.set(0.5,0.5,0.5);//.x=0.1;
+    plane.scale.setValues(0.5,0.5,0.5);//.x=0.1;
     newsroomsign.add(plane);
     OPENWORLD.Space.objTurn(newsroomsign,270-180-90);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(newsroomsign, 379.23, 280.95,1.3,4);
@@ -5909,9 +5968,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
 
     var lastentrytick=-1;
-    OPENWORLD.Room.setDistanceTrigger(roomNewsroom, dist:1.0);
+    setRoomDistanceTrigger(roomNewsroom, dist:1.0);
 
-    roomNewsroom.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    onDistanceTrigger(roomNewsroom, (THREE.Event event) {
       print("journalist2beachseen"+journalist2beachseen.toString()+"journalist2newsroomseen"+journalist2newsroomseen.toString());
       if (event.action) {
         // Dont always show the news room hint message
@@ -5925,9 +5984,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     var quill = await OPENWORLD.Sprite.loadSprite(
         'assets/textures/quill.png', 0.02, 0.1,
         ambient: false);
-    quill.scale.set(140.0,140.0,140.0);
-    ///   quill.children[0].position.set(0.0,0.015,-0.035);
-    quill.children[0].position.set(0.0,0.0,0.03);
+    quill.scale.setValues(140.0,140.0,140.0);
+    ///   quill.children[0].position.setValues(0.0,0.015,-0.035);
+    quill.children[0].position.setValues(0.0,0.0,0.03);
 
     var journalist =
     await OPENWORLD.Actor.copyActor( citizen5,
@@ -5945,8 +6004,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     addcitizennpc(journalist,"journalist",false);
 
     // Banter between the two journalists
-    OPENWORLD.BaseObject.setDistanceTrigger(journalist, dist: 1);
-    journalist.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(journalist, dist: 1);
+    onDistanceTrigger(journalist, (THREE.Event event) {
       if (event.action) {
         if ( !journalist2beachseen&&!journalist2newsroomseen) {
           chatter = ["Your always at Pallas Beach arent you",
@@ -5982,15 +6041,15 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Actor.wield(journalist, quill, "Bip01_R_Finger11");//Bip01_R_Hand");
 
     journalist2board=board.clone();//await OPENWORLD.Model.createModel('assets/models/board.glb');
-    journalist2board.scale.set(0.3,0.3,0.3);
-    journalist2board.position.set(0.0,0.0,0.0);
+    journalist2board.scale.setValues(0.3,0.3,0.3);
+    journalist2board.position.setValues(0.0,0.0,0.0);
     OPENWORLD.Actor.wield(journalist2,journalist2board, "Bip01_L_Finger11");
     journalist2board.visible=false;
 
     // Hint that traitor wears a red hat
     var hat =await OPENWORLD.Model.createModel('assets/models/hat.glb');
-    hat.scale.set(0.3,0.3,0.3);
-    hat.position.set(5.5,0.0,0.0);
+    hat.scale.setValues(0.3,0.3,0.3);
+    hat.position.setValues(5.5,0.0,0.0);
     OPENWORLD.Space.setTurnPitchRoll(hat, 0, -90,0);
     OPENWORLD.Actor.wield(journalist2,hat, "Bip01_Head");
 
@@ -6003,10 +6062,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
       OPENWORLD.Space.worldToLocalSurfaceObjHide(
           journalist2, 468.37, 349.54, 0, 6);
       OPENWORLD.Actor.playAction(
-          journalist2, name: "idle2");
-      OPENWORLD.BaseObject.setDistanceTrigger(journalist2, dist: 6);
-      journalist2.extra['trigger'].addEventListener(
-          'trigger', (THREE.Event event) {
+          journalist2, action: "idle2");
+      setDistanceTrigger(journalist2, dist: 6);
+      onDistanceTrigger(journalist2, (THREE.Event event) {
         if (event.action) {
           chatter=["I better head back to the newsroom",
             "Interesting.."
@@ -6040,11 +6098,10 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
             journalist2, banditpos.x, banditpos.y + 1, 0,
             6); //305.32, 428.21, 0, 6);
 
-        OPENWORLD.BaseObject.setDistanceTrigger(journalist2, dist: 8);
+        setDistanceTrigger(journalist2, dist: 8);
         OPENWORLD.Actor.playAction(
-            journalist2, name: "idle2"); //, loopmode:THREE.LoopRepeat );
-        journalist2.extra['trigger'].addEventListener(
-            'trigger', (THREE.Event event) {
+            journalist2, action: "idle2"); //, loopmode:THREE.LoopRepeat );
+        onDistanceTrigger(journalist2, (THREE.Event event) {
           if (event.action) {
             OPENWORLD.Mob.resetrandomwalk(journalist2);
             OPENWORLD.Mob.randomwalk(journalist2, 1.5, 0.2, 0.1,
@@ -6078,18 +6135,18 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
       print("put jounalist2 in newsroom");
       OPENWORLD.Space.worldToLocalSurfaceObjHide(
           journalist2, 378.16, 281.39, -0.022, 4); //378.13,281.45, 0, 4);
-      OPENWORLD.BaseObject.setDistanceTrigger(journalist2, dist: 1.0);
+      setDistanceTrigger(journalist2, dist: 1.0);
     } else if (journalist2newsroomseen &&! journalist2beachseen) {
       print("put jounalist2 at beach");
       journalist2atbeach();
-      OPENWORLD.BaseObject.setDistanceTrigger(journalist2, dist: 3.0);
+      setDistanceTrigger(journalist2, dist: 3.0);
     } else if (journalist2beachseen) {
       print("put jounalist2 at bandit");
       // Delayed because bandit not created yet
       Future.delayed(const Duration(milliseconds: 1 * 1000), () {
         journalist2tobandit();
       });
-      OPENWORLD.BaseObject.setDistanceTrigger(journalist2, dist: 3.0);
+      setDistanceTrigger(journalist2, dist: 3.0);
     } else {
       print("put jounalist2 no where");
     }
@@ -6102,13 +6159,13 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
 
     var quill2=await OPENWORLD.Sprite.cloneSprite(quill);
-    quill2.scale.set(140.0,140.0,140.0);
-    ///   quill.children[0].position.set(0.0,0.015,-0.035);
-    quill2.children[0].position.set(0.0,0.0,0.03);
+    quill2.scale.setValues(140.0,140.0,140.0);
+    ///   quill.children[0].position.setValues(0.0,0.015,-0.035);
+    quill2.children[0].position.setValues(0.0,0.0,0.03);
 
     OPENWORLD.Actor.wield(journalist2, quill2, "Bip01_R_Finger11");//Bip01_R_Hand");
 
-    journalist2.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    onDistanceTrigger(journalist2, (THREE.Event event) {
       if (event.action) {
         print("in journalist2");
         if (!journalist2newsroomseen) {
@@ -6135,7 +6192,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
                   print("now to beach");
 
                   // Now at beach then trigger is further away
-                  OPENWORLD.BaseObject.setDistanceTrigger(journalist2, dist: 5.0);
+                  setDistanceTrigger(journalist2, dist: 5.0);
                   journalist2inwait = false;
                   OPENWORLD.Persistence.set(
                       "journalist2inwait", journalist2inwait);
@@ -6174,7 +6231,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
                 print("now to bandit");
                 journalist2inwait = false;
                 // Now at beach then trigger is further away
-                OPENWORLD.BaseObject.setDistanceTrigger(journalist2, dist: 5.0);
+                setDistanceTrigger(journalist2, dist: 5.0);
 
                 journalist2beachseen = true;
                 OPENWORLD.Persistence.set(
@@ -6196,7 +6253,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     });
 
     // Custom strike of journalist traitor. Only allow killing when is at the bandits giving away secrets
-    OPENWORLD.BaseObject.setCustomTrigger(journalist2);//, dist: 1.5);
+    setCustomTrigger(journalist2);//, dist: 1.5);
     journalist2.extra['customtrigger'].addEventListener('strucktrigger', (THREE.Event event) {
       print("journalist struck trigger");
       if (!actorIsDead(journalist2)) {
@@ -6212,7 +6269,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
             print("jouranlist dead");
             OPENWORLD.BaseObject.clearAll(journalist2);
             actorDie(journalist2); //,diesoundpath:"sounds/die.mp3");
-            OPENWORLD.BaseObject.disableDistanceTrigger(journalist2);
+            disableDistanceTrigger(journalist2);
             if (actorIsDead(bandit))
               foundTraitor();
           }
@@ -6233,20 +6290,20 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // Newspaper where you can read the latest news about lindos
     var newspaper=await OPENWORLD.Model.createModel('assets/models/newspapers.glb');
-    newspaper.scale.set(0.005*1.2, 0.0005, 0.005);
+    newspaper.scale.setValues(0.005*1.2, 0.0005, 0.005);
     OPENWORLD.Space.objTurn(newspaper,45);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         newspaper,378.44,281.04,0.2,4);//409.66, 328.47,0,4);//408.75,327.88,0.1, 4);
     scene.add(newspaper);
-    var newspapersprite =   await OPENWORLD.Sprite.makeTextSprite("Click to read", fontSize:20, Colors.blue, bold:true, backgroundopacity: 0, width:300);//,scale:0.01);//THREE.Color(0xff0000));
+    var newspapersprite =   await OPENWORLD.Sprite.makeTextSprite("Click to read", fontSize:20, Colors.blue, bold:true, backgroundopacity: 0, width:300);//,scale:0.01);//THREE.Color.fromHex32(0xff0000));
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         newspapersprite,378.44,281.04,0.25,4);//409.66, 328.47,0,4);//408.75,327.88,0.1, 4);
-    newspapersprite.scale.set(0.1,0.03,1.0);
+    newspapersprite.scale.setValues(0.1,0.03,1.0);
     scene.add(newspapersprite);
 
-    OPENWORLD.BaseObject.setHighlight(newspaper, scene, THREE.Color(0x0000ff), 1.0, scale:1.1);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(newspaper, scene, THREE.Color.fromHex32(0x0000ff), 1.0, scale:1.1);//, scalex:1.4, scaley:1, scalez:1.4);
     OPENWORLD.BaseObject.highlight(newspaper, true,scale:1.1, opacity:0.5);
-    OPENWORLD.BaseObject.setTouchTrigger(newspaper);
+    setTouchTrigger(newspaper);
     newspaper.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
 
       OPENWORLD.BaseObject.highlight(newspaper, true, scale:1.1, opacity:1);
@@ -6273,9 +6330,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
         soundpath: "sounds/home.mp3", volume: 0.05); //THREE.Object3D();
     OPENWORLD.Room.setAutoIndoors(roomNewsroomBack, true);
     scene.add(roomNewsroomBack);
-    OPENWORLD.Room.setDistanceTrigger(roomNewsroomBack, dist:1.3);
+    setRoomDistanceTrigger(roomNewsroomBack, dist:1.3);
 
-    roomNewsroomBack.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    onDistanceTrigger(roomNewsroomBack, (THREE.Event event) {
 
       if (event.action) {
         print("in newsroomback");
@@ -6342,8 +6399,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     scene.add(roomPostoffice);
 
-    OPENWORLD.Room.setDistanceTrigger(roomPostoffice, dist:0.5);
-    Group postie =
+    setRoomDistanceTrigger(roomPostoffice, dist:0.5);
+    THREE.Group postie =
     await OPENWORLD.Actor.createActor('assets/actors/shopkeeper.glb',//citizen6.glb',
         shareanimations: armourer,
         action:"idle2",
@@ -6363,15 +6420,15 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // Click bag to show message from grandmaster
     var bag=await OPENWORLD.Model.createModel('assets/models/bag.glb');
-    bag.scale.set(0.015, 0.015, 0.015);
+    bag.scale.setValues(0.015, 0.015, 0.015);
     OPENWORLD.Space.objTurn(bag,20);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(bag,366.19,272.90,-0.02,4);
     scene.add(bag);
     addMsgToObj(bag, "Click to check mail", scale:0.1, z:11);
 
-    OPENWORLD.BaseObject.setHighlight(bag, scene, THREE.Color(0x0000ff), 1.0, scale:1.08);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(bag, scene, THREE.Color.fromHex32(0x0000ff), 1.0, scale:1.08);//, scalex:1.4, scaley:1, scalez:1.4);
     OPENWORLD.BaseObject.highlight(bag, true,scale:1.08, opacity:0.5);
-    OPENWORLD.BaseObject.setTouchTrigger(bag);
+    setTouchTrigger(bag);
     bag.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
 
       OPENWORLD.BaseObject.highlight(bag, true, scale:1.1, opacity:1);
@@ -6408,9 +6465,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     scene.add(roomRealEstate);
 
-    OPENWORLD.Room.setDistanceTrigger(roomRealEstate, dist:1.0);
+    setRoomDistanceTrigger(roomRealEstate, dist:1.0);
 
-    Group realestatelady =
+    THREE.Group realestatelady =
     await OPENWORLD.Actor.createActor('assets/actors/citizenf4.glb',
         z: actoroffset);
 
@@ -6421,8 +6478,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     scene.add(realestatelady);
     addcitizennpc(realestatelady,"realestatelady",false);
 
-    OPENWORLD.BaseObject.setDistanceTrigger(realestatelady, dist: 1);
-    realestatelady.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(realestatelady, dist: 1);
+    onDistanceTrigger(realestatelady, (THREE.Event event) {
       if (event.action) {
         print("real estate lady in");
         chatter = [
@@ -6441,13 +6498,13 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // If click on real estate guide cannot buy anything
     var guide=await OPENWORLD.Model.createModel('assets/models/guide.glb');
-    guide.scale.set(0.015,0.015,0.015);
+    guide.scale.setValues(0.015,0.015,0.015);
     OPENWORLD.Space.objTurn(guide,75);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(guide, 406.71, 308.19,0.23,4);
     scene.add(guide);
-    OPENWORLD.BaseObject.setHighlight(guide, scene, THREE.Color(0x0000ff), 1.0, scale:1.03);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(guide, scene, THREE.Color.fromHex32(0x0000ff), 1.0, scale:1.03);//, scalex:1.4, scaley:1, scalez:1.4);
     OPENWORLD.BaseObject.highlight(guide, true,scale:1.03, opacity:0.5);
-    OPENWORLD.BaseObject.setTouchTrigger(guide);
+    setTouchTrigger(guide);
     guide.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
 
       OPENWORLD.BaseObject.highlight(guide, true, scale:1.1, opacity:1);
@@ -6506,7 +6563,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
         soundpath: "sounds/courtyard.mp3", volume: 0.05, exitroom: roomDefault); //THREE.Object3D();
     scene.add(roomRoad);
 
-    OPENWORLD.Room.setDistanceTrigger(roomRoad, dist:0.5);
+    setRoomDistanceTrigger(roomRoad, dist:0.5);
 
     // If you get near the dog it will either bark, urinate or sit down
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
@@ -6516,8 +6573,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     scene.add(dog);
     addnpc(dog, "dog", true,deathsoundpath: "sounds/yelp.mp3");
 
-    OPENWORLD.BaseObject.setDistanceTrigger(dog, dist: 1.5);
-    dog.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(dog, dist: 1.5);
+    onDistanceTrigger(dog, (THREE.Event event) {
 
       if (event.action&&!actorIsDead(dog)) {
         OPENWORLD.Sound.play( path: 'sounds/bark.mp3', volume: 0.1, delay:OPENWORLD.Math.random()*5);
@@ -6551,18 +6608,18 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
         soundpath: "sounds/courtyard.mp3", volume: 0.05, exitroom: roomDefault); //THREE.Object3D();
 
     scene.add(roomChild);
-    OPENWORLD.Room.setDistanceTrigger(roomChild, dist:0.5);
+    setRoomDistanceTrigger(roomChild, dist:0.5);
 
     var child=await OPENWORLD.Actor.createActor('assets/actors/child.glb',
         z: actoroffset);
     setDefaultActor(child);
-    child.scale.set(0.006*3/5, 0.006*3/5, 0.006*3/5);
+    child.scale.setValues(0.006*3/5, 0.006*3/5, 0.006*3/5);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(child,365.33,232.03,0,4,lerpopacity: 1);
     scene.add(child);
-    OPENWORLD.BaseObject.setDistanceTrigger(child, dist: 0.8);
+    setDistanceTrigger(child, dist: 0.8);
     var jumpsound;
     // If you go near the child he will either star doing star jump, jump in the air or fart
-    child.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    onDistanceTrigger(child, (THREE.Event event) {
       if (event.action) {
         print("child in");
         OPENWORLD.BaseObject.clearAll(child);
@@ -6574,21 +6631,21 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
             if (rnd<0.3) {
               var starjumptime =  OPENWORLD.Math.random() * 10;
               OPENWORLD.Actor.playAction(
-                  child, name: "starjump", duration: 0.7, delay: starjumptime);
+                  child, action: "starjump", duration: 0.7, delay: starjumptime);
               OPENWORLD.Sound.play( sound:jumpsound, path: "sounds/starjump.mp3", loop:true, volume: 0.2,delay:starjumptime, obj:child);
               OPENWORLD.Mob.setSpeech(child, ["I can do star jumps!", "I jump so high"], z: 80,
                   width: 300,
                   scale: 0.4);
             } else if (rnd<0.6) {
               var jumptime=OPENWORLD.Math.random()*10;
-              OPENWORLD.Actor.playAction(child,    name: "jump", duration:1, stopallactions: true,  delay:jumptime);
+              OPENWORLD.Actor.playAction(child,    action: "jump", duration:1, stopallactions: true,  delay:jumptime);
 
               OPENWORLD.Sound.play( sound:jumpsound,path: "sounds/starjump.mp3", loop:true, volume: 0.2,delay:jumptime, obj:child);
               OPENWORLD.Mob.setSpeech(child, ["I can jump!", "Im clever"], z: 80, width: 300,  scale:0.4);
 
             } else {
               jumpsound.stop();
-              OPENWORLD.Actor.playAction(child,    name: "idle2", duration:1, stopallactions: true);
+              OPENWORLD.Actor.playAction(child,    action: "idle2", duration:1, stopallactions: true);
               OPENWORLD.Mob.clearText(child);
               var fartime=OPENWORLD.Math.random()*10;
               if (OPENWORLD.Math.random() <0.5)
@@ -6607,7 +6664,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
       } else {
         print("child out");
         jumpsound.stop();
-        OPENWORLD.Space.faceObjectAlwaysRemove(child);
+        OPENWORLD.Space.removeFaceObjectAlways(child);
         OPENWORLD.BaseObject.clearTimers(child);
       }
     });
@@ -6615,15 +6672,15 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     addnpc(child, "child", false, deathsoundpath: "sounds/groan.mp3");
 
-    OPENWORLD.BaseObject.setCustomTrigger(child);//, dist: 1.5);
+    setCustomTrigger(child);//, dist: 1.5);
     child.extra['customtrigger'].addEventListener('strucktrigger', (THREE.Event event) async {
       print("child dead");
       OPENWORLD.BaseObject.clearAll(child);
       actorDie(child); //,diesoundpath:"sounds/groan.mp3");
-      OPENWORLD.BaseObject.disableDistanceTrigger(child);
+      disableDistanceTrigger(child);
 
       var lolly= await OPENWORLD.Model.createModel('assets/models/lolly.glb');
-      lolly.scale.set(0.0015, 0.0015, 0.0015);
+      lolly.scale.setValues(0.0015, 0.0015, 0.0015);
       OPENWORLD.Space.worldToLocalSurfaceObjHide(
           lolly,365.33+0.1,232.03,0,4);//409.66, 328.47,0,4);//408.75,327.88,0.1, 4);
       scene.add(lolly);
@@ -6633,7 +6690,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // This is the prison entrance of lindos but not the actual prison where the prisoners are chained up
     var roomPrisonentrance = OPENWORLD.Room.createRoom(368.479,281.857,
-    soundpath: "sounds/home.mp3",  randomsoundpath:"sounds/groan.mp3", randomsoundgap:30, volume: 0.05, exitroom: roomDefault); //THREE.Object3D();
+    soundpath: "sounds/home.mp3",  randomsoundpaths: ["sounds/groan.mp3"], randomsoundgap:30, volume: 0.05, exitroom: roomDefault); //THREE.Object3D();
     roomPrisonentrance.extra['guide'] = [
       "This where the",
       "bad people go.",
@@ -6644,7 +6701,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     scene.add( roomPrisonentrance );
 
-    OPENWORLD.Room.setDistanceTrigger( roomPrisonentrance , dist:0.5);
+    setRoomDistanceTrigger( roomPrisonentrance , dist:0.5);
     // minx: -3.47, maxx: 10.1, miny: -12.4, maxy: -2.1);
 
     guard2 =await OPENWORLD.Actor.copyActor( guard,
@@ -6658,7 +6715,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Space.objTurn(guard2,180+45);  //sw
     scene.add(guard2);
 
-    OPENWORLD.BaseObject.setCustomTrigger(guard2);
+    setCustomTrigger(guard2);
     guard2.extra['customtrigger'].addEventListener('strucktrigger', (THREE.Event event) {
       print("struck"+event.action.toString());
       OPENWORLD.Actor.playActionThen(guard2, "slash", "idle", duration:1, durationthen:2);
@@ -6675,7 +6732,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // This is for the guard
     var sword= await OPENWORLD.Model.createModel('assets/models/sword.glb');
-    sword.scale.set(0.002, 0.002, 0.002);
+    sword.scale.setValues(0.002, 0.002, 0.002);
 
     OPENWORLD.Space.objTurn(sword,90);
     OPENWORLD.Space.objPitch(sword.children[0],90);
@@ -6690,7 +6747,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // This is the room with the prisoners chained up groaning
     var roomPrisoninside = OPENWORLD.Room.createRoom(368.980,280.330,
-        soundpath: "sounds/courtyard.mp3",randomsoundpath:"sounds/groan.mp3", randomsoundgap:30, volume: 0.05, exitroom: roomDefault); //THREE.Object3D();
+        soundpath: "sounds/courtyard.mp3",randomsoundpaths: ["sounds/groan.mp3"], randomsoundgap:30, volume: 0.05, exitroom: roomDefault); //THREE.Object3D();
     roomPrisoninside.extra['guide'] = [
       "These poor prisoners",
       "are chained in manacles",
@@ -6700,7 +6757,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Room.setAutoIndoors( roomPrisoninside , true);
 
     scene.add( roomPrisoninside );
-    OPENWORLD.Room.setDistanceTrigger( roomPrisoninside , dist:0.5);
+    setRoomDistanceTrigger( roomPrisoninside , dist:0.5);
 
     // Prisoners with shackled animation
     var prisoner24 =await OPENWORLD.Actor.copyActor( citizen2,
@@ -6715,8 +6772,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Space.objTurn(prisoner24,270);  //w
     scene.add(prisoner24);
 
-    OPENWORLD.BaseObject.setDistanceTrigger(prisoner24, dist: 2.0);
-    prisoner24.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(prisoner24, dist: 2.0);
+    onDistanceTrigger(prisoner24, (THREE.Event event) {
       if (event.action) {
         chatter = ["What Id give to get spat at in the face",
           "I sometimes hang awake at night dreaming of being spat at in the face",
@@ -6755,7 +6812,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     scene.add( roomRestaurant );
 
-    OPENWORLD.Room.setDistanceTrigger( roomRestaurant , dist:1.4);
+    setRoomDistanceTrigger( roomRestaurant , dist:1.4);
 
     // Restaurant sheep sign outside
     var restaurantsign = await OPENWORLD.Plane.loadPlane(
@@ -6770,11 +6827,11 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         restaurantsign2,382.05, 253.30 ,0.7, 4);
     OPENWORLD.Space.objTurn(restaurantsign2,180+90);
-    restaurantsign2.scale.set(0.5,0.5,0.5);
+    restaurantsign2.scale.setValues(0.5,0.5,0.5);
     scene.add(restaurantsign2);
 
     // Knight standing in the restaurant
-    Group knight2 =
+    THREE.Group knight2 =
     await OPENWORLD.Actor.createActor('assets/actors/knight2.glb',
         z: actoroffset);
      setDefaultActor(knight2 );
@@ -6801,8 +6858,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Space.objTurn(citizen42,90);  //e
     scene.add(citizen42);
     addcitizennpc(citizen42,"citizen42",true);
-    OPENWORLD.BaseObject.setDistanceTrigger(citizen42, dist: 0.5);
-    citizen42.extra['trigger'].addEventListener('trigger', (THREE.Event event) async {
+    setDistanceTrigger(citizen42, dist: 0.5);
+    onDistanceTrigger(citizen42, (THREE.Event event) async {
       if (event.action) {
         if (hasgotup2)
           OPENWORLD.Mob.setChatter(citizen42,["I'm just contemplating the meaning of life","I like to stand and look at the wall"],  z: 80, width: 300, scale:0.4);
@@ -6818,8 +6875,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     scene.add( wench2);
     addcitizennpc(wench2,"wench2",false);
 
-    OPENWORLD.BaseObject.setDistanceTrigger(wench2, dist: 0.5);
-    wench2.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(wench2, dist: 0.5);
+    onDistanceTrigger(wench2, (THREE.Event event) {
       if (event.action) {
         print("old lady in");
         chatter = ["My legs are grey.",
@@ -6838,7 +6895,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
               action: "walk", stopaction: "idle");
           OPENWORLD.Space.faceObjectAlways(wench2, camera, delay: 9);
 
-          OPENWORLD.BaseObject.disableDistanceTrigger(wench2);
+          disableDistanceTrigger(wench2);
 
           OPENWORLD.Actor.playActionThen(
               citizen42, "sittable", "idle", backwards: true,
@@ -6858,16 +6915,16 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // When click on restaurant board show menu so can buy food
     var board2=board.clone();
-    board2.scale.set(0.005, 0.005, 0.005);
+    board2.scale.setValues(0.005, 0.005, 0.005);
     OPENWORLD.Space.objTurn(board2,90);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         board2,381.88, 254.76,0.2,4);//409.66, 328.47,0,4);//408.75,327.88,0.1, 4);
     scene.add(board2);
     addMsgToObj(board2, "Click for menu",z:30);//, scale:0.15, z:15);
 
-    OPENWORLD.BaseObject.setHighlight(board2, scene, THREE.Color(0x0000ff), 1.0);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(board2, scene, THREE.Color.fromHex32(0x0000ff), 1.0);//, scalex:1.4, scaley:1, scalez:1.4);
     OPENWORLD.BaseObject.highlight(board2, true,scale:1.02, opacity:0.5);
-    OPENWORLD.BaseObject.setTouchTrigger(board2);
+    setTouchTrigger(board2);
     board2.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
       /*  "anthropinos stew" 20
     "skylos stew" 10
@@ -6888,24 +6945,24 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
       });
     });
     // Show either soup bowl or cheese depending on what you buy
-    Group food=Group();
+    THREE.Group food=THREE.Group();
     var soupbowl= await OPENWORLD.Model.createModel('assets/models/soupbowl.glb');
-    food.scale.set(0.005, 0.005, 0.005);
+    food.scale.setValues(0.005, 0.005, 0.005);
     OPENWORLD.Space.worldToLocalSurfaceObj(
         food,381.42,254.60,0.21);//409.66, 328.47,0,4);//408.75,327.88,0.1, 4);
     food.add(soupbowl);
     scene.add(food);
-    OPENWORLD.BaseObject.setHighlight(soupbowl, food, THREE.Color(0x0000ff), 1.0, deselectopacity: 0.5);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(soupbowl, food, THREE.Color.fromHex32(0x0000ff), 1.0, deselectopacity: 0.5);//, scalex:1.4, scaley:1, scalez:1.4);
 
     var cheese= await OPENWORLD.Model.createModel('assets/models/cheese.glb');
     food.add(cheese);
-    OPENWORLD.BaseObject.setHighlight(cheese, food, THREE.Color(0x0000ff), 1.0, deselectopacity: 0.5);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(cheese, food, THREE.Color.fromHex32(0x0000ff), 1.0, deselectopacity: 0.5);//, scalex:1.4, scaley:1, scalez:1.4);
 
     addMsgToObj(soupbowl, "Click to eat", scale:0.15, z:15);
     addMsgToObj(cheese, "Click to eat", scale:0.15, z:15);
 
     // When click on the food when seated show eat menu
-    OPENWORLD.BaseObject.setTouchTrigger(food);
+    setTouchTrigger(food);
     // This is when you click on the food on your plate
     food.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
 
@@ -7025,7 +7082,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Room.setAutoIndoors( roomSmellybottle , true);
     scene.add( roomSmellybottle );
 
-    OPENWORLD.Room.setDistanceTrigger( roomSmellybottle , minx:392.6, maxx:396, miny:299.1, maxy:300.4);// dist:0.5);
+    setRoomDistanceTrigger( roomSmellybottle , minx:392.6, maxx:396, miny:299.1, maxy:300.4);// dist:0.5);
 
     var wench2ii =await OPENWORLD.Actor.copyActor( realestatelady,
       texture: "assets/actors/citizenf42.jpg",
@@ -7039,7 +7096,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     addcitizennpc(wench2ii,"wench2ii",false);
     OPENWORLD.Space.faceObjectAlways(wench2ii, camera);
 
-    roomSmellybottle.extra['trigger'].addEventListener('trigger', (THREE.Event event) async {
+    onDistanceTrigger(roomSmellybottle, (THREE.Event event) async {
       if (event.action) {
         chatter=["Are you looking at my cleavage?",
           "Dont ask why this place is called the smelly bottle",
@@ -7053,13 +7110,13 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     });
 
     var board3=board.clone();//await OPENWORLD.Model.createModel('assets/models/board.glb');
-    board3.scale.set(0.3,0.3,0.3);
-    board3.position.set(0.0,0.0,0.0);
+    board3.scale.setValues(0.3,0.3,0.3);
+    board3.position.setValues(0.0,0.0,0.0);
     OPENWORLD.Actor.wield(wench2ii,board3, "Bip01_R_Hand");
 
-    OPENWORLD.BaseObject.setHighlight(board3, board3, THREE.Color(0x0000ff), 1.0, scale:3);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(board3, board3, THREE.Color.fromHex32(0x0000ff), 1.0, scale:3);//, scalex:1.4, scaley:1, scalez:1.4);
     OPENWORLD.BaseObject.highlight(board3, true,scale:3, opacity:0.8);
-    OPENWORLD.BaseObject.setTouchTrigger(board3);
+    setTouchTrigger(board3);
     board3.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
 
       OPENWORLD.BaseObject.highlight(board3, true, scale:3, opacity:1);
@@ -7075,25 +7132,25 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
       });
     });
 
-    Group food2=Group();
+    THREE.Group food2=THREE.Group();
 
     var soupbowl3= soupbowl.clone();
-    food2.scale.set(0.005, 0.005, 0.005);
+    food2.scale.setValues(0.005, 0.005, 0.005);
     OPENWORLD.Space.worldToLocalSurfaceObj(
         food2,393.81, 299.61 ,0.21);
     food2.add(soupbowl3);
     scene.add(food2);
-    OPENWORLD.BaseObject.setHighlight(soupbowl3, food2, THREE.Color(0x0000ff), 1.0, deselectopacity: 0.5);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(soupbowl3, food2, THREE.Color.fromHex32(0x0000ff), 1.0, deselectopacity: 0.5);//, scalex:1.4, scaley:1, scalez:1.4);
 
     var cheese2= cheese.clone();
 
     food2.add(cheese2);
-    OPENWORLD.BaseObject.setHighlight(cheese2, food2, THREE.Color(0x0000ff), 1.0, deselectopacity: 0.5);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(cheese2, food2, THREE.Color.fromHex32(0x0000ff), 1.0, deselectopacity: 0.5);//, scalex:1.4, scaley:1, scalez:1.4);
 
     addMsgToObj(soupbowl3, "Click to eat", scale:0.15, z:15);
     addMsgToObj(cheese2, "Click to eat", scale:0.15, z:15);
 
-    OPENWORLD.BaseObject.setTouchTrigger(food2);
+    setTouchTrigger(food2);
     // This is when you click on the food on your plate
     food2.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
       //  print("touched trigger "+event.action);
@@ -7216,8 +7273,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
    // citizen2,OPENWORLD.Room.getX(roomSmellybottle)+1-0.4, OPENWORLD.Room.getY(roomSmellybottle)+1-0.1, -0.55, 4);
     OPENWORLD.Space.objTurn(citizen2ii,270+45);  //nw
     scene.add(citizen2ii);
-    OPENWORLD.BaseObject.setDistanceTrigger(citizen2ii, dist: 0.5);
-    citizen2ii.extra['trigger'].addEventListener('trigger', (THREE.Event event) async {
+    setDistanceTrigger(citizen2ii, dist: 0.5);
+    onDistanceTrigger(citizen2ii, (THREE.Event event) async {
       if (event.action) {
         if (hasgotup) {
           OPENWORLD.Mob.setChatter(
@@ -7229,8 +7286,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     addcitizennpc(citizen2ii,"citizen22ii",true);
 
     // When get close to wench citizen walks outside so you can have a seat
-    OPENWORLD.BaseObject.setDistanceTrigger(wench2ii, dist: 0.8);
-    wench2ii.extra['trigger'].addEventListener('trigger', (THREE.Event event) async {
+    setDistanceTrigger(wench2ii, dist: 0.8);
+    onDistanceTrigger(wench2ii, (THREE.Event event) async {
       if (event.action) {
         print("smelly bottle wench in");
 
@@ -7257,7 +7314,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // This is the smithy of lindos - all you can do is sell kindling to him and also this where you send the order from the job knight
     var roomSmithy = OPENWORLD.Room.createRoom(381.064,239.750,
-        soundpath: "sounds/fire.mp3", randomsoundpath:"sounds/smithyhammer.mp3", randomsoundgap:60,  volume: 0.05, exitroom: roomDefault); //THREE.Object3D();
+        soundpath: "sounds/fire.mp3", randomsoundpaths: ["sounds/smithyhammer.mp3"], randomsoundgap:60,  volume: 0.05, exitroom: roomDefault); //THREE.Object3D();
     roomSmithy.extra['guide'] = [
       "The smithy is where",
       "armourers and weaponers",
@@ -7269,7 +7326,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Room.setAutoIndoors( roomSmithy, true);
     scene.add( roomSmithy );
 
-    OPENWORLD.Room.setDistanceTrigger( roomSmithy , dist:0.5);
+    setRoomDistanceTrigger( roomSmithy , dist:0.5);
 
     // Fire in kiln
     brandfire = new VolumetricFire(
@@ -7286,7 +7343,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
         brandfire.mesh ,380.40, 239.63,0.25,4);//380.32, 239.63, 0.2, 4);
 
 
-    Group smithy =
+    THREE.Group smithy =
     await OPENWORLD.Actor.createActor('assets/actors/smithy.glb',
         shareanimations: armourer,
         action:"idle2",
@@ -7300,7 +7357,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     addcitizennpc(smithy,"smithy",false);
 
 
-    roomSmithy.extra['trigger'].addEventListener('trigger', (THREE.Event event) async {
+    onDistanceTrigger(roomSmithy, (THREE.Event event) async {
       if (event.action) {
         chatter=["Have you got wood? These furnaces use so much wood.",
           "I pay good money for kindling.",
@@ -7314,13 +7371,13 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     // If click on hammer can sell your kindling
     var kindlingprice=20;  // was 5 but given the effort isn't worth it
     var hammer=await OPENWORLD.Model.createModel('assets/models/hammer.glb');
-    hammer.scale.set(0.2,0.2,0.2);
-    //hammer.children[0].position.set(0,0,0);
+    hammer.scale.setValues(0.2,0.2,0.2);
+    //hammer.children[0].position.setValues(0,0,0);
     OPENWORLD.Actor.wield(smithy,hammer, "Bip01_L_Finger11");//Bip01_R_Hand");
     addMsgToObj(hammer, "Click to sell",scale:0.6);
-    OPENWORLD.BaseObject.setHighlight(hammer, hammer, THREE.Color(0x0000ff), 1.0, scale:5.2);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(hammer, hammer, THREE.Color.fromHex32(0x0000ff), 1.0, scale:5.2);//, scalex:1.4, scaley:1, scalez:1.4);
     OPENWORLD.BaseObject.highlight(hammer, true,scale:5.2, opacity:0.8);
-    OPENWORLD.BaseObject.setTouchTrigger(hammer);
+    setTouchTrigger(hammer);
     hammer.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
 
       OPENWORLD.BaseObject.highlight(hammer, true, scale:5.2, opacity:1);
@@ -7350,9 +7407,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
             'Thanks. We need to keep these kilns running.',
           ], z: 100, width: 300);
         } else {
-          Fluttertoast.showToast(
-              msg: "You dont have any kindling to sell",
-              toastLength: Toast.LENGTH_LONG);
+          showToast("You dont have any kindling to sell");
         }
       }
     });
@@ -7384,7 +7439,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Room.setAutoIndoors( roomPostoffice2, true);
     scene.add( roomPostoffice2);
 
-    OPENWORLD.Room.setDistanceTrigger( roomPostoffice2 , minx:383.6, maxx:386.4, miny:256.3, maxy:257.95);//dist:0.5);
+    setRoomDistanceTrigger( roomPostoffice2 , minx:383.6, maxx:386.4, miny:256.3, maxy:257.95);//dist:0.5);
     // minx: -3.47, maxx: 10.1, miny: -12.4, maxy: -2.1);
 
     var postie2 =await OPENWORLD.Actor.copyActor( realestatelady,
@@ -7399,7 +7454,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     scene.add(postie2);
     addcitizennpc(postie2,"postie2",false);
 
-    roomPostoffice2.extra['trigger'].addEventListener('trigger', (THREE.Event event) async {
+    onDistanceTrigger(roomPostoffice2, (THREE.Event event) async {
       if (event.action) {
         chatter = [
           "Sorting mail can get boring",
@@ -7423,9 +7478,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     scene.add(bag2);
     addMsgToObj(bag2, "Click to check mail", scale:0.1, z:11);
 
-    OPENWORLD.BaseObject.setHighlight(bag2, scene, THREE.Color(0x0000ff), 1.0, scale:1.08);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(bag2, scene, THREE.Color.fromHex32(0x0000ff), 1.0, scale:1.08);//, scalex:1.4, scaley:1, scalez:1.4);
     OPENWORLD.BaseObject.highlight(bag2, true,scale:1.08, opacity:0.5);
-    OPENWORLD.BaseObject.setTouchTrigger(bag2);
+    setTouchTrigger(bag2);
     bag2.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
 
       OPENWORLD.BaseObject.highlight(bag2, true, scale:1.1, opacity:1);
@@ -7464,9 +7519,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Room.setAutoIndoors( roomSoupkitchen, true);
     scene.add( roomSoupkitchen );
 
-    OPENWORLD.Room.setDistanceTrigger( roomSoupkitchen , dist:1.0);
+    setRoomDistanceTrigger( roomSoupkitchen , dist:1.0);
 
-    Group souplady =
+    THREE.Group souplady =
     await OPENWORLD.Actor.createActor('assets/actors/citizenf3.glb',
         z: actoroffset);
     setDefaultActor(souplady );
@@ -7486,14 +7541,14 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     addcitizennpc(homeless,"homeless",true);
 
     var soupbowl2= soupbowl.clone();//await OPENWORLD.Model.createModel('assets/models/soupbowl.glb');
-    soupbowl2.scale.set(0.005, 0.005, 0.005);
+    soupbowl2.scale.setValues(0.005, 0.005, 0.005);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         soupbowl2,386.61,242.78,0.2,4);
     scene.add(soupbowl2);
 
     addMsgToObj(soupbowl2, "Click to eat");
 
-    roomSoupkitchen.extra['trigger'].addEventListener('trigger', (THREE.Event event) async {
+    onDistanceTrigger(roomSoupkitchen, (THREE.Event event) async {
       if (event.action) {
         var minwait=5;
         chatter = [
@@ -7555,7 +7610,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Room.setAutoIndoors( roomWeaponer, true);
     scene.add( roomWeaponer );
 
-    Group weaponer =
+    THREE.Group weaponer =
     await OPENWORLD.Actor.createActor('assets/actors/weaponer.glb',
         z: actoroffset);
     setDefaultActor(weaponer );
@@ -7573,9 +7628,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     scene.add(weaponshop);
     addMsgToObj(weaponshop, "Click for weapons", scale:0.0017, z:0.22);
 
-    OPENWORLD.BaseObject.setHighlight(weaponshop, scene, THREE.Color(0x0000ff), 1.0, scale:1.02);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(weaponshop, scene, THREE.Color.fromHex32(0x0000ff), 1.0, scale:1.02);//, scalex:1.4, scaley:1, scalez:1.4);
     OPENWORLD.BaseObject.highlight(weaponshop, true,scale:1.01, opacity:0.7);
-    OPENWORLD.BaseObject.setTouchTrigger(weaponshop);
+    setTouchTrigger(weaponshop);
     markup=1.2;
     markdown=0.8;
     var swordprice=100;
@@ -7614,10 +7669,10 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     // When on ground pick it up - get icon
     setGetObject(sword3,scaleselected: 1.1, scalenotselected: 1.1);// {scalenotselected:1.025, scaleselected:1.05})
     OPENWORLD.BaseObject.highlight(sword3,false);
-    OPENWORLD.Room.setDistanceTrigger( roomWeaponer , dist:0.5);
+    setRoomDistanceTrigger( roomWeaponer , dist:0.5);
 
     var haswielded=false;
-    roomWeaponer.extra['trigger'].addEventListener('trigger', (THREE.Event event) async {
+    onDistanceTrigger(roomWeaponer, (THREE.Event event) async {
       if (event.action) {
         sword3.visible=!inventorynames.contains("sword");
         OPENWORLD.BaseObject.highlight(sword3,true);
@@ -7677,7 +7732,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // The battleaxe you can buy
     var battleaxe=await OPENWORLD.Model.createModel('assets/models/battleaxe.glb');
-    battleaxe.scale.set(0.01, 0.01, 0.01);
+    battleaxe.scale.setValues(0.01, 0.01, 0.01);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         battleaxe,OPENWORLD.Room.getX(roomWeaponer),OPENWORLD.Room.getY(roomWeaponer),0.0,4);
     setValue(battleaxe,"battleaxe",battleaxeprice);
@@ -7732,7 +7787,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Room.setAutoIndoors( roomTrixiehouse, true);
     scene.add( roomTrixiehouse );
 
-    OPENWORLD.Room.setDistanceTrigger( roomTrixiehouse , minx:393.8, maxx:395.1, miny:295.2, maxy:296.9);//dist:0.5);
+    setRoomDistanceTrigger( roomTrixiehouse , minx:393.8, maxx:395.1, miny:295.2, maxy:296.9);//dist:0.5);
 
     // Trixie lying on bed with sexy pose
     trixie= await OPENWORLD.Actor.createActor('assets/actors/trixie.glb',
@@ -7746,8 +7801,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Space.objTurn(trixie  ,0);  //n
     scene.add( trixie  );
     addcitizennpc(trixie,"trixie",true);
-    OPENWORLD.BaseObject.setDistanceTrigger(trixie, dist: 2);
-    trixie.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(trixie, dist: 2);
+    onDistanceTrigger(trixie, (THREE.Event event) {
       if (event.action) {
         chatter = ["You want me?",
           "My god, you are so good looking.",
@@ -7764,7 +7819,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     // Opium on the bedstand
     var opium= await OPENWORLD.Model.createModel('assets/models/opium.glb');
     setValue(opium, "opium",50);
-    opium.scale.set(0.002, 0.002, 0.002);
+    opium.scale.setValues(0.002, 0.002, 0.002);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(opium,394.04, 295.84,0.25,4);
     scene.add(opium);
     setGetObject(opium, scalenotselected :1.1, scaleselected: 1.15);//,on:false);// {scalenotselected:1.025, scaleselected:1.05})
@@ -7795,25 +7850,25 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     addcitizennpc(storemanii,"storemanii",true);
 
-    OPENWORLD.BaseObject.setDistanceTrigger(storemanii, dist: 10, ignoreifhidden: false);
-    storemanii.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(storemanii, dist: 10, ignoreifhidden: false);
+    onDistanceTrigger(storemanii, (THREE.Event event) {
       if (event.action) {
         storemanii.visible = true;
         print("storeman start moveto again");
         OPENWORLD.Mob.moveToLoop(
             storemanii,
             [
-              [387.26, 285.76, 0, 0.2],
-              [386.05, 281.09, 0, 0.2],
-              [381.72, 276.86, 0, 0.2],
-              [378.29, 276.46, 0, 0.2],
-              [379.32, 271.84, 0, 0.2],
-              [383.69, 268.31, 0, 0.2],
-              [382.22, 263.48, 0, 0.2],
-              [383.65, 253.85, 0, 0.2],
-             [ 385.76, 252.93, 0, 0.2],
-              [388.13, 245.92, 0, 0.2],
-             [ 389.64, 238.58, 0, 0.2],
+              {'p': [387.26, 285.76, 0], 'v': 0.2},
+              {'p': [386.05, 281.09, 0], 'v': 0.2},
+              {'p': [381.72, 276.86, 0], 'v': 0.2},
+              {'p': [378.29, 276.46, 0], 'v': 0.2},
+              {'p': [379.32, 271.84, 0], 'v': 0.2},
+              {'p': [383.69, 268.31, 0], 'v': 0.2},
+              {'p': [382.22, 263.48, 0], 'v': 0.2},
+              {'p': [383.65, 253.85, 0], 'v': 0.2},
+             {'p': [385.76, 252.93, 0], 'v': 0.2},
+              {'p': [388.13, 245.92, 0], 'v': 0.2},
+             {'p': [389.64, 238.58, 0], 'v': 0.2},
             ],
             action: "walk",
             randomposition: true);
@@ -7835,8 +7890,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     scene.add(smithyii);
     addcitizennpc(smithyii,"smithyii",true);
-    OPENWORLD.BaseObject.setDistanceTrigger(smithyii, dist: 10, ignoreifhidden: false);
-    smithyii.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(smithyii, dist: 10, ignoreifhidden: false);
+    onDistanceTrigger(smithyii, (THREE.Event event) {
       if (event.action) {
         //  print("guard visible");
         smithyii.visible = true;
@@ -7845,17 +7900,17 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
         OPENWORLD.Mob.moveToLoop(
             smithyii,
             [
-              [388.13, 245.92, 0, 0.2],
-              [ 385.76, 252.93, 0, 0.2],
-              [383.65, 253.85, 0, 0.2],
-              [382.22, 263.48, 0, 0.2],
-              [383.69, 268.31, 0, 0.2],
-              [379.32, 271.84, 0, 0.2],
-              [378.29, 276.46, 0, 0.2],
-              [381.72, 276.86, 0, 0.2],
-              [386.05, 281.09, 0, 0.2],
-              [387.26, 285.76, 0, 0.2],
-              [ 372.68,331.52,0,0.2]
+              {'p': [388.13, 245.92, 0], 'v': 0.2},
+              {'p': [385.76, 252.93, 0], 'v': 0.2},
+              {'p': [383.65, 253.85, 0], 'v': 0.2},
+              {'p': [382.22, 263.48, 0], 'v': 0.2},
+              {'p': [383.69, 268.31, 0], 'v': 0.2},
+              {'p': [379.32, 271.84, 0], 'v': 0.2},
+              {'p': [378.29, 276.46, 0], 'v': 0.2},
+              {'p': [381.72, 276.86, 0], 'v': 0.2},
+              {'p': [386.05, 281.09, 0], 'v': 0.2},
+              {'p': [387.26, 285.76, 0], 'v': 0.2},
+              {'p': [372.68, 331.52, 0], 'v': 0.2}
             ],
             action: "walk",
             randomposition: true);
@@ -7869,11 +7924,11 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // This is the trixie who is in the street
     var roomTrixie = OPENWORLD.Room.createRoom(391.787,253.682,
-        soundpath: "sounds/home.mp3",randomsoundpath: "sounds/trixie.mp3", randomsoundgap:50, volume: 0.2, exitroom: roomDefault); //THREE.Object3D();
+        soundpath: "sounds/home.mp3",randomsoundpaths: ["sounds/trixie.mp3"], randomsoundgap:50, volume: 0.2, exitroom: roomDefault); //THREE.Object3D();
 
     scene.add(roomTrixie );
 
-    OPENWORLD.Room.setDistanceTrigger( roomTrixie , dist:1.5);
+    setRoomDistanceTrigger( roomTrixie , dist:1.5);
 
     var trixie3= await OPENWORLD.Actor.copyActor(trixie,  texture: "assets/actors/trixie3.jpg", action:"idle2");
     setDefaultActor(trixie3);
@@ -7884,8 +7939,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     addcitizennpc(trixie3,"trixie3",true);
 
 
-    OPENWORLD.BaseObject.setDistanceTrigger(trixie3, dist: 4);
-    trixie3.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(trixie3, dist: 4);
+    onDistanceTrigger(trixie3, (THREE.Event event) {
       if (event.action) {
         chatter=["Hello there!",
           "Are you looking for some fun?",
@@ -7917,7 +7972,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     scene.add(roomBareground  );
 
-    OPENWORLD.Room.setDistanceTrigger( roomBareground  , dist:2);
+    setRoomDistanceTrigger( roomBareground  , dist:2);
     var fluteresident= await OPENWORLD.Actor.copyActor(citizen,  texture: "assets/actors/citizen12.jpg", action:"sittable");
     setDefaultActor(fluteresident);
 
@@ -7928,8 +7983,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     addcitizennpc(fluteresident,"fluteresident",true);
 
     // Flute resident tells jokes and laughs at his own jokes
-    OPENWORLD.BaseObject.setDistanceTrigger(fluteresident, dist: 1.5);
-    fluteresident.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(fluteresident, dist: 1.5);
+    onDistanceTrigger(fluteresident, (THREE.Event event) {
       if (event.action) {
         OPENWORLD.Mob.clearText(fluteresident);
         print("flute resident in");
@@ -7977,7 +8032,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     // Can take the flute next to the flute resident - can play the flute as well
     var fluteprice=50;
     var flute=await OPENWORLD.Model.createModel('assets/models/flute.glb');
-    flute.scale.set(0.01, 0.01, 0.01);
+    flute.scale.setValues(0.01, 0.01, 0.01);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
     flute,439.6,280.350,0.18,4);
     OPENWORLD.Space.objTurn(flute,315-90);
@@ -8059,7 +8114,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // This is in the acropolis with the three knights including the postulant and training knight
     var roomGrandstoaii= OPENWORLD.Room.createRoom(431.060,273.420,
-        soundpath: "sounds/acropolis.mp3", volume: 0.05,  randomsoundpath:"sounds/meow.mp3", randomsoundgap:30, exitroom: roomDefault); //THREE.Object3D();
+        soundpath: "sounds/acropolis.mp3", volume: 0.05,  randomsoundpaths: ["sounds/meow.mp3"], randomsoundgap:30, exitroom: roomDefault); //THREE.Object3D();
 
     roomGrandstoaii.extra['guide'] = [
       "You are at the acropolis",
@@ -8073,7 +8128,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     ];
 
     scene.add(roomGrandstoaii );
-    OPENWORLD.Room.setDistanceTrigger( roomGrandstoaii  , dist:1.5);
+    setRoomDistanceTrigger( roomGrandstoaii  , dist:1.5);
 
     // teacher knight
     knight22= await OPENWORLD.Actor.copyActor(knight2, texture: "assets/actors/knight22.jpg");
@@ -8093,8 +8148,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Actor.wield(knight22, sword4, "Bip01_R_Finger11");
 
     // If walk near the teacher knight will try to give you a lesson
-    OPENWORLD.BaseObject.setDistanceTrigger(knight22, dist: 0.7);
-    knight22.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(knight22, dist: 0.7);
+    onDistanceTrigger(knight22, (THREE.Event event) {
       if (event.action) {
         print("teacher in");
 
@@ -8145,7 +8200,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
         OPENWORLD.Mob.setSpeech(knight22, chatter,  randwait:0, minwait:wait, z: 80, width: 300, scale:0.4);
       } else {
         print("teacher out");
-        OPENWORLD.Space.faceObjectAlwaysRemove(knight22);
+        OPENWORLD.Space.removeFaceObjectAlways(knight22);
         OPENWORLD.Mob.setSpeech(knight22, ["Is my lesson boring you?", ],    z: 80, width: 300, scale:0.4);
 
       }
@@ -8163,7 +8218,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     addknightnpc(postulant,"postulant");
 
     // knight3 used in quartersdoorway - the jobknight!
-    Group knight3 =
+    THREE.Group knight3 =
     await OPENWORLD.Actor.createActor('assets/actors/knight3.glb',
         shareanimations: armourer,
         action:"sittableidle",
@@ -8182,9 +8237,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     addknightnpc(postulant2,"postulant2");
 
     // Cat the can kill - just wonder around
-    Group cat = await OPENWORLD.Actor.createActor('assets/actors/cat.glb',
+    THREE.Group cat = await OPENWORLD.Actor.createActor('assets/actors/cat.glb',
         z:0);
-    cat.scale.set(0.01,0.01,0.01);
+    cat.scale.setValues(0.01,0.01,0.01);
     OPENWORLD.Space.objTurn(cat.children[0],0);
 
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
@@ -8193,7 +8248,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Space.objTurn(cat,0);
     scene.add(cat);
     addnpc(cat, "cat", true,deathsoundpath: "sounds/catfight.mp3");
-    OPENWORLD.BaseObject.setCustomTrigger(cat); //, dist: 1.5);
+    setCustomTrigger(cat); //, dist: 1.5);
     cat.extra['customtrigger'].addEventListener(
         'deadtrigger', (THREE.Event event) {
           // Postulant is happy when you kill the cat
@@ -8205,8 +8260,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     }
     );
     // Have cat wonder around stoa
-    OPENWORLD.BaseObject.setDistanceTrigger(cat, dist: 4);
-    cat.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(cat, dist: 4);
+    onDistanceTrigger(cat, (THREE.Event event) {
       if (event.action) {
         print("cat in");
         OPENWORLD.Mob.randomwalk(cat, 0.5, 0.15, 0.1,
@@ -8282,7 +8337,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     var brand=THREE.Group();
     var brandi= await OPENWORLD.Model.createModel('assets/models/flamingbrand.glb');
 
-    brandi.scale.set(0.012, 0.012, 0.012);
+    brandi.scale.setValues(0.012, 0.012, 0.012);
     brand.add(brandi);
     scene.add(brand);
 
@@ -8299,11 +8354,11 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Space.worldToLocalSurfaceObjHide(brand,429.43, 268.65 ,0,6);//431.22, 276.84,2);
 
 
-    OPENWORLD.Room.setDistanceTrigger( roomQuartersdoorway  , dist:0.5);
+    setRoomDistanceTrigger( roomQuartersdoorway  , dist:0.5);
     // minx: -3.47, maxx: 10.1, miny: -12.4, maxy: -2.1);
     var donejob=await OPENWORLD.Persistence.get("donejob",def:false);//false;
 
-    roomQuartersdoorway.extra['trigger'].addEventListener('trigger', (THREE.Event event) async {
+    onDistanceTrigger(roomQuartersdoorway, (THREE.Event event) async {
       if (event.action) {
         // Show nod if haven't started job yet so can nod and start the job
         if (whistle&&!inventorynames.contains("card")&&!inventorynames.contains("receipt")&&!donejob) {
@@ -8340,7 +8395,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // This is the order of the jobknight to give to the smithy for pants and greaves
     var card= await OPENWORLD.Model.createModel('assets/models/card.glb');
-    card.scale.set(0.007, 0.007, 0.007);
+    card.scale.setValues(0.007, 0.007, 0.007);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(card,OPENWORLD.Room.getX(roomQuartersdoorway), OPENWORLD.Room.getY(roomQuartersdoorway),0.0,4);
     setGetObject(card,on:false);// {scalenotselected:1.025, scaleselected:1.05})
 
@@ -8366,9 +8421,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
         }
 
       } else
-        Fluttertoast.showToast(
-            msg: "The armourer isn't here",
-            toastLength: Toast.LENGTH_LONG);
+        showToast("The armourer isn't here");
     }
     var cardtext=['ORDER for the armourers',
       'Leather pants',
@@ -8390,8 +8443,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     addknightnpc(jobknight,"jobknight");
 
     var intakinghauberk=false;
-    OPENWORLD.BaseObject.setDistanceTrigger(jobknight, dist: 0.9);
-    jobknight.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(jobknight, dist: 0.9);
+    onDistanceTrigger(jobknight, (THREE.Event event) {
       // if giving the player the initial greeting then dont offer jobs
       if (jobknight.extra.containsKey('ingreeting')&&jobknight.extra['ingreeting'])
         return;
@@ -8454,7 +8507,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
             if (!jobknight.extra.containsKey('nodtrigger')) {
               // When player nods give the player the order
-              OPENWORLD.BaseObject.setCustomTrigger(jobknight); //, dist: 1.5);
+              setCustomTrigger(jobknight); //, dist: 1.5);
               jobknight.extra['nodtrigger']=true;
               jobknight.extra['customtrigger'].addEventListener(
                   'nodtrigger', (THREE.Event event) {
@@ -8481,7 +8534,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     // Hide dagger under bunk in quarters
     var daggerprice=50;
     var dagger=await OPENWORLD.Model.createModel('assets/models/knife.glb');
-    dagger.scale.set(0.01, 0.01, 0.01);
+    dagger.scale.setValues(0.01, 0.01, 0.01);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         dagger,431.16, 275.86,0.0,4);
     scene.add(dagger);
@@ -8495,7 +8548,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     // Put book on bedside table
     var bookprice=50;
     var book=await OPENWORLD.Model.createModel('assets/models/book.glb');
-    book.scale.set(0.004, 0.004, 0.004);
+    book.scale.setValues(0.004, 0.004, 0.004);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
     book,430.30,275.35,0.25,4);
     scene.add(book);
@@ -8523,7 +8576,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
    // OPENWORLD.Space.objPitch(rosary,90);
     scene.add(rosary);
     setValue(rosary,"rosary",rosaryprice);
-    setGetObject(rosary, scalenotselected:1.1, scaleselected:1.1, color:THREE.Color(0x000088));
+    setGetObject(rosary, scalenotselected:1.1, scaleselected:1.1, color:THREE.Color.fromHex32(0x000088));
     // OPENWORLD.BaseObject.highlight(dagger,false);
     var rosarytext=[
     "Our Father, Who art in heaven, Hallowed be Thy Name.",
@@ -8543,7 +8596,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     OPENWORLD.Space.objTurn(hauberk2,-90+15);
     scene.add(hauberk2);
-    OPENWORLD.BaseObject.setHighlight(hauberk2, scene, THREE.Color(0x0000ff), 1.0,  deselectopacity: 0.5);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(hauberk2, scene, THREE.Color.fromHex32(0x0000ff), 1.0,  deselectopacity: 0.5);//, scalex:1.4, scaley:1, scalez:1.4);
     OPENWORLD.BaseObject.highlight(hauberk2, true, opacity:0.5);
     setGetObject(hauberk2,takelabel:"Take");
 
@@ -8570,7 +8623,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     OPENWORLD.Space.objTurn(hauberk3,-90+15);
     scene.add(hauberk3);
-    OPENWORLD.BaseObject.setHighlight(hauberk3, scene, THREE.Color(0x0000ff), 1.0,  deselectopacity: 0.5);//, scalex:1.4, scaley:1, scalez:1.4);
+    OPENWORLD.BaseObject.setHighlight(hauberk3, scene, THREE.Color.fromHex32(0x0000ff), 1.0,  deselectopacity: 0.5);//, scalex:1.4, scaley:1, scalez:1.4);
     OPENWORLD.BaseObject.highlight(hauberk3, true, opacity:0.5);
     setGetObject(hauberk3,takelabel:"Take");
     hauberk3.extra['touchtrigger'].addEventListener('triggermenu', (THREE.Event event) {
@@ -8583,17 +8636,17 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // Picture of lady under bed
     var lady2=ladycard.clone();
-    lady2.scale.set(0.008,0.008,0.008);
+    lady2.scale.setValues(0.008,0.008,0.008);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         lady2,429.02, 279.45,0.05,4);
     OPENWORLD.Space.objRoll(lady2,90);
     scene.add(lady2);
 
     // Put funny trixie message on wall
-    var trixiesign =   await OPENWORLD.Plane.makeTextPlane("Trixie was here", fontSize:20, Colors.black, backgroundopacity: 0, width:300);//scale:0.01);//THREE.Color(0xff0000));
+    var trixiesign =   await OPENWORLD.Plane.makeTextPlane("Trixie was here", fontSize:20, Colors.black, backgroundopacity: 0, width:300);//scale:0.01);//THREE.Color.fromHex32(0xff0000));
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         trixiesign,428.84, 279.15  , 0.4, 4);
-    trixiesign.scale.set(0.1,0.1,0.1);
+    trixiesign.scale.setValues(0.1,0.1,0.1);
     OPENWORLD.Space.objTurn(trixiesign, -90);
     scene.add(trixiesign);
 
@@ -8605,8 +8658,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     scene.add(roomGrandstoa  );
 
     // Jobknight comes out and greets you if you dont have a whistle to call Amon yet
-    OPENWORLD.Room.setDistanceTrigger( roomGrandstoa  , dist:1.5);
-    roomGrandstoa.extra['trigger'].addEventListener('trigger', (THREE.Event event) async {
+    setRoomDistanceTrigger( roomGrandstoa  , dist:1.5);
+    onDistanceTrigger(roomGrandstoa, (THREE.Event event) async {
 
       if (event.action) {
         print("enter grand stoa room");
@@ -8734,7 +8787,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     // Put a bottle on ground with hint that dagger is under the bunk in the quarters
     var bottleprice=5;
     var bottle2=bottle.clone();
-    bottle2.scale.set(0.05, 0.05, 0.05);
+    bottle2.scale.setValues(0.05, 0.05, 0.05);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         bottle2,430.59,276.81,0,4,lerpopacity: 1.0);
     scene.add(bottle2);
@@ -8758,7 +8811,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     ];
     scene.add(roomPropylaea );
 
-    OPENWORLD.Room.setDistanceTrigger( roomPropylaea  , dist:4);
+    setRoomDistanceTrigger( roomPropylaea  , dist:4);
 
     // give information about the roman stoa if in this room
     var roomRomanstoa= OPENWORLD.Room.createRoom(  427.39, 261.71,
@@ -8770,7 +8823,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
       "guiding spirit Psithyros."
     ];
     scene.add(roomRomanstoa );
-    OPENWORLD.Room.setDistanceTrigger( roomRomanstoa  , dist:4);
+    setRoomDistanceTrigger( roomRomanstoa  , dist:4);
 
     // This is where the quest is concluded where if you have spotted the journalist in the newsroom and at the beach then the journalist
     // will give information to the bandit about troops. When giving information kill the bandit and journalist and you've completed the quest and
@@ -8786,7 +8839,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     scene.add(roomBandit );
 
-    OPENWORLD.Room.setDistanceTrigger( roomBandit  , dist:8);
+    setRoomDistanceTrigger( roomBandit  , dist:8);
 
     bandit= await OPENWORLD.Actor.copyActor(beggar,  texture: "assets/actors/citizen43.jpg", action:"idle2");//, texture: "assets/actors/knight32.jpg", action:"sitidle");
 
@@ -8803,7 +8856,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     var rockpos=[[305.35, 432.52],[ 307.93, 427.45],[301.63, 427.94]];
     var hidepos=[[304.93, 433.70],[308.96, 427.71], [300.79, 427.31]];
     var rockorig= await OPENWORLD.Model.createModel('assets/models/rock.glb');
-    rockorig.scale.set(0.04, 0.04, 0.04);
+    rockorig.scale.setValues(0.04, 0.04, 0.04);
     for (var pos in rockpos) {
       var rock=rockorig.clone();
       OPENWORLD.Space.worldToLocalSurfaceObjHide(
@@ -8811,11 +8864,11 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
           10); //409.66, 328.47,0,4);
       scene.add(rock);
     }
-    OPENWORLD.BaseObject.setDistanceTrigger(bandit, dist: 3);
+    setDistanceTrigger(bandit, dist: 3);
 
     // Bandit runs away if jouranlist isn't coming to give info
     var hasfollowed=false;
-    bandit.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    onDistanceTrigger(bandit, (THREE.Event event) {
       if (event.action) {
         //duration:20,
         if (!journalist2beachseen) {
@@ -8883,7 +8936,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     });
 
     // You can only kill the bandit when journalist is there otherwise tries to get away from you
-    OPENWORLD.BaseObject.setCustomTrigger(bandit);//, dist: 1.5);
+    setCustomTrigger(bandit);//, dist: 1.5);
     bandit.extra['customtrigger'].addEventListener('strucktrigger', (THREE.Event event) {
       var dist=OPENWORLD.Space.getDistanceBetweenObjs(bandit,journalist2);
       if (dist<7) {
@@ -8893,7 +8946,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
         //  OPENWORLD.Space.faceObjectLerp(npc,camera,1);
         if (getActorHealth(bandit) <= 0) {
           actorDie(bandit); //,diesoundpath:"sounds/die.mp3");
-          OPENWORLD.BaseObject.disableDistanceTrigger(bandit);
+          disableDistanceTrigger(bandit);
           OPENWORLD.Mob.clearText(bandit);
           OPENWORLD.BaseObject.clearTimers(bandit);
 
@@ -8924,7 +8977,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // Put a parrot near sword so is more visible from a distance
     var deadparrot3 = await OPENWORLD.Sprite.cloneSprite(deadparrot);
-    deadparrot3.scale.set(2.0,2.0,2.0);
+    deadparrot3.scale.setValues(2.0,2.0,2.0);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         deadparrot3,322.93+0.3, 390.61,0,10);//377.04, 280.52,0.05,4);//376.68, 281.48, 0.25, 4);
     scene.add(deadparrot3);
@@ -8946,7 +8999,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     scene.add(roomBeach );
 
-    OPENWORLD.Room.setDistanceTrigger( roomBeach  , dist:0.5);
+    setRoomDistanceTrigger( roomBeach  , dist:0.5);
 
     // Have dr have encourage player to try out the boat
     var drhector= await OPENWORLD.Actor.copyActor( citizen2);
@@ -8957,9 +9010,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     scene.add(drhector);
     addcitizennpc(drhector,"drhector",true);
 
-    OPENWORLD.BaseObject.setDistanceTrigger(drhector, dist: 3);
+    setDistanceTrigger(drhector, dist: 3);
     // OPENWORLD.Space.objTurn(boat2 ,180);
-    drhector.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    onDistanceTrigger(drhector, (THREE.Event event) {
       if (event.action) {
         OPENWORLD.Mob.setSpeech(
             drhector, ["Why not take her for a spin?"], z: 80,
@@ -8983,25 +9036,25 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
         'assets/textures/parrot.png', 0.15, 0.09,
         ambient: false);// await OPENWORLD.Sprite.cloneSprite(deadparrot);
 
-    deadparrot2.scale.set(100.0,100.0,100.0);
-    deadparrot2.children[0].position.set(0.0,0.0,0.03);
+    deadparrot2.scale.setValues(100.0,100.0,100.0);
+    deadparrot2.children[0].position.setValues(0.0,0.0,0.03);
 
     OPENWORLD.Actor.wield(drhector, deadparrot2 , "Bip01_L_Arm");//Bip01_R_Hand");
 
     // Load boat
     boat2= await OPENWORLD.Model.createModel('assets/models/boat2.glb');
     boat2.extra['name']='boat';
-    boat2.scale.set(0.03, 0.03, 0.03);
+    boat2.scale.setValues(0.03, 0.03, 0.03);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         boat2 ,408.18, 328.47, 0, 20);
     boat2.children[0].extra['name']='boat2';
 
     scene.add(boat2);
 
-    OPENWORLD.BaseObject.setDistanceTrigger(boat2, dist: 0.5);
+    setDistanceTrigger(boat2, dist: 0.5);
 
     // If get near boat then sail it
-    boat2.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    onDistanceTrigger(boat2, (THREE.Event event) {
       if (event.action) {
         // When boatriding true then in animate() moves the boat along with the player and puts player above sea level
         boatriding=true;
@@ -9011,7 +9064,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
         // Move player forward into sea
         OPENWORLD.Space.objMoveAngleSurface(camera,OPENWORLD.You.getMoveDir(),2,0);//OPENWORLD.Camera.cameraoffset);
 
-        OPENWORLD.BaseObject.disableDistanceTrigger(boat2);
+        disableDistanceTrigger(boat2);
 
       } else {
 
@@ -9030,9 +9083,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     scene.add(roomDigging );
 
-    OPENWORLD.Room.setDistanceTrigger( roomDigging  , dist:4.0);
+    setRoomDistanceTrigger( roomDigging  , dist:4.0);
 
-    Group shoveler =
+    THREE.Group shoveler =
     await OPENWORLD.Actor.createActor('assets/actors/shoveler.glb',
         shareanimations: armourer,
         action:"shovel",
@@ -9052,8 +9105,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Space.objTurn(shoveler2,90);
     scene.add(shoveler2);
     addcitizennpc(shoveler2,"shoveler2",true);
-    OPENWORLD.BaseObject.setDistanceTrigger(shoveler2, dist: 4);
-    shoveler2.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(shoveler2, dist: 4);
+    onDistanceTrigger(shoveler2, (THREE.Event event) {
       if (event.action) {
         OPENWORLD.Mob.setChatter(shoveler2, [
           "What's keeping the Knight Prefect?",
@@ -9073,8 +9126,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     addcitizennpc(citizeniii,"citizeniii",true);
 
     OPENWORLD.Space.faceObjectAlways(citizeniii, camera);
-    OPENWORLD.BaseObject.setDistanceTrigger(citizeniii, dist: 4);
-    citizeniii.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(citizeniii, dist: 4);
+    onDistanceTrigger(citizeniii, (THREE.Event event) {
       if (event.action) {
         OPENWORLD.Mob.setChatter(citizeniii, [
           "You know when you dig have your knees 45°",
@@ -9130,7 +9183,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // Show cannons that are used for defence
     var cannonorig= await OPENWORLD.Model.createModel('assets/models/cannon.glb');
-    cannonorig.scale.set(0.005, 0.005, 0.005);
+    cannonorig.scale.setValues(0.005, 0.005, 0.005);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         cannonorig,668.80, 542.78,0,8);
     scene.add(cannonorig);
@@ -9152,7 +9205,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     scene.add(roomFieldTent);
 
-    OPENWORLD.Room.setDistanceTrigger( roomFieldTent  , dist:0.5);
+    setRoomDistanceTrigger( roomFieldTent  , dist:0.5);
 
     var postulant3= await OPENWORLD.Actor.copyActor(postulant,  action:"sitidle");
 
@@ -9162,11 +9215,11 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Space.objTurn(postulant3,50);
     scene.add(postulant3);
     addknightnpc(postulant3,"postulant3");
-    OPENWORLD.BaseObject.setDistanceTrigger(postulant3, dist: 1);
+    setDistanceTrigger(postulant3, dist: 1);
     var hasjumpedtick=-1;
     var issitting=true;
     // Show startled knight jump up when you get near
-    postulant3.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    onDistanceTrigger(postulant3, (THREE.Event event) {
       if (event.action) {
           if (OPENWORLD.System.currentMilliseconds()-hasjumpedtick<60*1000)
             return;
@@ -9219,11 +9272,11 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
       "is always begging for kindling.",
     ];
     scene.add(roomKindling);
-    OPENWORLD.Room.setDistanceTrigger( roomKindling  , dist:4);
+    setRoomDistanceTrigger( roomKindling  , dist:4);
 
     // Create three bundles of kindling you can take
     var kindlingorig= await OPENWORLD.Model.createModel('assets/models/kindling.glb');
-    kindlingorig.scale.set(0.04, 0.04, 0.04);
+    kindlingorig.scale.setValues(0.04, 0.04, 0.04);
     OPENWORLD.Space.objPitch(kindlingorig,-15);
 
     for (var i=0; i<3; i++) {
@@ -9256,7 +9309,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     //  Sheep between lindos and the acropolis
     var roomSheep= OPENWORLD.Room.createRoom(414.479,260.357,
-        soundpath: "sounds/field.mp3", volume: 0.05, randomsoundpath:"sounds/bah.mp3", randomsoundgap:50, exitroom: roomDefault); //THREE.Object3D();
+        soundpath: "sounds/field.mp3", volume: 0.05, randomsoundpaths: ["sounds/bah.mp3"], randomsoundgap:50, exitroom: roomDefault); //THREE.Object3D();
 
     scene.add(roomSheep );
 
@@ -9268,8 +9321,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // If stand still for too long near sheep the sheperd arrives and tells you off
     // If you continue to stand there the sheperd will attack you
-    OPENWORLD.Room.setDistanceTrigger( roomSheep  , dist:8);
-    roomSheep.extra['trigger'].addEventListener('trigger', (THREE.Event event) async {
+    setRoomDistanceTrigger( roomSheep  , dist:8);
+    onDistanceTrigger(roomSheep, (THREE.Event event) async {
       if (event.action) {
         print("in sheep");
 
@@ -9314,10 +9367,10 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     });
 
     // Create three sheep that wonder around
-    Group sheeporig =
+    THREE.Group sheeporig =
     await OPENWORLD.Actor.createActor('assets/actors/sheep.glb', shareanimations: dog
     );
-    sheeporig.scale.set(0.005,0.005,0.005);
+    sheeporig.scale.setValues(0.005,0.005,0.005);
     for (var i=0; i<3; i++) {
       var sheep = await OPENWORLD.Actor.copyActor(sheeporig);
       OPENWORLD.Space.worldToLocalSurfaceObjHide(
@@ -9329,8 +9382,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
       //  OPENWORLD.Space.objTurn(crab  ,90);  //e
       scene.add(sheep);
       addnpc(sheep, "sheep", true, deathsoundpath: "sounds/bah.mp3");
-      OPENWORLD.BaseObject.setDistanceTrigger(sheep, dist: 5);
-      sheep.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+      setDistanceTrigger(sheep, dist: 5);
+      onDistanceTrigger(sheep, (THREE.Event event) {
         if (event.action) {
           OPENWORLD.Mob.randomwalk(sheep, 5, 0.05, 0.3,
               action: "walk",
@@ -9344,10 +9397,10 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     // This is the sheep between the beach and lindos
     var roomSheep3= OPENWORLD.Room.createRoom(393.97, 316.09,
-        soundpath: "sounds/field.mp3", volume: 0.05, randomsoundpath:"sounds/bah.mp3", randomsoundgap:50, exitroom: roomDefault); //THREE.Object3D();
+        soundpath: "sounds/field.mp3", volume: 0.05, randomsoundpaths: ["sounds/bah.mp3"], randomsoundgap:50, exitroom: roomDefault); //THREE.Object3D();
 
     scene.add(roomSheep3 );
-    OPENWORLD.Room.setDistanceTrigger( roomSheep3  , dist:8);
+    setRoomDistanceTrigger( roomSheep3  , dist:8);
 
     // Create three sheep but there is no sheperd
     for (var i=0; i<3; i++) {
@@ -9361,8 +9414,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
       scene.add(sheep);
       addnpc(sheep, "sheep", true,deathsoundpath: "sounds/bah.mp3");
-      OPENWORLD.BaseObject.setDistanceTrigger(sheep, dist: 5);
-      sheep.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+      setDistanceTrigger(sheep, dist: 5);
+      onDistanceTrigger(sheep, (THREE.Event event) {
         if (event.action) {
           OPENWORLD.Mob.randomwalk(sheep, 5, 0.05, 0.3,
               action: "walk",
@@ -9378,11 +9431,11 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     var roomWildDog= OPENWORLD.Room.createRoom(123.096,512.404,
         soundpath: "sounds/field.mp3", volume: 0.05, exitroom: roomDefault); //THREE.Object3D();
     scene.add(roomWildDog);
-    Group wilddog = await OPENWORLD.Actor.createActor('assets/actors/wilddog.glb',
+    THREE.Group wilddog = await OPENWORLD.Actor.createActor('assets/actors/wilddog.glb',
       shareanimations: dog,
       duration:3
     );
-    wilddog.scale.set(0.005,0.005,0.005);
+    wilddog.scale.setValues(0.005,0.005,0.005);
     OPENWORLD.Space.objTurn(wilddog.children[0],0);
 
     // If you get too near the wild dog it will attack you
@@ -9393,9 +9446,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     OPENWORLD.Space.objTurn(wilddog,wilddir);
     scene.add(wilddog);
     addnpc(wilddog, "wilddog", true,deathsoundpath: "sounds/yelp.mp3");
-    OPENWORLD.BaseObject.setDistanceTrigger(wilddog, dist: 1);
+    setDistanceTrigger(wilddog, dist: 1);
     // OPENWORLD.Space.objTurn(boat2 ,180);
-    wilddog.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    onDistanceTrigger(wilddog, (THREE.Event event) {
       if (event.action) {
         Future.delayed(Duration(milliseconds: (OPENWORLD.Math.random()*5000).round()), () {
           actorAttack(wilddog,attackaction: "attack");
@@ -9405,8 +9458,8 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     });
 
     // If at a distance from the dog then will urinate or eat the meat
-    OPENWORLD.Room.setDistanceTrigger( roomWildDog  , dist:10);
-    roomWildDog.extra['trigger'].addEventListener('trigger', (THREE.Event event) async {
+    setRoomDistanceTrigger( roomWildDog  , dist:10);
+    onDistanceTrigger(roomWildDog, (THREE.Event event) async {
       if (event.action) {
         var t=Timer.periodic(Duration(seconds: 15), (timer) {
           if (OPENWORLD.Math.random()<0.2)
@@ -9423,7 +9476,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     });
 
     // Put meat in front of wild dog
-    var meatpos=OPENWORLD.Math.vectorMoveFoward(wildpos[0], wildpos[1],wilddir,0.18);
+    var meatpos=OPENWORLD.Math.vectorMoveForward(wildpos[0], wildpos[1],wilddir,0.18);
     var meat2= meat3.clone();
 
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
@@ -9445,7 +9498,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     scene.add(roomCannon);
 
-    OPENWORLD.Room.setDistanceTrigger( roomCannon , dist:0.5);
+    setRoomDistanceTrigger( roomCannon , dist:0.5);
 
     var cannon= cannonorig.clone();//await OPENWORLD.Model.createModel('assets/models/cannon.glb');
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
@@ -9454,7 +9507,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     scene.add(cannon);
 
     var cannonballs= await OPENWORLD.Model.createModel('assets/models/cannonballs.glb');
-    cannonballs.scale.set(0.01, 0.01, 0.01);
+    cannonballs.scale.setValues(0.01, 0.01, 0.01);
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         cannonballs,469.84, 353.82,0,6);
     OPENWORLD.Space.objTurn(cannonballs,0);
@@ -9499,9 +9552,9 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     addknightnpc(knight23,"knight23");
 
     var splashpos=[472.31, 368.0];
-    OPENWORLD.BaseObject.setDistanceTrigger(knight23, dist: 4);
+    setDistanceTrigger(knight23, dist: 4);
     // When get near the knight he fires the cannon periodically
-    knight23.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    onDistanceTrigger(knight23, (THREE.Event event) {
       if (event.action) {
         chatter=[
           "Boom goes the dynamite",
@@ -9523,7 +9576,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
           OPENWORLD.Space.worldToLocalSurfaceObj(
               splash,splashpos[0]+4*(OPENWORLD.Math.random()-0.5), splashpos[1]+4*(OPENWORLD.Math.random()-0.5), 0);
           splash.position.y=-OPENWORLD.Math.random()*0.2;
-          splash.scale.set(OPENWORLD.Math.random()*0.2+0.8,OPENWORLD.Math.random()*0.2+0.8,1.0);
+          splash.scale.setValues(OPENWORLD.Math.random()*0.2+0.8,OPENWORLD.Math.random()*0.2+0.8,1.0);
           OPENWORLD.BaseObject.setVisible(splash,true,delay:1.3);
           OPENWORLD.BaseObject.setVisible(splash,false,delay:1.7);
         });
@@ -9557,28 +9610,28 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     var roomSheep2= OPENWORLD.Room.createRoom(363.45, 314.27,
         soundpath: "sounds/field.mp3", volume: 0.05,  exitroom: roomDefault); //THREE.Object3D();
     scene.add(roomSheep2 );
-    OPENWORLD.Room.setDistanceTrigger( roomSheep2  , dist:8);
+    setRoomDistanceTrigger( roomSheep2  , dist:8);
 
     var sheperd2 =await OPENWORLD.Actor.copyActor(  prisoner25, action:"idle2");
     OPENWORLD.Space.worldToLocalSurfaceObjHide(
         sheperd2,OPENWORLD.Room.getX(roomSheep2), OPENWORLD.Room.getY(roomSheep2), 0.0, 20);
     scene.add(sheperd2);
-    OPENWORLD.Texture.setEmissive(sheperd2, THREE.Color(0x222222));  // Make sheperd stand out more
+    OPENWORLD.Texture.setEmissive(sheperd2, THREE.Color.fromHex32(0x222222));  // Make sheperd stand out more
 
     addcitizennpc(sheperd2,"sheperd2",true);  // can be killed
-    OPENWORLD.BaseObject.setDistanceTrigger(sheperd2, dist: 20, ignoreifhidden: false);
-    sheperd2.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    setDistanceTrigger(sheperd2, dist: 20, ignoreifhidden: false);
+    onDistanceTrigger(sheperd2, (THREE.Event event) {
       if (event.action) {
 
         sheperd2.visible = true;
         print("sheperd2 start moveto again");
         OPENWORLD.Mob.moveToLoop(
             sheperd2,
-            [  [363.45, 314.27, 0, 0.2],
-            [356.20, 325.89, 0, 0.2],
-            [348.76, 338.22, 0, 0.2],
-            [342.44, 348.70, 0, 0.2],
-            [335.82, 364.70, 0, 0.2],
+            [  {'p': [363.45, 314.27, 0], 'v': 0.2},
+            {'p': [356.20, 325.89, 0], 'v': 0.2},
+            {'p': [348.76, 338.22, 0], 'v': 0.2},
+            {'p': [342.44, 348.70, 0], 'v': 0.2},
+            {'p': [335.82, 364.70, 0], 'v': 0.2},
 
             ],
             action: "walk",
@@ -9748,12 +9801,18 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     camera.add(me);
     //scene.add(me);
     OPENWORLD.Space.objTurn(me,0);
-    me.position.set(0,-0.17,0.02);
+    me.position.setValues(0,-0.17,0.02);
 
+    // Show the pool objects around where you start
+    var startpos = OPENWORLD.You.getWorldPos();
+    OPENWORLD.Config.showPoolsObjects(startpos.x, startpos.y);
+    // This stops actors dropping from the sky when displayed without first animation started
+    OPENWORLD.Actor.update(0.001);
 
     setState(() {
       weaponicon = defaultweaponicon;//'icons/fist.png';
       loaded = true;
+      OPENWORLD.System.loaded = true;
     });
 
     // Show guidance if first time
@@ -9767,19 +9826,26 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     Future.delayed(const Duration(milliseconds: 1000), () {
       // So when startup dont end up in two rooms - check if already in a room on startup and if not turn on distance trigger to can get into roomdefault
       if (OPENWORLD.You.room==null) {
-        OPENWORLD.BaseObject.reenableDistanceTrigger(roomDefault);
+        reenableDistanceTrigger(roomDefault);
 
       }
     });
 
-
-    animate();
+    // In three_js the viewer calls the animation events every frame instead of animate() calling itself with Future.delayed
+    // Only add it once in case initPage is called again when restarting the game
+    if (!addedanimation) {
+      addedanimation = true;
+      threeJs.addAnimationEvent((dt) {
+        animate(dt);
+      });
+    }
 
     _timer = new Timer.periodic(new Duration(milliseconds: poll), (_) {
       clientInterval(); // for the client connection
       heartbeat();
       //userGuidanceController.show(subIndex:1);
     });
+    timerstarted = true;
 
     // scene.overrideMaterial = new THREE.MeshBasicMaterial();
   }
@@ -9836,7 +9902,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
         // stop rendering while show dialog
 
         // Disable DomLikeListenable so can type
-        _globalKey.currentState?.pause = true;
+        // _globalKey.currentState?.pause = true; (DomLikeListenable not used with three_js)
 
       });
       var value = names[(OPENWORLD.Math.random() * names.length).floor()];
@@ -9846,7 +9912,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
       setState(() {
         // loaded=true;
-        _globalKey.currentState?.pause = false;
+        // _globalKey.currentState?.pause = false; (DomLikeListenable not used with three_js)
       });
       if ((name==null|| name == "" ) &&
           CLIENT.Connection.connect_state != CLIENT.Connection.CS_CONNECTED) {
@@ -9915,9 +9981,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
       await _session.post(
         //  "https://forthtemple.com/secondtemple/serverdart/secondtemple.php",
           position);
-      Fluttertoast.showToast(
-          msg: "You disconnected from the game",
-          toastLength: Toast.LENGTH_LONG);
+      showToast("You disconnected from the game");
       OPENWORLD.Mob.colorfromname=false;
 
     }
@@ -9926,34 +9990,45 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
   // When click the close button
   // Silence sounds and hide inventory
-  close({pop:true}) async {
+  // When click the close button
+  // Silence sounds and hide inventory
+  // If [pop] then leave the game. Like the new Second Temple this restarts the application (see restartApplication in main.dart)
+  // because creating a second three_js viewer in the same process can crash the renderer
+  close({pop=true}) async {
 
     print("close");
     OPENWORLD.Weather.mute(true); // so that dont get wind or rain sound when close
     OPENWORLD.Musics.setMute(true);//stop();
     OPENWORLD.Sound.setMute(true);
     OPENWORLD.Room.mute(true);
-    roomdefaultsound11.stop();
-    roomdefaultsound12.stop();
-    roomdefaultsound21.stop();
-    roomdefaultsound22.stop();
+    if (roomdefaultsoundloaded) {
+      roomdefaultsound11.stop();
+      roomdefaultsound12.stop();
+      roomdefaultsound21.stop();
+      roomdefaultsound22.stop();
+    }
     if (horseridingcloploaded)
       horseridingclop.stop();
     OPENWORLD.You.immobile=false;
     OPENWORLD.You.immobileturn=false;
     canhit=true;
     OPENWORLD.Config.poolObjects.clear();
+    OPENWORLD.BaseObject.clearAllTimers();
     if (loaded) {
-      _timer.cancel();
+      if (timerstarted) {
+        _timer.cancel();
+        timerstarted = false;
+      }
       await disconnect();
       setState(() {
         loaded = false;
+        OPENWORLD.System.loaded = false;
         OPENWORLD.System.active = false;
       });
     }
 
     if (pop)
-      Navigator.pop(context);
+      await restartApplication(context);
 
   }
 
@@ -9966,12 +10041,12 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
   msg() async {
     // disable DomLikeListenable so can type
-    _globalKey.currentState?.pause = true;
+    // _globalKey.currentState?.pause = true; (DomLikeListenable not used with three_js)
 
     var msg=await chatDialog('Enter Message','','');
 
     // reenable DomLikeListenable so can use movement keyboard again
-    _globalKey.currentState?.pause = false;
+    // _globalKey.currentState?.pause = false; (DomLikeListenable not used with three_js)
 
     if (msg!=null&&msg != "") {
       CLIENT.You.msg.add(msg);
@@ -9990,7 +10065,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
   flyup() {
     if (OPENWORLD.Camera.cameraoffset < 3) {
       OPENWORLD.Camera.cameraoffset += 0.1;
-      OPENWORLD.Space.objUpSurface(
+      OPENWORLD.Space.setZ(
           camera,
           OPENWORLD.Camera.cameraoffset); //camera.position.x+=0.01; //trick to show
     }
@@ -10001,7 +10076,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
   flydown() {
     if (OPENWORLD.Camera.cameraoffset > 0.15) {
       OPENWORLD.Camera.cameraoffset -= 0.1;
-      OPENWORLD.Space.objUpSurface(
+      OPENWORLD.Space.setZ(
           camera,
           OPENWORLD.Camera.cameraoffset); //camera.position.x+=0.01; //trick to show
       wingflap();
@@ -10012,12 +10087,12 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
   var lastframes=0;
   var frames10=0;
 
-  animate() async {
+  // Called by three_js every frame with the frame time [frameTime] in seconds
+  // In the three_dart version animate() called render() and then called itself again with Future.delayed
+  // Now three_js does the rendering and calls this through threeJs.addAnimationEvent
+  animate(frameTime) {
     // if app in background dont keep animating
     if (!kIsWeb&&OPENWORLD.System.appstate != AppLifecycleState.resumed) {
-      Future.delayed(const Duration(milliseconds: 1000), () {
-        animate();
-      });
       return;
     }
 
@@ -10030,13 +10105,16 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     }
     frames++;
     frames10++;
-    var frameTime = clock.getDelta();
 
     prevlocalx = camera.position.x;
     prevlocaly = camera.position.y;
     prevlocalz = camera.position.z;
 
-
+    // Update the reflections of the sea water shader
+    if (water!=null&&water!.visible&&threeJs.renderer!=null) {
+    //  print("water update");
+      water!.updateReflections(threeJs.renderer!, scene, camera);
+    }
 
     if (mapshow) {
       // Get the map to display and maps pixel coordinates based on the world coordinates and show the marker where the player is
@@ -10058,13 +10136,16 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
     // Where all the openworld updates are performed - every frame
     OPENWORLD.Actor.update(frameTime);
 
-    if (OPENWORLD.Math.random() < 0.1) {
-      OPENWORLD.Mob.update();
-    }
+    OPENWORLD.Mob.update(frameTime);
+
     //_smoke.update(frameTime);
+    clock.getDelta();  // This is needed for the flames since they use clock.elapsedTime
     OPENWORLD.Updateables.update(frameTime, clock.elapsedTime);
 
-    render();
+    // Movement, wall detection, horse and boat riding - this was render() in the three_dart version
+    updateMovement(frameTime);
+
+    OPENWORLD.Portals.update();
 
     OPENWORLD.Sound.update();
 
@@ -10090,9 +10171,6 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
       OPENWORLD.Camera.setPitch( 0.35*math.sin( clock.getElapsedTime ()*5 % (math.pi) ));
     }
 
-    Future.delayed( Duration(milliseconds: framedelay), () {  // was 40 which is 1000/40 = 25 fps
-      animate();
-    });
   }
 
 
@@ -10211,7 +10289,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
       // Only show max_message message
       msgs.addAll(ret["msg"]);
       if (msgs.length > max_message) {
-        msgs.splice(0, msgs.length - max_message - 1);
+        msgs.removeRange(0, msgs.length - max_message - 1);
       }
       // if a player is no longer on the server remove them
       for (var i = players.length - 1; i >= 0; i--) {
@@ -10225,7 +10303,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
           //player_mixers[i]._gone) {
           scene.remove(players[i].actor); //mixer.getRoot());
           players_removed.add(players[i]);
-          players.splice(i, 1);
+          players.removeAt(i);
         }
       }
 
@@ -10248,7 +10326,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
             // reuse an old player if one around
             player = players_removed[0];
 
-            players_removed.splice(0, 1);
+            players_removed.removeAt(0);
           } else {
 
             var _has_name;
@@ -10306,13 +10384,13 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
             print('is walking');
             player.isWalking = true;
             await OPENWORLD.Actor.playAction(
-               player.actor, name: "walk", duration: 1, stopallactions: true);
+               player.actor, action: "walk", duration: 1, stopallactions: true);
 
           } else if (dist < stopdist && player.isWalking) {
             print('is not walking');
             player.isWalking = false;
             await OPENWORLD.Actor.playAction(
-                player.actor, name: "idle2", duration: 1, stopallactions: true);
+                player.actor, action: "idle2", duration: 1, stopallactions: true);
 
           }
 
@@ -10322,7 +10400,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
           // if player has entered the game then move them straight there
 
           await OPENWORLD.Actor.playAction(
-              player.actor, name: "idle2", duration: 1, stopallactions: true);
+              player.actor, action: "idle2", duration: 1, stopallactions: true);
           OPENWORLD.Space.worldToLocalSurfaceObj(player.actor, x, y, 0);
         }
 
@@ -10386,11 +10464,13 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
 
     if (underSea()) {
       // Show blue fog if underwater
-      (scene.fog as THREE.Fog)?.near=0.1;
-      (scene.fog as THREE.Fog)?.far=8;
+      if (scene.fog != null) {
+        scene.fog!.near=0.1;
+        scene.fog!.far=8;
+      }
       OPENWORLD.Weather.setSkyOpacity(0.0);
-      scene.background=seacolor;//THREE.Color(0x064273);
-      scene.fog?.color=seacolor; //THREE.Color(0x064273);
+      scene.background=seacolor;//THREE.Color.fromHex32(0x064273);
+      scene.fog?.color=seacolor; //THREE.Color.fromHex32(0x064273);
     } else
       OPENWORLD.Weather.changeFog(OPENWORLD.Weather.fog);
 
@@ -10407,9 +10487,7 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
         setHealth(0);
         youDie();
         endo(delay: 10);
-        Fluttertoast.showToast(
-            msg: "You fall to your death",
-            toastLength: Toast.LENGTH_LONG);
+        showToast("You fall to your death");
       }
       // If close to edge of game then slow down so can't go off edge
       var diff=5;
@@ -10477,9 +10555,14 @@ class _StateRhodes3D extends State<Rhodes3DPage> /*with TickerProviderStateMixin
   void dispose() {
     print(" dispose ............. ");
     disposed = true;
-
-    three3dRender.dispose();
+    if (timerstarted) {
+      _timer.cancel();
+      timerstarted = false;
+    }
+    threeJs.dispose();
+    THREE.loading.clear();
 
     super.dispose();
   }
 }
+

@@ -1,5 +1,5 @@
 //import 'package:three_dart/three3d/math/index.dart';
-import 'package:openworld/three_dart/three_dart.dart' as THREE;
+import 'package:three_js/three_js.dart' as THREE;
 
 Map<String, dynamic> SkyShader = {
   //"shaderID": 'skySimpleShader',

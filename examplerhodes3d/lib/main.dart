@@ -1,4 +1,3 @@
-
 import 'dart:io';
 import 'dart:ui';
 
@@ -6,7 +5,6 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'theme.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';
@@ -15,28 +13,86 @@ import 'Rhodes3DPage.dart';
 
 import 'package:openworld/openworld.dart' as OPENWORLD;
 
+// This was theme.dart in the three_dart version
+class AppColor {
+  //ok 594400
+  static const primary = Colors.white; //Color(0xffbb308a);
+}
+
+const MethodChannel _restartChannel = MethodChannel('rhodes3d/restart');
+
+/// Restarts the game. Same as in the new Second Temple.
+/// Creating a second three_js viewer in the same process can crash the renderer so instead of going back to
+/// the splash page the whole application is restarted which gives a brand new engine and GL context
+/// - Desktop: relaunches the process (fresh engine + GL context).
+/// - Android: relaunches the app's activity and kills the old process
+///   (also a fresh engine + GL context). Needs a 'rhodes3d/restart' method channel in MainActivity
+///   like the one used by Second Temple, otherwise falls back to going back to the start screen
+/// - iOS: apps can't relaunch themselves, so this returns to the start
+///   screen instead (pass [context] from Rhodes3DPage).
+Future<void> restartApplication([BuildContext? context]) async {
+  print('restartApplication');
+  if (kIsWeb) {
+    // Nothing to relaunch on the web so just go back to the start screen
+    if (context != null && context.mounted)
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    return;
+  }
+
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    await Process.start(
+      Platform.resolvedExecutable,
+      Platform.executableArguments,
+      mode: ProcessStartMode.detached,
+    );
+    exit(0);
+  }
+
+  if (Platform.isAndroid) {
+    try {
+      await _restartChannel.invokeMethod('restart');
+      return; // process is killed natively
+    } catch (e) {
+      print("Android restart failed, falling back to soft restart: $e");
+    }
+  }
+
+  // iOS (and Android fallback): back to the first screen in this navigator
+  if (context != null && context.mounted) {
+    print("navigator close");
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  } else {
+    print("navigator close failed");
+  }
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (!kIsWeb&&(Platform.isLinux||Platform.isWindows||Platform.isMacOS)) {
 
     await WindowManager.instance.ensureInitialized();
-    windowManager.waitUntilReadyToShow().then((_) async {
-      await windowManager.setTitle(gamename);
-      final screens = PlatformDispatcher.instance.displays;
-      final fSize = screens.first.size;
-
-      windowManager.setSize(Size(  1440,900));
-      // windowManager.setSize(Size(fSize.width, fSize.height));
-      // windowManager.setPosition(Offset(0.0,0.0));
-      windowManager.setAlignment(Alignment.center);
+    WindowOptions windowOptions = WindowOptions(
+      size: Size(1440, 900),
+      center: true,
+      backgroundColor: Colors.transparent,
+      skipTaskbar: false,
+      title: gamename,
+    );
+    windowManager.waitUntilReadyToShow(windowOptions, () async {
+      // Windowed by default. Set the persistent value "fullscreen" to true to start full screen (eg for steam)
+      bool fs = await OPENWORLD.Persistence.get("fullscreen", def: false);
+      print("fullscreen"+fs.toString());
+      if (fs) await windowManager.setFullScreen(true);
+      await windowManager.show();      // show FIRST so WS_VISIBLE is part of the saved style
+      await windowManager.focus();
     });
   }
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -92,11 +148,17 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver{
     WidgetsBinding.instance.addObserver(this);
   }
 
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-     // title: 'Flutter Demo',
+      title: gamename,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
 
@@ -226,4 +288,3 @@ class _Rhodes3DSplashPageState extends State<Rhodes3DSplashPage> {//}with Widget
     );
   }
 }
-

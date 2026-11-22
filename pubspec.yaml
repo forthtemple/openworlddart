@@ -4,15 +4,12 @@ version: 0.0.1
 homepage: https://github.com/forthtemple/openworlddart
 
 environment:
-  sdk: ">=2.18.0 <4.0.0"
-
+  #sdk: ">=2.18.0 <4.0.0"
+  sdk: '>=3.0.0'
 dependencies:
   flutter:
     sdk: flutter
-  #openworld_gl:
-  #  git:
-  #    #    #url: 'https://github.com/wasabia/flutter_gl'
-  #    url: 'https://github.com/forthtemple/openworld_gl.git'
+
   http: ^1.1.0
   universal_html: ^2.2.4
   ffi: ^2.1.0
@@ -21,16 +18,41 @@ dependencies:
   opentype_dart: ^0.0.1
   crypto: ^3.0.3
   audioplayers: ^6.1.0
+  #audioplayers: ^6.8.1
   shared_preferences: ^2.2.3
-  openworld_gl: ^0.0.26
-  archive: ^3.3.0
+  #openworld_gl: ^0.0.26
+  archive: ^4.0.7
+  three_js: 0.2.4
+  #three_js:
+  #  path: ../three_js-main/packages/three_js
+  three_js_helpers: ^0.2.2
+  three_js_transform_controls: ^0.2.0
+
+  three_js_svg: ^0.2.0
+  three_js_objects: ^0.2.0
+  three_js_tjs_loader: ^0.2.0
+  three_js_postprocessing: ^0.2.0
+  three_js_modifers: ^0.2.0
+  three_js_terrain: ^0.2.0
+  three_js_exporters: ^0.2.0
+  three_js_line: ^0.2.0
+  three_js_bvh_csg: ^0.2.0
+  #three_js_video_texture: ^0.0.2
+  three_js_audio: ^0.2.1
+  three_js_audio_latency: ^0.0.1
+  three_js_advanced_exporters: ^0.0.1
+  #three_js_core: 0.2.4
+
+  package_info_plus: ^8.0.0
+  path_provider: ^2.1.5   # check pub.dev for the latest exact version
 dependency_overrides:
-  #openworld_gl:
-  #  path: ../openworld_gl/openworld_gl
+  flutter_angle: ^0.3.9
+  volume_controller: 3.3.0
+  audioplayers_android: 5.2.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  lints: ^2.0.3
+  lints: ^6.0.0
 
 
 flutter:

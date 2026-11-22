@@ -1,12 +1,12 @@
-import 'dart:collection';
+//import 'dart:collection';
 import 'dart:core';
 
 import 'package:flutter/foundation.dart';
 import 'package:openworld/updateable.dart';
-import 'package:openworld_gl/native-array/index.dart';
-import 'package:openworld/three_dart/three_dart.dart' as THREE;
-import 'dart:math' as math;
-import 'dart:io' show Platform;
+//import 'package:openworld_gl/native-array/index.dart';
+import 'package:three_js/three_js.dart' as THREE;
+//import 'dart:math' as math;
+//import 'dart:io' show Platform;
 // 'System.out.println("version"+ gl.getContext().getGLSLVersionString()); ',
 
 
@@ -205,7 +205,8 @@ class VolumetricFire extends Updateable {
     this._depth=depth;
 
     if (color!=null) {
-      _color=THREE.Vector3(color.r, color.g, color.b);
+    //  print("xxx"+color.red.toString()+" "+color.blue.toString()+" "+color.green.toString());
+      _color=THREE.Vector3(color.red, color.green, color.blue);
     } else {
       _color=THREE.Vector3(1.0,1.0,1.0);
     }
@@ -244,9 +245,9 @@ class VolumetricFire extends Updateable {
     // still did not figure out, how many vertexes should be...
     // three.jsでは可変にできない、ひとまず多めに用意
 
-    var index = new Uint16Array ((_width + _height + _depth) * 30);
-    var position = new Float32Array((_width + _height + _depth) * 30 * 3);
-    var tex = new Float32Array((_width + _height + _depth) * 30 * 3);
+    var index = new THREE.Uint16Array ((_width + _height + _depth) * 30);
+    var position = new THREE.Float32Array((_width + _height + _depth) * 30 * 3);
+    var tex = new THREE.Float32Array((_width + _height + _depth) * 30 * 3);
 
 
     var geometry = new THREE.BufferGeometry();
@@ -256,9 +257,9 @@ class VolumetricFire extends Updateable {
     geometry.setIndex(new THREE.Uint16BufferAttribute(index, 1));
     //  geometry.attributes={'position': new THREE.BufferAttribute(position, 3),'tex': new THREE.BufferAttribute(tex, 3)});
 
-    geometry.setAttribute(
+    geometry.setAttributeFromString(
         'position', THREE.Float32BufferAttribute(position, 3));
-    geometry.setAttribute('tex', THREE.Float32BufferAttribute(tex, 3));
+    geometry.setAttributeFromString('tex', THREE.Float32BufferAttribute(tex, 3));
 
 
     var material = await initMaterial();
@@ -285,7 +286,7 @@ class VolumetricFire extends Updateable {
     // Canvas2D で noise 画像を作る
    // print("xxx"+VolumetricFire.texturePath);
     if (nzw==null) {
-      nzw = await textureLoader.loadAsync(VolumetricFire.texturePath + 'nzw.png');
+      nzw = await textureLoader.fromAsset(VolumetricFire.texturePath + 'nzw.png');
       nzw?.wrapS = THREE.RepeatWrapping;
       nzw?.wrapT = THREE.RepeatWrapping;
       nzw?.magFilter = THREE.LinearFilter;
@@ -293,7 +294,7 @@ class VolumetricFire extends Updateable {
     }
 
     if (fireProfile==null) {
-      fireProfile = await textureLoader.loadAsync(
+      fireProfile = await textureLoader.fromAsset(
           VolumetricFire.texturePath + 'firetex.png');
       fireProfile?.wrapS = THREE.ClampToEdgeWrapping;
       fireProfile?.wrapT = THREE.ClampToEdgeWrapping;
@@ -337,7 +338,7 @@ class VolumetricFire extends Updateable {
       'blending': THREE.AdditiveBlending,
       'transparent': true
     });*/
-    THREE.ShaderMaterial material = new THREE.ShaderMaterial({
+    THREE.ShaderMaterial material = new THREE.ShaderMaterial.fromMap({
       'vertexShader': vs,
       'fragmentShader': fs,
       'uniforms': uniforms,
@@ -377,15 +378,19 @@ class VolumetricFire extends Updateable {
   @override
   update(frameTime,elapsed) {
     if (this.mesh.visible) {
+
       this.updateViewVector();
       this.slice();
       this.updateGeometry();
-      this.mesh.material.uniforms['time']['value'] = elapsed;
+     // print("fire"+frameTime.toString()+" "+elapsed.toString());
+     // this.mesh.material?.uniforms['time']={'value':elapsed};//['value'] = elapsed;
+      this.mesh.material?.uniforms['time']['value'] = elapsed;
     }
   }
 
 
   updateGeometry() {
+
     this.mesh.geometry?.index?.array.set(this._indexes);
   //  print("ooo"+this._points.toString());
     this.mesh.geometry?.attributes['position'].array.set(this._points);
@@ -405,15 +410,18 @@ class VolumetricFire extends Updateable {
 
     var modelViewMatrix = new THREE.Matrix4();
 
-    modelViewMatrix.multiplyMatrices(
+    modelViewMatrix.multiply2(//)Matrices(
         this.camera.matrixWorldInverse,
         this.mesh.matrixWorld
     );
-
-    this._viewVector.set(
-        -modelViewMatrix.elements[ 2 ],
+    var elements=modelViewMatrix.toList();
+    this._viewVector.setValues(
+        -elements[ 2 ],
+        -elements[ 6 ],
+        -elements[ 10 ]
+       /*     -modelViewMatrix.elements[ 2 ],
         -modelViewMatrix.elements[ 6 ],
-        -modelViewMatrix.elements[ 10 ]
+        -modelViewMatrix.elements[ 10 ]*/
     ).normalize();
   }
 
@@ -479,30 +487,33 @@ class VolumetricFire extends Updateable {
       if (range != 0.0) {
         var irange = 1.0 / range;
 
-        activeEdge['deltaPos'].subVectors(
+
+        THREE.Vector3 dog;
+
+        activeEdge['deltaPos'].sub2( //)Vectors(
             this._posCorners[ endIndex ],
             this._posCorners[ startIndex ]
-        ).multiplyScalar(irange);
+        ).scale(irange);//multiplyScalar(irange);
 
-        activeEdge['deltaTex'].subVectors(
+        activeEdge['deltaTex'].sub2( //Vectors(
             this._texCorners[ endIndex ],
             this._texCorners[ startIndex ]
-        ).multiplyScalar(irange);
+        ).scale(irange);//multiplyScalar(irange);
 
         var step = cornerDistance[ startIndex ] - sliceDistance;
 
-        activeEdge['pos'].addVectors(
-            activeEdge['deltaPos'].clone().multiplyScalar(step),
+        activeEdge['pos'].add2(//)Vectors(
+            activeEdge['deltaPos'].clone().scale(step),//multiplyScalar(step),
             this._posCorners[ startIndex ]
         );
 
-        activeEdge['tex'].addVectors(
-            activeEdge['deltaTex'].clone().multiplyScalar(step),
+        activeEdge['tex'].add2(//Vectors(
+            activeEdge['deltaTex'].clone().scale(step),//multiplyScalar(step),
             this._texCorners[ startIndex ]
         );
 
-        activeEdge['deltaPos'].multiplyScalar(this._sliceSpacing);
-        activeEdge['deltaTex'].multiplyScalar(this._sliceSpacing);
+        activeEdge['deltaPos'].scale(this._sliceSpacing);//multiplyScalar(this._sliceSpacing);
+        activeEdge['deltaTex'].scale(this._sliceSpacing);//multiplyScalar(this._sliceSpacing);
       }
 
       expirations.push(activeEdge, cornerDistance[ endIndex ]);

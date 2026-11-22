@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Second Temple",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "examplesecondtemple",
+      "program": "lib/main.dart"
+    },
+    {
+      "name": "Rhodes 3D",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "examplerhodes3d",
+      "program": "lib/main.dart"
+    }
+  ]
+}

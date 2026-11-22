@@ -1,5 +1,7 @@
+// Much simpler and cheaper water
 import 'package:openworld/updateable.dart';
-import 'package:openworld/three_dart/three_dart.dart' as THREE;
+import 'package:three_js/three_js.dart' as THREE;
+//import 'package:openworld/three_dart/three_dart.dart' as THREE;
 import 'package:openworld/openworld.dart' as OPENWORLD;
 import 'dart:math' as math;
 
@@ -8,18 +10,20 @@ class WaterSimple extends Updateable
   static List _waterVertData=[];  // all use this
   static late THREE.PlaneGeometry g;
 
-  static initVertexData({widthsegments:5, heightsegments:5})
+  static initVertexData({widthsegments=5, heightsegments=5})
   {
     g = new THREE.PlaneGeometry(1, 1, widthsegments, heightsegments);
     g.rotateX(-math.pi * 0.5);
     _waterVertData = [];
     var v3 = new THREE.Vector3(); // for re-use
     for (var i = 0; i < g.attributes['position'].count; i++) {
-      v3.fromBufferAttribute(g.attributes['position'], i);
+
+     // v3.fromBufferAttribute(g.attributes['position'], i);
+      v3.fromBuffer(g.attributes['position'], i);
       _waterVertData.add({
         'initH': v3.y,
-        'amplitude': THREE.MathUtils.randFloatSpread(2)/100,
-        'phase': THREE.MathUtils.randFloat(0, math.pi)
+        'amplitude': OPENWORLD.Math.randFloatSpread(2)/100,
+        'phase': OPENWORLD.Math.randFloat(0, math.pi)
       });
     }
 
@@ -36,7 +40,7 @@ class WaterSimple extends Updateable
 
 
     });
-    m.emissive = THREE.Color(
+    m.emissive = THREE.Color.fromHex32(
         0x2e3f50);//000000);//3d4848);//4f5b5b);//21170e);//406695);//64777d);//);//665600);
     m.metalness = 1.0;
     m.roughness = 0.5;

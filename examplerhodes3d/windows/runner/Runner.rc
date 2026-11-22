@@ -93,7 +93,7 @@ BEGIN
             VALUE "FileDescription", "rhodes3d" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "rhodes3d" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2024 com.forthtemple. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2026 Forthtemple. All rights reserved." "\0"
             VALUE "OriginalFilename", "rhodes3d.exe" "\0"
             VALUE "ProductName", "rhodes3d" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"

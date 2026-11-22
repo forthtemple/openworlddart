@@ -1,0 +1,8 @@
+[
+{
+  "directory": "C:/Users/skinh/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_angle-0.3.9/android/.cxx/Debug/u6hb2b25/arm64-v8a",
+  "command": "C:\\Users\\skinh\\AppData\\Local\\Android\\Sdk\\ndk\\28.2.13676358\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=aarch64-none-linux-android21 --sysroot=C:/Users/skinh/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dangle_android_graphic_jni_EXPORTS -IC:/Users/skinh/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_angle-0.3.9/android/src/main/cpp -IC:/Users/skinh/AppData/Local/Android/Sdk/ndk/28.2.13676358/sources/android/native_app_glue -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++14 -fno-limit-debug-info  -std=c++14 -fPIC -o CMakeFiles\\angle_android_graphic_jni.dir\\angle_android_graphic_jni.cpp.o -c C:\\Users\\skinh\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\flutter_angle-0.3.9\\android\\src\\main\\cpp\\angle_android_graphic_jni.cpp",
+  "file": "C:\\Users\\skinh\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\flutter_angle-0.3.9\\android\\src\\main\\cpp\\angle_android_graphic_jni.cpp",
+  "output": "CMakeFiles\\angle_android_graphic_jni.dir\\angle_android_graphic_jni.cpp.o"
+}
+]

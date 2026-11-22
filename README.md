@@ -1,18 +1,21 @@
 # Open World for dart
-This gaming engine is written in flutter and is based upon our existing threejs openworld repository [openworldthreejs](https://github.com/forthtemple/openworldthreejs). The gaming engine uses the [three_dart](https://github.com/Knightro63/three_dart (is more up to date then three_dart on pub.dev)) package making it easy to convert threejs code to three_dart. This package is available on <a href="https://pub.dev/packages/openworld">pubdev</a>. Because it uses flutter, games created with this engine are cross platform working on Android, iOS, web, windows and Linux. And with the flutter feature of hotloading it allows 3D objects to be added to a scene on the fly making game design easier. Note, openworld is compatible with three_dart and can be used without the openworld aspects eg the game [stack tower](https://github.com/forthtemple/stacktower/). Openworld has extra features compared to three_dart like linux compatibility and is more up to date.
 
-I am working on the new version of the engine that uses  [three_js](https://github.com/Knightro63/three_js) instead of  [three_dart](https://github.com/wasabia/three_dart) and am working on game for  [Steam](https://store.steampowered.com/app/4067520/Second_Temple/) that uses this new engine. Check out my [twitter](https://x.com/forthtemple) to see the progress. I have a preview on [Steam](https://store.steampowered.com/app/4067520/Second_Temple/)
+This a draft I'm writing for the future version of the openworld library so ignore for the time being.
 
-This small sample code demonstrates a small part of openworld showing how to add a skydome but suggest you look at the example games in github to see how the engine works in its entirety with weather, actor animations, terrains, chatter etc.
+refer to \games\openworldthreejs\PATCHES md file for patches!
+
+This is a library to make openworld games using the dart package threejs. This library is based upon an older threejs openworld library just for web using javascript [openworldthreejs](https://github.com/forthtemple/openworldthreejs). The advantages of flutter for an openworld game is with one code base you can create a multi platform (iOS, Windows,Android, MacOS, Linux, Web). Also there is a huge number of flutter widgets that can be incorporated into the game. There is also hotloading making it possible to place objects in a scene, hit hotload and the 3D object will appear in your game within seconds. 
+
+This version of the library is an update of the previous openworld library that used [three_dart](https://github.com/wasabia/three_dart) instead of [three_js](https://github.com/Knightro63/three_js)/ Threejs is more up to date and have found it works better across platforms. The openworld library itself has been updated to work better on desktops as opposed to smartphones. This has been showcased by an improved version of the Second Temple game on  [steam](https://store.steampowered.com/app/4067520/Second_Temple/). This new version is available on [windows, mac](https://store.steampowered.com/app/4067520/Second_Temple/),  linux,[iPhone](https://apps.apple.com/us/app/second-temple/id6593662011) and android and [web](https://secondtemple.org). As with the previous version, this library includes two demo games, Second Temple and Rhodes 3D.
+
+The openworld library has many new features added such terrain levels allowing for example, a multi story building where you can place objects on different floors of the building. There are also shadows built into model and actor creation. There is a new vegetation object using cheap sprites to generate vegetation like grass and shrubs. It can also add detail to the ground. There are also a tree object that uses many sprites and plains to create branches and leaves. And the water2 object of threejs has been made faster being able to skip reflection updates and also choose which objects to reflect. There is also an asset encrypter so when you deploy a game, your assets have some protection. The config class has been updated so pooled objects are not only created from a static text file but also runtime. This allows for example a crowd of say 1000 NPC's only showing the closest 50 near the camera. Alos actor animation throttling can be used so when there is lots of actors the CPU only actors close to the camera have every animation frame calculated while those further away having frames skipped. Also the new openworld library includes being able to add actor animations run time by combining existing animations. The library also has the addition of extra callbacks. For example when an npc has given a speech a callback can be called when the speech is finished have the npc for example jump up in the air. There are also callbacks for keypresses. For example a keypress callback for when a player gets near a horse and presses 'E' which calls a callback to mount the horse. For large meshes, mesh intersection calculations for walking on a terrain or finding a wall can be expensive and openworld is now far more optimized for calculating intersections with caching and bounding boxes. Run time obstacles have also been added so you can block off an area and then reenable. This is useful for say a door that has been closed. For multiple doors, a doorsway class has have been added to allows that multiple doors eg two grand doors to be opened or closed with one call coding to manually opening each door.  Another feature is fading objects as you move away from the camera rather than abruplty making them invisible the object fades. Simnilarly lights can also be dimmed as they move away from the camera. 
+
+The following code snippet demonstrates a small part of openworld showing how to add a skydome but it is recommended you look at some of the sample games to see how openworld works with weather, actor animations, terrains, chatter etc.
 
 
 ### Import
 
 ```
-import 'package:openworld_gl/openworld_gl.dart';
-import 'package:openworld/three_dart/three3d/objects/index.dart';
-import 'package:openworld/three_dart/three_dart.dart' as THREE;
-import 'package:openworld/three_dart_jsm/three_dart_jsm.dart' as THREE_JSM;
 import 'package:openworld/shaders/SkyShader.dart';
 import 'package:openworld/openworld.dart' as OPENWORLD;
 ```
@@ -56,16 +59,15 @@ import 'package:openworld/openworld.dart' as OPENWORLD;
     // Openworld will change sky depending on time of day
     OPENWORLD.Time.init(sunSphere, skyMat, ambience);
 
-```   
-This gaming engine includes two demo games with full source and all resources including blender models, sound, textures being freely available in this repository.
+```
 
-One game is set in Jerusalem at the Second Temple 72AD just before a roman invasion. 
 
-<img src="https://github.com/user-attachments/assets/87d3e8a2-fd28-428f-807e-733b0f1bbef2" width="400"/>
+One of the demo games is set in Jerusalem at the Second Temple 65AD. 
 
-![secondtemple](https://github.com/user-attachments/assets/49e647e9-a4b4-463b-a97a-8012a9cdcf60)
+<img width="400" alt="Screenshotcourtowmen" src="https://github.com/user-attachments/assets/fe084261-9002-4611-b9f4-a45f51108c95" />
+<img width="426" height="240" alt="Video Project 2" src="https://github.com/user-attachments/assets/cea19076-b1ee-47a2-aa2b-7430ac8ccf97" />
 
-This game is not only available in this repository but also on <a href="https://apps.apple.com/us/app/ark-uncovered/id6593662011">iTunes</a> (iOS, macOS) on  <a href="https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.secondtemple">Amazon</a> (Android), <a href='https://chatgpt.forthtemple.com/secondtemple/'>web</a>, <a href="https://snapcraft.io/secondtemple">snap</a> (Linux) and <a href='https://www.youtube.com/watch?v=v63XYmFEgj8'>Youtube</a>
+This games models, actors and texture are all availabe in this repository and the game can be run on <a href='https://store.steampowered.com/app/4067520/Second_Temple/'>Steam</a> (Windows and macOS). <a href="https://apps.apple.com/us/app/ark-uncovered/id6593662011">iTunes</a> (iOS, macOS) on  <a href="https://forthtemple.com/secondtemple.apk">TODO secondtemple.apk</a> (Android), <a href='https://secondtemple.org/'>web</a>, <a href="https://snapcraft.io/secondtemple">todo snap</a> (Linux) and <a href='https://www.youtube.com/watch?v=fNuSaUxYvGs'>Youtube</a>
 
 [![secondtemple](https://snapcraft.io/secondtemple/badge.svg)](https://snapcraft.io/secondtemple)
 
@@ -76,13 +78,14 @@ A second game is set in Lindos, Rhodes south of Greece in 1522 just before Sulam
 It is also available on <a href="https://apps.apple.com/us/app/lindos-1522/id6736712620">iTunes</a> (iOS, macOS) on  <a href="https://www.amazon.com/gp/mas/dl/android?p=com.forthtemple.rhodes3d">Amazon</a> (Android), <a href="https://snapcraft.io/rhodes3d">snap</a> (Linux), <a href='https://chatgpt.forthtemple.com/rhodes3d'>web</a> and <a href='https://www.youtube.com/watch?v=-xjAiFQzZRM'>Youtube</a>.
 
 [![rhodes3d](https://snapcraft.io/rhodes3d/badge.svg)](https://snapcraft.io/rhodes3d)
-     
-The philosphy of the engine it should not be bloated and only include features that typical openworld games would require on a smartphone or desktop. For example most openworld games will have animated actors, such as a person or monster walking. Most would include models,  planes and sprites, sound, light, weather, time of day, maps, music and rooms. But not all would include, for example, a players inventory system or a combat system or a monetary system. So these less used features are excluded.
+-------
 
-Alongside threedarts existing 3D functions such as loading models, lighting, texturing, shaders it also includes features that are useful in openword games such as:
+The philosophy of the library is it should not get too bloated and only include features that typical openworld games would require on a smartphone or desktop. For example most openworld games will have animated actors, such as a person or monster walking. Most openworld games would include models,  planes and sprites, sound, light, weather, time of day, maps, music and rooms. But not all would include, for example, a players inventory system or a combat system or a monetary system. So these less used features are excluded.
+
+Alongside threejs existing 3D functions such as loading models, lighting, texturing, shaders it also includes features that are useful in openword games such as:
 
 *Animated actors*  
-  Openworld has easy actor animation including duration, looping, cloning existing actors, assigning new textures to cloned actor, sharing animations between actors with the same skeleton, doing one acion and then transitioning to an idling action.  All actors  made with the Blender modelling tool and are available in '/examplesecondtemple/blender' and '/examplerhodes3d/blender'. These are then exported into the assets directory in glb format.
+  Openworld makes actor animation easy and includes duration, looping, cloning existing actors, assigning new textures to cloned actor, sharing animations between actors with the same skeleton, doing an action and then transitioning to an idling action.  All actors are  made with the Blender modelling tool and are available in '/examplesecondtemple/blender' and '/examplerhodes3d/blender'. These are then exported into the assets directory in glb format.
 
 ![image](https://github.com/user-attachments/assets/41a0a204-c41a-4115-9605-f8039a7d1bad)
 
@@ -113,8 +116,33 @@ It is possible to specify new textures for cloned actors and models which allows
     _shofar2 = await OPENWORLD.Actor.copyActor(_shofar, randomduration: 0.1, texture:"assets/actors/shofar/shofar2.jpg");
 ```
 
+- Create new animations
+  
+   It is possible to create new animations from existing ones such as combining a squat animation with a look right animation. This makes it unnecessary to manually create large numbers of combinations of animations in blender. For example rather than using blender to create a squat look right animation combine two animations like below:
+
+```
+      // Create a new animation squatright using the squat animation and the lookright animation just copying the pose on the head
+      OPENWORLD.Actor.createAnimation(seller, "squatright", "squat", "lookright", ["Bip01_Head"]);
+      // Create a new animation walkhandrightpointleft using the with animation of oa person walking with the right hand up and combine it with a person pointing left using the bones left arm1 and left arm2 
+      OPENWORLD.Actor.createAnimation(seller, "walkhandrightpointleft", "walkhandright", "pointleft", ["Bip01_L_Arm1","Bip01_L_Arm2"]);
+
+```
+
+- Animation throttling
+  
+     If there are  a large number of actors, such as a crowd it can be expensive to animate every actors new pose each frame. To reduce CPU expense frames can be skipped if the actor is a certain distance away from the camera. For example if the actor is 0.5 units away then skip 6 frames before doing the next animation.
+  
+```
+     // Have every 6th frame skipped if 0.5 units from the camera
+     OPENWORLD.Actor.enableDistanceThrottle(actor, minDistance: 0.5, skipFrames: 6);
+     // Turn the animation throttling off
+     OPENWORLD.Actor.disableDistanceThrottle(actor);
+```
+  
+
+
 *Models*  
-  Openworld also make it easy to include models that can be cloned and also reused with different texture. Like actors, models are also made with the Blender modelling tool and are available in '/examplesecondtemple/blender' and '/examplerhodes3d/blender'. These are also exported into the assets directory in glb format with blender (except for the terrain which should be exported in wavefront objformat ).
+  Openworld also make it easy to include models that can be cloned and also reused with different textures. Like actors, models are also made with the Blender modelling tool and are available in '/examplesecondtemple/blender' and '/examplerhodes3d/blender'. These are also exported into the assets directory in glb format with blender (except for the terrain which is easier for accessing model groups when wavefront obj format is used ).
 
 ![image](https://github.com/user-attachments/assets/b7c19259-9ead-4e7f-aac7-7ecfea18a19a)
 
@@ -130,10 +158,47 @@ It is possible to specify new textures for cloned actors and models which allows
     
 ```
 
+
+*Shadows*
+
+Threejs has shadows and the openworld library makes it easier to set an object to cast a shadow, such as an NPC.
+
+  
+<img width="309"  alt="image" src="https://github.com/user-attachments/assets/bc52b1d4-4d14-4131-9532-f815aeb4a8d7" />
+
+In the example below the sun has a shadow map and the terrain (groundsurface) is set to receive shadows and the soldier2 is set to cast a shadow:
+
+```
+  
+ var sunlight = new THREE.DirectionalLight(0x888888,1.0);//.PointLight(0x888888);///.PointLight(0x888888); //ffffff);
+ sunlight.target=threeJs.camera;
+   // Set sun shadows
+ sunlight.shadow?.mapSize.width = 1024;
+ sunlight.shadow?.mapSize.height = 1024;
+ sunlight.shadow?.camera?.near = 0.01;
+ sunlight.shadow?.camera?.far = 500;
+ sunlight.castShadow = true;
+ threeJs.scene.add(sunlight);
+ sunlight.shadow!.radius=1;
+
+ // Terrain recieves shadows
+ groundsurface= OPENWORLD.BaseObject.getGroupByName(OPENWORLD.Space.mesh, "ground");
+ groundsurface.receiveShadow = true;
+
+// Soldier casts a shadow
+ soldier2 = await OPENWORLD.Actor.createActor(
+        'assets/actors/soldier/soldier2.glb',
+        z: actoroffset,
+        shareanimations: seller,
+        castshadow: true);
+```
+        
 *Adding sprites, planes and text*  
-Openworld also make it easy to add sprites, planes and text.
+Openworld also makes it easy to add sprites, planes and text.
 
   ![image](https://github.com/user-attachments/assets/8eca92a9-a123-4563-a54e-3cdce4e9f6c6)
+  <img width="200" alt="image" src="https://github.com/user-attachments/assets/85480e4e-6ce2-4144-aa4f-1c3f46724b12" />
+
 
 ```
     // Load a sprite of gabriel 
@@ -147,27 +212,69 @@ Openworld also make it easy to add sprites, planes and text.
 
     // Load a plane with the text 'Lindos News'
     var textplane =   await OPENWORLD.Plane.makeTextPlane("Lindos News", Colors.black, backgroundopacity: 0);
+
+    // Create a multitext sprite with the part on the left with a transparent background and the second part of the text black and bold like in the screenshot above
+    var stairsdownicon = await OPENWORLD.Sprite.makeMultiTextSprite( [{'message': 'E', 'textcolor': Colors.white,
+          'backgroundcolor': Colors.black,
+          'backgroundopacity': 1.0,
+          'paddingLeft': 5, 'paddingRight': 5},
+              {'message': 'Stairs ↓', 'textcolor': Colors.white,
+            'backgroundcolor': Colors.black,
+            'bold':true,
+            'backgroundopacity': 0.0}], scale:0.03);
 ```
 
-As with actors and models, the objects can be scale and placed on the surface of terrain.
+As with actors and models, these objects can be scaled and placed on the surface of terrain.
 
+*Instanced Objects*
+
+If a scene has thousands of objects it can be costly to render so many objects each frame. Instanced objects allow multiple objects such as models and sprites to be grouped together and rendered in one pass
+   
+<img width="400"  alt="image" src="https://github.com/user-attachments/assets/17044f21-63e5-4ef2-a835-de14085beb5b" />
+
+In this example thousands of column models are displayed and renderered with one pass:
+
+```
+    // Display 300 columns in a row with one column model
+    column = await OPENWORLD.Model.createModel( 'assets/models/column.glb');
+    instancedColumns = InstancedModel.fromTemplate(column, 300, threeJs.scene,name:'column');
+    instancedColumns.hideDistance=15.0;
+    instancedModels.add(instancedColumns);
+
+    instancedColumns.reset();
+    for (var i = 0; i < 300; i++) {
+      instancedColumns.place(-90, 6.82, 14.77 + i * 0.15, 0.0, scale: THREE.Vector3(0.4, 0.4, 0.4));
+    instancedColumns.finish();
+
+    // Use InstanceBilloards for sprites instead of models.
+    // Here display 100 grass sprites at random positions
+    var grasstexture = await  AssetPack.loadTexture('assets/models/temple/grass.png');
+    instancedGrass = InstancedBillboards.create(grasstexture!, 10, threeJs.scene,color:spritebillboardambiencecolor);
+    for (var i=0; i<100; i++)
+      instancedGrass.place(    OPENWORLD.Math.random()*10, OPENWORLD.Math.random()*10, 0.1,  width: 0.1,  height: 0.1);
+
+```
 
 *Terrain and collision detection*  
 Openworld allows for a single terrain model to be defined. For example for the Second Temple game the terrain is defined in:
 
 openworld/examplesecondtemple/blender/terrain/temple.blend 
 
+In blender you can defines multple meshes in a model as follows:
+
+<img width="1247" height="546" alt="image" src="https://github.com/user-attachments/assets/58ed0076-f1b3-467a-bc27-e6e2c840f00c" />
+<!--
 ![image](https://github.com/user-attachments/assets/7a1c1422-d8f5-4912-bf91-77e5107c946f)
 
 
-In blender you can defines multple meshes in a model as follows:
  
  ![image](https://github.com/user-attachments/assets/3e4fb79b-1f38-4679-97f5-c2a4313813ad)
- 
-If the mesh contains the name 'surface' then OPENWORLD treats it as a surface and 3D objects can easily be placed onto the surface using opendarts rayscaster.  The OPENWORLD function worldToLocalSurfaceObj places an object on the terrain at the point it intersects the terrain surface. Likewise a mesh with the word 'wall' in it is treated as a wall and OPENWORLD stop a player walking through it. And a 'roof' mesh is used so OPENWORLD knows if a player is indoors and stop showing rain indoors
- 
+-->
 
-Terrains should be exported as wavefront obj files since mesh names are retained. This is necessary so OPENWORLD knows which meshes are a wall, surface or roof
+If the mesh contains the name 'surface' then OPENWORLD treats it as a surface and 3D objects can be placed onto the surface using opendarts rayscaster.  The OPENWORLD function worldToLocalSurfaceObj places an object on the terrain at the point it intersects the terrain surface. You can also define levels of surfaces, for example a roof with level name 'surface1' in blender. Negative surface values can be used for levels below ground.  Also walls can be defined where if the word 'wall' is in a terrain group it is treated like a wall OPENWORLD stops a player walking through it. And a 'roof' mesh is used so OPENWORLD knows if a player is indoors and stop showing rain indoors.
+
+
+Terrains can be exported as glb files but also wavefront obj files. 
 
 ```
     // Example of loading terrain  openworld/examplesecondtemple/blender/terrain/temple.blend that has been exported to an obj file with path mode set to strip
@@ -186,23 +293,33 @@ Terrains should be exported as wavefront obj files since mesh names are retained
 
 
 *Spatial features*  
-Alongside using threedarts existing spatial placement of objects OPENWORLD has extra procedures to make it easy to place objects on a terrain at a certain point and with procedures to turn and scale them. All turn angle are in degrees with 0 degrees being north and 90 being east. Spatial functions make it easy to hide 3D objects if the camera gets a certain distance away from an object helping to increase frame rate. There is also spatial lerping making it possible to move an object along a terrain from one point to another in a given amount of time. Similarly with turning an object it is possible to lerp. For example turn 90 degrees in 1 second such as in this example:
+Alongside using threejs existing spatial placement of objects OPENWORLD has extra procedures to make it easy to place objects on a terrain at a certain point and with procedures to turn and scale them. All turn angle are in degrees with 0 degrees being north and 90 being east. Spatial functions make it easy to hide 3D objects if the camera gets a certain distance away from an object helping to increase frame rate. There is also spatial lerping making it possible to move an object along a terrain from one point to another in a given amount of time. Similarly with turning an object it is possible to lerp. For example turn 90 degrees in 1 second such as in this example:
 
 ```
-    // Example of a fountain moving south 1 unit taking 1 second to lerp and also spinning from 90 degrees to 180 degress in 1 second
-    var fountain = await OPENWORLD.Model.createModel('assets/models/fountain.glb');
-    OPENWORLD.Space.worldToLocalSurfaceObjHide(
-        fountain, 1,1, 0.0, 7);             // Set the position of the fountain on the surface and hide if its over 7 units away
-    OPENWORLD.Space.objTurn(fountain, 90);          // Set angle plane is facing east 
-    scene.add(fountain);
+    // Example of a car moving south 1 unit taking 1 second to lerp and also spinning from 90 degrees to 180 degrees in 1 second
+    var car = await OPENWORLD.Model.createModel('assets/models/car.glb');
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(     car, 1,1, 0.0, 7);             // Set the position of the car on the surface and hide if its over 7 units away
+    OPENWORLD.Space.objTurn(car, 90);          // Set angle plane is facing east 
+    scene.add(car);
 
-    // Move the fountain south one unit taking 1 second to gets there - lerp the fountain
-    OPENWORLD.Space.worldToLocalSurfaceObjLerp(
-            fountain, 1,2, 0, 1);
-   // Have fountain spin from 90 degrees to 180 degress lerping for one second
-   OPENWORLD.Space.objTurnLerp(fountain, 180, 1);
+    // Move the car south one unit taking 1 second to gets there - lerp the car
+    OPENWORLD.Space.worldToLocalSurfaceObjLerp(  car, 1,2, 0, 1);
+   // Have car spin from 90 degrees to 180 degress lerping for one second
+   OPENWORLD.Space.objTurnLerp(car, 180, 1);
+
+   // Can also use levels eg place a chimney on a roof that is on a surface set as level 1 in blender
+   var chimney = await OPENWORLD.Model.createModel('assets/models/chimney.glb');
+   OPENWORLD.Space.worldToLocalSurfaceObjHide(
+       chimney, 1,3, 0.0, 7, level:1);             // Set the position of the chimney on the roof which is level 1 and hide if its over 7 units away
+   OPENWORLD.Space.objTurn(chimney, 90);          // Set angle chimey is facing east 
+   scene.add(chimney);
+
+
 
 ```
+Behind the scenes mesh intersections with surfaces are cached in a small grid. This the reduces the compute needed for example if there is a lot of NPC's walking on a surface. By setting a smaller grid size more  accurate heights can be calculated but will increase the number of intersection calculations required.
+
+Also wall intersection are optimized so that if you have a big terrain with a lot of walls, it can be expensive to do a wall intersection every frame. Bounding box calculations are used so walls within the bounding box are used to calculate intersections. Its is therefore good practice to group  walls into localized blocks rather than spread  walls over the terrain otherwise wall intersections will be calculated on every wall.
 
 There are many other spatial functions.  For example:
 
@@ -217,9 +334,44 @@ OPENWORLD.Space.faceObjectAlways(knight, camera);
 
 
 ```
+And it is possible to place an object on a terrain with the same pitch as the terrain with the normal2world parameter. For example a horse and cart going up a hill like in the screenshot:
+
+<img width="261" height="279" alt="image" src="https://github.com/user-attachments/assets/71d9c89f-65ed-4f06-8b13-a3e4ee273bd2" />
+
+```
+  OPENWORLD.Space.worldToLocalSurfaceObjHide(  cart, 1,3, 0.0, 7, normal2world:true);
+
+  // Move the cart up hill to position 1,5 in 10 seconds while keeping the cart normal to the world
+  // worldToLocalSurfaceOnlyObjLerp will calculate its height position on the terrain at every movement so the cart will move along the contours of the terrain
+  OPENWORLD.Space.worldToLocalSurfaceOnlyObjLerp(  cart, 1,5,0, 10.0, normal2world:true);
+```
+
+Another spatial feature is the ability to lerp opacity of the object so rather than an object disappear instantly when it is a certain distance from the camera instead it will fade:
+```
+    // Have a car fade in 1 second when the car is 7 units away from the camera and fade in when you get closer than 7 units
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(     car, 1,1, 0.0, 7, lerpopacity:1.0);             
+
+```
+
+This also applies to light intensity and like lerpopacity rather than have a light abruptly turn off when the camera is a certain distance away can fade fade when the 'lerplight' parameter is used:
+
+```
+    // Set up a point light
+    var hearthlightgroup = THREE.Group();
+    var light = new THREE.PointLight(    0xFFA500); 
+    light.intensity = 0.3; 
+    light.distance = 0.5; 
+    hearthlightgroup.add(light);
+    scene.add(hearthlightgroup);
+    // Place the light source in the scene and when camera is 2 units away from it have the light fade in 1 second
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(
+        hearthlightgroup, hearthposx, hearthposy,2.0,level:1, 1, lerplight: 1);
+
+```
+
 
 *Triggers*  
-Openworld also has a trigger system whereby its possible to trigger an event. For example a trigger for when the camera gets a certain distance from an npc. In the following example a cat has a distance trigger that causes the cat to meow when a player moves within 4 meters of the cat:
+Openworld also has a trigger system where an event can be triggered. For example a trigger for when the camera gets a certain distance from an npc. In the following example a cat has a distance trigger that causes the cat to meow when a player moves within 4 meters of the cat:
 
     Group cat = await OPENWORLD.Actor.createActor('assets/actors/cat.glb', z:0);
     cat.scale.set(0.01,0.01,0.01);
@@ -227,15 +379,15 @@ Openworld also has a trigger system whereby its possible to trigger an event. Fo
         cat,1,1, 0, 4);
     OPENWORLD.Space.objTurn(cat,0);
     scene.add(cat);
-    OPENWORLD.BaseObject.setDistanceTrigger(cat, dist: 4);
-    cat.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
+    OPENWORLD.BaseObject.setDistanceTrigger(cat, dist: 4. event: (action) {
       if (event.action) {
          OPENWORLD.Sound.play(path: "sounds/meow.mp3", volume: 0.2);
       } else {
       }
     });
 
-The is also a trigger for when a 3D object in the scene is clicked. In the following example when the minorah is clicked it is hidden:
+
+There is also a trigger for when a 3D object in the scene is clicked. In the following example when the minorah is clicked it is hidden:
 
 ```
     var minorah = await OPENWORLD.Model.createModel('assets/models/minorah.glb');
@@ -243,12 +395,11 @@ The is also a trigger for when a 3D object in the scene is clicked. In the follo
     OPENWORLD.Space.worldToLocalSurfaceObjHide(minorah, -0.33, 1.03, 0.0, 4); 
     minorah.scale.set(0.11, 0.11, 0.11);
     OPENWORLD.Space.objTurn(minorah, 0);
-    OPENWORLD.BaseObject.setTouchTrigger(minorah);
-    minorah.extra['touchtrigger'].addEventListener('trigger', (THREE.Event event) {
+    OPENWORLD.BaseObject.setTouchTrigger(minorah,event:(event) {
        minorah.visible=false;
     });
 ```
-
+<!--
 This is also custom triggers. For example its possible to create your own trigger for when an npc is struck by a player:
 
 ```
@@ -263,10 +414,100 @@ This is also custom triggers. For example its possible to create your own trigge
          ...
 
 ```
+=really should change custom triggers to be consitent with the change
+-->
 
+*Portals*
+
+Portals allows a player to jump from one part of the game to another. This is useful for a terrain with multiple levels where you may want to move the player from one level to another. For example if you have set of stairs and when a player walks up the stairs the player is moved to a new terrain level on the next floor.
+
+In this example a portal is defined at the bottom of some stairs and takes the player to the top of the stairs and vice versa:
+```
+     // Take a player to the top of a set of steps to level 1
+     // If a player walk into a rectangle at x,y=57.16, 13.35 with width and height 0.04 then take them to x,y 57.7,13.45 on level 1 and have them face 0 degrees when they reach their destination
+     OPENWORLD.Portals.createPortal(
+          57.76, 13.35,
+          0.04,
+          0.04,
+          57.7, 13.45,
+          0.0,
+          level2: 1,
+          finalturn:0,
+          //  marker: _hotload,   // If visually want to see the portal entrance and destination then comment this part out
+          lerp: 1  // Take one second to get lerp to the top of the steps
+     );
+
+     // This portal does the opposite and takes the player from the top of the steps down to the bottom. When the player reaches the bottom they turn 225 degrees
+     // There is a callback where when they reach the bottom, after a delay of 1 second they turn to 318 degrees
+     // Angle entry is the angle they must enter the portal (140 degrees) with a certain threshold (eg  50 degrees eg can enter the portal 90 to 190 degrees)
+     // Angle entry stops the problem of  possibly have multiple portals near each other and accidently falling into the wrong one
+     OPENWORLD.Portals.createPortal(
+          57.74, 13.42,
+          level:1,
+          0.05,
+          0.05,
+          57.63, 13.21,
+          level2: 0,
+          0.0,
+          //   marker:_hotload,
+          finalturn:225,
+          angleentry: 140,
+          angleentrythresh: 50,
+          lerp: 1,
+          callback:(){
+            OPENWORLD.Space.objTurnLerp(threeJs.camera, 318,1,delay1);
+          }
+      );
+```
+
+*Obstacles*
+
+At run time a rectangular obstacle can be placed in the scene stopping a player from getting past. For example it can be put in a closed doorway when a door is closed and disabled when the door is opened. It also has a callback for when a player hits the obstacle:
+
+```
+    // Place an obstacle at  hearthposx, hearthposy with a width and height of 0.1
+    // If hit the obstacle then play a pain sound
+    OPENWORLD.Obstacles.createObstacle(
+        hearthposx, hearthposy, 0.1, 0.1,
+         //marker:_hotload   // Draw the marker
+        callback: (obstacle) {
+          OPENWORLD.Sound.play(path: OPENWORLD.Math.randPick(['sounds/pain.mp3','sounds/pain2.mp3','sounds/pain3.mp3']),volume: 0.1);
+        },
+        callbacknextwait: 1  // Wait 1 second before allow another callback - stop flood of callbacks if a player hits the obstacle
+    );
+```
+
+*Doorways*
+If a scene has a doorway made of multiple doors such as a double door rather than turn each door individually if the doorway is open or closed, a doorway can be defined to open and close all doors with one call.
+
+In this example a doorway is set to be open only if its not night night time:
+
+```
+    // For a doorway of two doors create the two door objects
+    var doorwomensgateeast = doorwood.clone();
+    _hotload.add(doorwomensgateeast);
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(
+        doorwomensgateeast,-13.66, 63.15, 0.00,  10);
+    doorwomensgateeast.scale.setValues(0.2, 0.25, 0.2);
+
+    var doorwomensgatewest = doorwomensgateeast.clone();
+    _hotload.add(doorwomensgatewest);
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(
+        doorwomensgatewest, -13.86, 63.15, 0.00,   10);
+
+    // These two doors can be added to a doorway 
+    var doorwaywomensgate=OPENWORLD.Doorway();
+    // If the door is open turn the door to 0 degrees otherwise to 90 degrees
+    doorwaywomensgate.addDoor(doorwomensgateeast,0,90);
+    // If the second door is open turn the door to 0 degrees otherwise set it to -90 degrees
+    doorwaywomensgate.addDoor(doorwomensgatewest,0,-90);
+    // Set the doors open or closed with one call - here if its not night time then both doors will be 0 degrees
+    doorwaywomensgate.setOpenClose(!OPENWORLD.Time.isNight(OPENWORLD.Time.time));
+
+```
       
 *Movement system*  
-Openworld includes the flutter <a href="https://pub.dev/packages/flutter_joystick">joystick</a> widget that allows a player to control turning and movement on a smartphone.  
+Openworld includes the flutter <a href="https://pub.dev/packages/flutter_joystick">joystick</a> widget for players to control turning and movement on a smartphone.  
 
 ![image](https://github.com/user-attachments/assets/dcdd75c8-8ba9-43e3-8fdf-cc7b3c559d0c)
 
@@ -274,11 +515,23 @@ This widget is used in conjuction with a threejs joystick/ keyboard that has bee
 
 Movement also includes swiping on the screen to turn and pitch the camera.
 
-The threedart code has been modified so that keyboard control can be switched from movement back to flutter widgets so that for example you could type text in a flutter widget.
+The threejs code has been modified so that keyboard control can be switched from movement back to flutter widgets so that for example you could type text in a flutter widget.
+
+*Keyboard callbacks*
+Keyboard callback allows for an event to conditionally occur when a key is pressed. For example if you are looking at a donkey from a certain distance and press 'e' the a callback is called to mount the donkey. Callbacks can also be unconditional eg very time a player presses space they jump up in the air
+
+```
+// Create a keyboard callback wehre if you are 0.5 units from a horse and facing it with 50 degrees and press 'e' you will mount the horse.
+OPENWORLD.KeyboardCallbacks.createKeyboardCallback(
+          'E', object: _horse, 0.5,facingdiff: 50,
+              (keyboardcallback) {
+             mount();
+          });
+```
 
 
 *Mob System*  
-Openworld has procedures specifically for npcs. For example  have  an actor randomly walk around a point of a given distance and frequency like a dog walking around randomly:
+Openworld has procedures specifically for NPCs. For example  have  an actor randomly walk around a point of a given distance and frequency like a dog walking around randomly:
 
 ```
   // Here a journalist will walk a random distance of 1.5 units from where he is at a speed of 0.2m/s, walking 10% of the time
@@ -291,22 +544,40 @@ Openworld has procedures specifically for npcs. For example  have  an actor rand
 There is also a procedure to move an NPC over and over again through a set of positions such as a guard walking up and down a corridor:
 
 ```
-  // Here a storeman will walk through these three points walking at 0.2m/s looping over and over
-  OPENWORLD.Mob.moveToLoop(
-            storeman,
-            [ [387.26, 285.76, 0, 0.2],
-              [386.05, 281.09, 0, 0.2],
-              [381.72, 276.86, 0, 0.2], ],
-            action: "walk". // Animation to play while walking
-       );
+  // Here a storeman will walk through these three points walking at 0.02 units/s looping over and over.
+   // Movetoloop also includes actions where can reach a certain point and do something like jump up in the air and turn west.
+  // Also includes callbacks where once a position When reaches 6.1,-20.5 the storaman cries in pain
+  // The looptype canbe looptypestop where rather than looping will stop
+  var v=0.02;
+  OPENWORLD.Mob.moveToLoop(storeman,
+              [
+                {"p": [-5.84, -30.5, 0], "v": v},
+                {"p": [-6.1, -20.5, -0.01], "v": v,
+                  "callback": (actor) {
+                     OPENWORLD.Sound.play(path: OPENWORLD.Math.randPick(['sounds/pain.mp3','sounds/pain2.mp3','sounds/pain3.mp3']),volume: 0.1);
+                  }
+                },
+                {"action": "jump", "time": 10, "t": 270},  // Jump when reach -6.1,-20.5 waiting 10 seconds and face west
+                {"p": [-6.1, -20.5, 0], "v":v},
+                {"p": [-5.84, -35, 0],  "v": v, },
+              ],
+             // looptype: OPENWORLD.Mob.LoopTypeStop,  
+              action: "walk");
+
 
   // Or just move an npc through multiple points to reach a destination
   // For example have a knight walk through the point 384.76, 252.02 to reach 383.76, 252.02
+  // Can have a callback when finish so for example the knight says hello when reached the destinstation
    OPENWORLD.Mob.moveTo(knight, [ [ 384.76, 252.02], [ 383.76, 252.02]] ,
       action:"walk",    // Animation while walking
       stopaction:"idle" // Animation when reached final point
+       callbackonfinish: (actor) {
+         OPENWORLD.Mob.setSpeech(actor, ["Hello"], z: 90,    scale: 0.4);
+       })
   );
+
 ```
+
 There are also procedures to make it easy to add random chatter to an npc. For example:
 
 <img src="https://github.com/user-attachments/assets/63442d1c-8c3c-4ecd-9d29-624e784c2182" width="256">
@@ -325,6 +596,22 @@ Its also possible to have an npc say a speech with one sentence spoken after the
   OPENWORLD.Mob.setSpeech(oldlady, ["I can't see very well.","Is someone there?","Try some of my pie"]);
 ```
 
+Speech also has text placement allowing for text to be placed in the x,y,z position releative to an NPC. To place the text to the left or right of the NPC use x and forward or back use y.
+
+In the example below the text -50 units forward. Setspaech has a callback for when a speech is finished. In this example the  NPC laughs when saying the speech:
+
+  <img width="300" alt="image" src="https://github.com/user-attachments/assets/4687b052-1eac-496b-a4c4-14335e081c75" />
+ OPENWORLD.Mob.setSpeech(actor,
+    ['Jack and Jill',
+     'went up the hill',
+     'to fetch a pale of water'],
+    x: 20,     y: -50.0,  z: 90,
+     clearwhendone: true,   // When speech is finished, clear the text
+      scale: 0.7,  tails: { 'bottomleft', 'bottomright', 'bottomcenter' },  // have tails at the bottom of the speech bubble like in the screenshot - for example imlpy a group of people are singing
+      callbackonfinish: (actor) {
+        // When finished speech laugh
+         OPENWORLD.Sound.play(path:'sounds/laugh.mp3');
+      });
 
 *Weather*  
 Openworld has weather built into the engine and includes wind, rain, cloud and fog. It has lerping so it is possible gradually transition from say clear sky to cloudy or rain to fog. It also includes a random weather generator where you can specify the probabity in a given day it will rain, be cloudy, be windy or foggy.
@@ -350,7 +637,7 @@ Also the day length can be specified. For example 1 hour to equal 24 hours. Ther
 
 
 *Light*  
-Openworld includes features like specifying that a light should be switched on at night and turned off during the day. Also allows light to flicker and also to lerp turning a light on so its not sudden.
+Openworld includes features like specifying that a light should be switched on at night and turned off during the day. Also allows light to flicker and lerping to fade a Light when a player moves away.
 
 ```
     var homelight= new THREE.PointLight(0xFFA500);
@@ -360,6 +647,9 @@ Openworld includes features like specifying that a light should be switched on a
     OPENWORLD.Light.addFlicker(homelight);
     // Specify that homelight will only be on at night
     OPENWORLD.Light.addNightOnly(homelight);
+    // when move 5 units away from camera, light will fade in 1 second or vice versa
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(
+        homelight, hearthposx, hearthposy, 5, lerplight: 1);
 ```
 
 *Sound*  
@@ -415,14 +705,14 @@ do something like give information when the player clicks the highlighted object
 
 
 *Delays*  
-There are many openworld procedures that have a delay. For example it is possible to have an actor wave his hand in 5 seconds or have cat meow in 5 seconds
+Many of the openworld procedures have a delay so that for example, have an actor wave his hand after 5 seconds or have cat meow in 10 seconds
 
 ```
-  // Cat meows in 5 seconds
-  OPENWORLD.Sound.play(path: "sounds/meow.mp3", volume: 0.2, delay:5);
+  // Cat meows in 10 seconds
+  OPENWORLD.Sound.play(path: "sounds/meow.mp3", volume: 0.2, delay:10);
 ```
 
-The allows for a sequence of actions to be performed. For example have a knight spin in 1 second, jump in 2 seconds and then laugh in 3 seconds.
+The following demonstrates a sequence of actions to be performed using delays. For example have a knight spin in 1 second, jump in 2 seconds and then laugh in 3 seconds.
 ```
 // Knight turns east in 1 seconds
 OPENWORLD.Space.objTurnLerp(knight, 90, 0.5, delay:1);
@@ -433,7 +723,7 @@ OPENWORLD.Sound.play(path: "sounds/laugh.mp3", volume: 0.2, delay:3);
 ```
 
 *Persistence*  
-Openworld has persistence so data can be stored when an app is closed and all game information can be retrieved. For example remember the state of the weather:
+Openworld has persistence so data can be stored when an app is closed and all game information can be retrieved when restarted. For example remember the state of the weather:
 
 ```
    // Store the rain level
@@ -445,32 +735,29 @@ Openworld has persistence so data can be stored when an app is closed and all ga
 
 *Rooms*  
 Openworld has a room system which allows things to happen when a player enters a room such as play a background sound, determine if  the room is indoors and call a trigger when a player enters the room. Rooms are defined to have a central x,y point with a rectangle having distance from that point. Rooms not only have a looping sound associated with it but also a random intermittent sound such as a smithy hammering occasionly. If  a room is indoors then rain will not appear.  The following is an example of a room with a background sound and a random intermittent sound and is defined to be indoors if a roof is above the players head. When the player enters the room a priest says a speech:
-
+It also has exitroom so when you leave a room it'll take you do another room eg room terrain
+   -for example can have a large roomterrain with smaller rooms of houses that lead into the terrain
+      -roomterrain could have sound of crickets at night or general terrain 
 ```
     var roomBC = OPENWORLD.Room.createRoom(7.4, 1.26,               // central coordinates of the room
              soundpath: "sounds/courtyard.mp3", volume: 0.05,       // looping background sound played when enter the room
-             randomsoundpath:"sounds/prayer.mp3", randomsoundgap:50 // prayer is played randomly every 50 seconds
+             randomsoundpath:"sounds/prayer.mp3", randomsoundgap:50, // prayer is played randomly every 50 seconds
+             exitroom: roomTerrain
     );
     scene.add(roomBC);
     OPENWORLD.Room.setAutoIndoors(roomBC, true);                    // If roof is above head is 
     OPENWORLD.Room.setDistanceTrigger(roomBC,
-        minx: 5, maxx: 9.1, miny: -0.67, maxy: 2.8);                // define the boundaries of the room - room in x axis from 5 to 9.1 and y axis is -0.67 to 2.0
+       // define the boundaries of the room - room in x axis from 5 to 9.1 and y axis is -0.67 to 2.0
+        minx: 5, maxx: 9.1, miny: -0.67, maxy: 2.8,     event: (action) { {
     // When enter the room
-    roomBC.extra['trigger'].addEventListener('trigger', (THREE.Event event) {
       if (event.action) {
          OPENWORLD.Mob.setSpeech(priest, ["Welcome to the Second Temple","Its 72AD"]);   // When enter the room the priest says a speech
       } 
     });
 ```
-<!--
-rooms where define an area for a room and 
-    can trigger entry and exit of room eg have butcher say hello when someone enters
-    room sound eg sound fo a smithy when enter
-    indoors when indoors then not effected by rain
--->
 
 *Maps*  
-Openworld has maps that show the players position with a marker. It is possible to have multiple maps where you can have a map for say a city and then a larger encompassing for wilderness. Each map is an image and you specify two points with a pixel position and a corresponding world position. With the two points openworld  calculates the image position from the world position through interpolation and can place a marker in the correct position:
+Openworld has maps that shows the players position with a marker. It is possible to have multiple maps where you can have a map for say a city and then a larger encompassing for wilderness. Each map is an image and you specify two points with a pixel position and a corresponding world position. With the two points openworld  calculates the image position from the world position through interpolation and can place a marker in the correct position:
 
 <img src="https://github.com/user-attachments/assets/816b8b2d-b8d5-4a8c-80a2-e73cb7077fc4" width="350">
 
@@ -501,11 +788,7 @@ In this example there are two maps and when the player is within the area of map
     // Given the current world position get the correct map and its marker position on that map
     var map = OPENWORLD.Maps.getMapFromWorldcoords(worldpos.x, worldpos.y);
 ```
-<!--
- maps where just specify two points on a map ie pixel pos and world pos and can tranlate your position onto map
-    -multipel maps and will choose the one at end so can have maps eg for a city and a global map
-    -exmaples of display of maps in two demos
--->
+
 
 *Music*  
 Openworld can play music in the background with multiple songs with different probabilities of playing. In the example below there are four song and hatikvah has a 5/8 chance of the song being chosen to play. By default there is a gap between songs of 3 minutes plus a random number between 0 and 50 second though this can be changed with 'timebetweensongs' and 'randomtimebetweensongs':
@@ -546,7 +829,7 @@ Rather than hard code all 3D objects in flutter it is possible to specify 3D obj
 }
 ```
 
-The config file also has  pool objects. This is useful for example with a forest with thousands of trees. Its possible to show only the closest 40 trees at anyone on time instead of clone 1000 trees. In the example below a tree object is created. There are two pool positions at two different positions with 500 trees defined in each that are randomly placed within 30 units of the position of the pool object. They are randomly scaled by 0.4 (scaled randomly between 0.8 to 1.2). So the example below defines 1000 trees but only creates 40 and displays only the closest 40 to the player.
+The config file also has  pool objects. This is useful for example with a forest with thousands of trees. Its possible to show only the closest 40 trees at anyone one time instead of clone 1000 trees. In the example below a tree object is created. There are two pool positions at two different positions with 500 trees defined in each that are randomly placed within 30 units of the position of the pool object. They are randomly scaled by 0.4 (scaled randomly between 0.8 to 1.2). So the example below defines 1000 trees but only creates 40 and displays only the closest 40 to the player.
 
 ```
 {"objects": [
@@ -564,9 +847,173 @@ The config file also has  pool objects. This is useful for example with a forest
   }
 }
 ```
+Config pool objects can also be used run time with pool objects not needing to be created in the  config.json file. For example it is possible to create a crowd of 100 NPC actors. In  the example below pooled actors are randomly placed in a 10x10 grid facing in random directions. Pool object can also have callbackonvisible and callbackonhide  events so when a pool object appears or disappears you could have them for example say a speech, jump up in the air. And when they are no longer visible you can clear the change on callbackonhide. It is important remember to undo any modifications you do in callbackonvisible so the change doesnt appear  when the pool object is reused. In the example below animation throttling is used so that actors that are furtuher away have less frames computed the those closer to the camera allowing for large crowds without expensive animation pose calcualtions.
 
+```
+    // Create 100 pool object in a 10x10 units area
+    for (var i=0; i<100; i++) 
+        OPENWORLD.Config
+            .config['positions']['poolpositions'][1]['positions'].add(
+            {
+              'name':  OPENWORLD.Math.randPick(manlist),
+              'p': [OPENWORLD.Math.random()*10,OPENWORLD.Math.random()*10, 0],
+              't': OPENWORLD.Math.random()*360,
+              'action': "idle",
+              'randomduration': 0.1,
+              "lerpopacity": 1,
+                "callbackonvisible":(actor) {
+                  OPENWORLD.Actor.enableDistanceThrottle(actor, minDistance: 0.5, skipFrames: 6);
+                },
+                "callbackonhide":(actor) {
+                  OPENWORLD.Actor.disableDistanceThrottle(actor);
+                },
+            });
+
+
+    // Call this once any new objects are created  - eg at the end of hotload
+    await OPENWORLD.Config.updatePoolObjects();
+
+    OPENWORLD.Config.forceShowPoolObjects();
+```
+
+Config can also reteive the position information of a given pool object. In the example below ppositionjson will have 
+ppositionjson['p'] as 10,10,0 and 
+ppositionjson['t'] will be 35
+and label 'blacksmith'
+when callbackonvisible is called. In the example, when the positionjson label is blacksmith a hammering sound will be played. This allow pool object information to be retrieved.
+```
+   OPENWORLD.Config
+            .config['positions']['poolpositions'][1]['positions'].add(
+            {
+              'name':  'citizen3',
+              'p': [10,10, 0],   't': 35,
+              'label':'blacksmith',
+              'action': "idle",
+                "callbackonvisible":(actor) {
+                  var positionjson = OPENWORLD.Config.getPositionForObject(actor);
+                  if (positionjson['label']=='blacksmith')
+                    OPENWORLD.Sound.play(path: "sounds/hammer.mp3");
+                },
+            });
+
+    // Also possible to get the object associated with the positionjson if it is visible
+    var actor = OPENWORLD.Config.getPoolPositionObject(  positionjson);
+    if (actor!=null) {
+       OPENWORLD.Space.objTurnLerp(actor,35,1);
+    }
+```
+  
 *Common objects*    
-Openworld includes some useful objects like fire, water, flares, smoke and sky. Most are based on those  available in threejs as shaders. 
+Openworld includes some useful objects like fire, water, flares, smoke and sky that will commonly be used in an openworld. Many are based on those  available in threejs as shaders. 
+
+- Water
+  The following is an example of water:
+<img width="300" alt="image" src="https://github.com/user-attachments/assets/de67d132-ddea-46c8-b08f-87ad39534f68" />
+
+In this example incluseiveonly is set to true to allow specific objects to be reflected. If it is set to false it means you specify what you don't want reflected. This example also only calculates reflections once every 4 frames speeding up the water effect:
+
+```
+    final waterGeometryi = THREE.PlaneGeometry(20.0, 20.0);
+    var watersiloam = Water(waterGeometryi, WaterOptions(
+      color: 0xbbddff,
+      scale: 4 / 32.0,
+      reflectivity: 1.0,
+      flowDirection: THREE.Vector2(0.05, 0.05),
+      textureWidth: 256,
+      textureHeight: 256, 
+      inclusiveOnly:true
+    ));
+
+    watersiloam.scale.setValues(0.1,0.1, 1.0);
+    OPENWORLD.Space.setTurnPitchRoll(Glob.watersiloam!, 0, 0, 90);
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(watersiloam!, -9.3-0.4, -52.62, 0.063, 2.5);
+    scene.add(watersiloam);
+
+    // Use inclusive where say what want reflected in the pool
+    // Choose to include for example the sky, clouds tents
+    threeJs.scene.traverse((obj) {
+        if (obj is THREE.Mesh && 
+            (obj.name== 'skymesh' || obj.name == 'clouds'||   obj.name == 'tentsiloamnormalclotheswall')) 
+           Glob.watersiloam.includeInReflection.add(obj);
+      });
+      // Only calculate the reflections once every 4 frames
+      watersiloam.reflectionUpdateInterval =4;
+
+```
+
+- Vegeration
+
+The vegetation object allows the rendering of vegetation sprites cheaply including grass and shrubs and also detail on the ground.  
+  <img width="300" alt="image" src="https://github.com/user-attachments/assets/ffeca468-17f4-4c6e-9737-6d8669980a1c" />
+  
+In the example below the surfaceTexture is is set to detailmap.jpg 
+```
+    // Create vegetation at x,y=5,6 of 20 units in width and height and exclude a point at 2,2 of width and height 0.5
+    // Add grass and myrtle
+    var grass = Vegetation();
+    var grassgroupii = await grass.createGrass(threeJs.camera,
+        boundaryWidth: 20,   boundaryLength:20,    worldposx: 5,  worldposy: 6,
+        layerFadeAngle: 0.25,
+        excludeSquares: [[2,2,0.5,0.5]],  // Exclude regions
+        surfaceTexture: SurfaceTextureSpec(
+            asset: 'assets/models/temple/detailmap.jpg',
+            blendStrength: 0.25,
+            tilingScale: 0.3, // texture repeats every 12 world metres
+            edgeFade: 0.02
+        ),
+        plants: [
+          PlantSpec(
+            spriteAsset: 'assets/shaders/grass.png',
+            count: 10000,  // Create a lot of grass sprites
+            width: 0.2 / 2,
+            height: 0.3,
+            billboard: 1,
+            flipProbability: 0.5,
+          ),
+          PlantSpec(
+              spriteAsset: 'assets/models/temple/myrtle.png',
+              count: 100,
+              width: 0.4 ,
+              height: 0.6 ,
+              billboard: 3,
+              heightVariation: 0.3,  // Dont make all the myrtle the same width and height
+              widthVariation: 0.3,
+              layers: 2,
+              flipProbability: 0.5,  // Randomly flip the mytle
+              planeSize: 100,
+              exclusionOffset: 0.1
+          ),
+        ],
+        heightGridDivisions: 10,
+        planeSize: 50);
+
+    OPENWORLD.Space.worldToLocalSurfaceObjHide(
+        grassgroupii,5,6, 0.0,  15);
+    scene.add( grassgroupii);
+
+    OPENWORLD.Updateables.add(grassiii);
+```  
+- Trees
+  
+  Can cheap trees made up of transparent planes. In example below  has 3 types of tree sections and has 128 out of them. The example below has the sections quite large so fewer sections are needed for a more realistic looking tree:
+  
+  <img width="300" alt="image" src="https://github.com/user-attachments/assets/974a3ece-0b53-4c1a-83d2-abccc6e2a7a1" />
+```
+          var treei = await Tree.createTree([
+            ["assets/textures/boxthorn.png", 0.8], // leafscale
+            ["assets/textures/boxthorn2.png", 0.8],
+            ["assets/textures/boxthorn3.png", 1.4]
+          ],
+              leafspritescale: 1.2,
+              // is redundant because have specified in leafpaths
+              spreadx: 3.0,
+              spreadz: 3.0,
+              spready: 1.0,
+              //   useplanes: false,
+              leafspritespertree: 128,
+              spreadytapertop: 0.5);
+```
+- Fire
 
 ![image](https://github.com/user-attachments/assets/ab24ea2b-8149-4759-abec-f7f8eb794eca)
 
@@ -580,21 +1027,34 @@ The following is an example of fire:
     scene.add(fire.mesh);
     OPENWORLD.Updateables.add(fire);
 ```
-
+<!--
 The following is an example of flares:
 
 ![image](https://github.com/user-attachments/assets/ee950d2f-7ca7-4a2f-8397-6bf3a9d8269d)
+-->
 
-The following is an example of water:
+*Asset Pack*
 
-![image](https://github.com/user-attachments/assets/4f4499fd-e278-4457-8810-71d83fd11289)
+If you upload a game to steam your assets will not be protected and can be accessed by anyone. Openworld now has an asset pack tool that lets you encrypt your assets to offer some encryption.  It is made to be convenient so that in debug mode you can continue to load your assets like normal in a  /protected folder but when you do a release instead the assets can be loaded from an archive in your assets/pack directory. You will need to add - assets/packs/ to your pubspec.yaml file.
 
+
+You can follow instructions in /lib/ASSET_PACK_README.md
+In example below a key is created for the assets and the protected assets are encrypted into a game.owp file using that key:
+
+```
+dart run openworld:pack_assets --gen-key
+
+dart run openworld:pack_assets --in protected --out assets/packs/game.owp
+
+
+```
 
 *Multi player*  
-The demo games include simple multi player capability. But multiplayer is not built into the openworld gaming engine. This might change in the future. Openworld does have a client class with sessions and player information but the actual game play is specific for each demo. The demo multiplayer simply broadcasts a logged in players  position and turn and broadcasting a player action 'wave'. The multiplayer does provide chat and information on whos on. The server side is written in php and mysql as available in the repository in /server
+The rhodes3d demo games include simple multi player capability. But multiplayer is not built into the openworld gaming engine. This might change in the future. Openworld does have a client class with sessions and player information but the actual game play is specific for each demo. The demo multiplayer simply broadcasts a logged in players  position and turn and broadcasting a player action 'wave'. The multiplayer does provide chat and information on whos on. The server side is written in php and mysql as available in the repository in /server
 
 ![image](https://github.com/user-attachments/assets/d5114ddf-57ab-46e7-a3ab-54b29215eca7)
 
+Future versions of the library will include multiplayer support that is peer to peer so that no server is required. The games will be hosted by players themselves. 
 
 *Hotloading*  
 The demo games include a hotloading function that is called whenever a game is hotloaded. This allows everything in hotload function being reloaded and displayed instantly making placement of objects being possible on the fly. For example in the example below an extra grassposs position could be added and then hotloaded and it will be displayed straight away:
@@ -624,6 +1084,7 @@ hotload() async
 }
 ```
 
+  
 An easy way to get a world position on the terrain is from the android studio console which will every second display your location and turn:
 
 ```
@@ -633,90 +1094,5 @@ pos: 8.59, 1.51, t-95.00
 ```
 
 By copying and pasting the position into the hotload function, objects can be placed in the scene, hotloaded and viewed straight away.
-
-<!--
-**Blender**
-All actors and models are made with the Blender modelling tool and are available in '/examplesecondtemple/blender' and '/examplerhodes3d/blender'. These are then exported into the assets directory in glb format with blender except for the terrain which should be exported in wavefront obj format with strip applied since mesh names are preserved which is necessary in defining the terrain surface, walls and roofs.
-
--demos made with blender modelling tool
-  -mesh editing, animations, texturing in blender
-  all availble in this respotiroy
-  
-*Terrain*    
-terrain is exported to obj, use strip
-  - seems to work better in terms of intersections
-  wall, roof surface in name show screenshot
-
-*Actors    
-actor, models are export as glb from blender
-
- 
-A minimalistic framework to make it easier creating an multi user open world with threejs for both smartphones and desktops
-
-To demonstrate the framework, a demo has been made for the Second Temple, the temple that was at the center of judaism before 77AD. It is where the dome of the rock currently stands on the temple mount in Jerusalem. In the demo you can explore the Second Temple. This framework also includes the original blender models for the temple and the actors in the demo. It also demonstrates a multi user server. The demo should work on smartphone browsers (tested on iPhone and iPad 9.3) and desktops.
-
-Live Demo http://www.forthtemple.com/secondtemple
-
-Click 'connect' to connect to the server
-
-![alt tag](http://www.forthtemple.com/secondtemple/screenshots/temple200.jpg)  ![alt tag](http://www.forthtemple.com/secondtemple/screenshots/templeiii200.jpg)
-
-
-**Installation**  
-If you unzip the distrubution under your webserver root then browsing http://localhost/openworldthreejs/web/secondtemple/ should display the Second Temple.
-
-For instructions on setting up the server refer to the server section at the end.
-
-**Intro**  
-The framework revolves around a main world model that contains surfaces and walls that the framework detects to allow a user to walk around a model. The demo includes a blender model for the second temple (/models/secondtemple/temple/temple.blend). The minimalistic framework is in the javascript file /web/secondtemple/openworldjs/openworld.js and has functions that make it possible to work with world coordinates and directions instead of local coordinates and rotations. For example the coordinates 5,4,0 means 5,4 in the xy plane and height zero off the surface of the model. Also direction can be specified with 90 degrees being east, 180 being south.
-
-The openworld framework also includes an all purpose controller with virtual joystick that works on a smartphone. It also works with a keyboard and mouse.
-
-There is also a server written in PHP and MySQL that allows multiple users to interact on the server. It has a base server that can be the basis for other multi user open worlds.
-
-
-**Using blender models**  
-
-terrain is exported to obj, use strip
-  - seems to work better in terms of intersections
-actor, models are export as glb from blender
-
-All the models in the demos are created using Blender. There are included in the repository. In the demo, models are exported as wavefront 'obj' models since they allow for multiple texturing. For actors they are exported from Blender as json models since they include animations which json allows for but obj does not.
-
-If you open /models/secondtemple/temple/temple.blend notice the multiple meshes. Notice that some have the word wall and some surface in them.
-
-![alt tag](http://www.forthtemple.com/secondtemple/screenshots/wallsurface.jpg) 
-
-A surface mesh will be intersected by the open world framework to determine the ground. Walls are also detected to stop players walking through walls. Also notice the units of distance in the blender model are around about 1 meter. Also Z is up. Also some meshes are hidden in order to reduce the size. To export the temple.blend model to obj, select all the meshes you wish to export (will exclude the hidden ones) and then export the obj and then click on 'selection only' to only export the selected meshes.
-
-![alt tag](http://www.forthtemple.com/secondtemple/screenshots/exportobj.jpg) 
-
-To export an actor like a priest (/models/secondtemple/priest/priest.blend) to json make sure the Blender export io_three is placed under the directory Blender\2.xx\scripts\addons. Exporting to json can be fiddly where you must first select the mesh you wish to export like selecting body below:
-
-![alt tag](http://www.forthtemple.com/secondtemple/screenshots/jsonselectmesh.jpg) 
-
-And then when you export to json you must specify all the correct flags once to export so that it is not missing animation, bone, texture information. These are the ones that work:
-
-![alt tag](http://www.forthtemple.com/secondtemple/screenshots/exportjsonsmall.jpg) 
-
-**Server**  
-The server is written in pure PHP and MySQL with no dependencies. MySQL is used to hold the player positions and also includes messaging. Every second a player polls the server giving the server via json the players position. In return the server gives player positions in the players vicinity and also any messages from players. There is tests for player abuse, such as polling much more often or giving false positions, but this could easily be added in the future.
-  
-*Installation*  
-1. From the distribution copy the server directory to your host that has PHP and MySQL. It should be the same directory as your index.html file. Eg  
-     - index.html  
-     - actors  
-     - server  
-     - models  
-     - openworldjs  
-2. Create a MySQL database such as 'openworld' with a user and password  
-3. Run the openworld.sql script under /server on the new database  
-4. Change the base_server.php mysql username and password and database to the database you just setup  
-  
-Now when you click on 'Connect' when browse to index.html it should connect you to the server.
-
-*Modifying game parameters*  
-Some of the game specific parameters for the server are specified in secondtemple.php. These paramaters include $MAX_DISTANCE where if it is greater than 0 will only tell players of other players that are within that distance. $CLOSET will show just the closest x number of players. -->
-
 
 

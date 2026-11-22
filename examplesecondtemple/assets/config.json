@@ -1,18 +1,49 @@
 {"objects": [
-  {"name": "carcass","object": [
+  {"name": "citizen","ignore":true,"object": [
+    {"type": "actor", "ifilename":"assets/actors/citizen/citizen.glb","s":0.0012}
+  ]},
+  {"name": "citizen4","ignore":true, "object": [
+    {"type": "actor", "copyobject":"assets/actors/citizen/citizen4.glb","shareanimations":"citizen","s":0.0012,"z": 38}
+  ]},
+  {"name": "citizen42","ignore":true, "object": [
+    {"type": "actor", "copy": "citizen4","texture":"assets/actors/citizen/citizen42.jpg","shareanimations":"citizen","s":0.0012,"z": 38}
+  ]},
+
+  {"name": "carcass","ignore":true,"object": [
     {"type": "sprite", "texture":"assets/textures/carcass.png","height":0.2, "width":0.05, "randommirroru":true, "ambient":false, "zi":0.1}
   ]},
   {"name": "laver","ignore":true, "object": [
     {"type": "sprite", "texture":"assets/textures/laver.png","height":0.6, "width":0.4, "ambient": false}
   ]},
-  {"name": "grass","object": [
-    {"type": "sprite", "texture":"assets/textures/grass.png","height":0.1, "width":0.1}
+  {"name": "grass","ignore":true, "object": [
+    {"type": "sprite", "texture":"assets/models/temple/grass.png","randommirroru":true, "height":0.03, "width":0.05}
+  ]},
+  {"name": "myrtle","ignore":true, "object": [
+    {"type": "sprite", "texture":"assets/models/temple/myrtle.png","randommirroru":true, "width":0.05, "height":0.075}
+  ]},
+  {"name": "sage","ignore":true, "object": [
+    {"type": "sprite", "texture":"assets/models/temple/sage.png","randommirroru":true, "width":0.05, "height":0.05}
+  ]},
+  {"name": "grass2","ignore":true, "object": [
+    {"type": "model", "filename":"assets/models/grass.glb","s":0.015, "emissive": "111111"}
+  ]},
+  {"name": "detailmap","ignore":true, "object": [
+    {"type": "model", "filename":"assets/models/detailmap.glb","s":0.4, "emissive": "333333", "opacity": 0.4,"shininess": 0, "roughness": 1.0}
+  ]},
+  {"name": "rock","ignore":true,"object": [
+    {"type": "sprite", "texture":"assets/textures/rock.png","randommirroru":true, "height":0.03, "width":0.05}
+  ]},
+  {"name": "cyprus","object": [
+    {"type": "sprite", "texture":"assets/models/temple/cyprus.png","height":0.7, "width":0.2}
   ]},
   {"name": "olive","object": [
-    {"type": "sprite", "texture":"assets/textures/olive.png","height":0.6, "width":0.6}
+    {"type": "sprite", "texture":"assets/models/temple/olive.png","height":0.3, "width":0.3}
   ]},
   {"name": "fishtable","object": [
     {"type": "model", "filename":"assets/models/fishtable.glb","s":0.005, "t":90}
+  ]},
+  {"name": "rocksmall","object": [
+    {"type": "model", "filename":"assets/models/rocksmall.glb","s":0.004, "roughness": 1, "shininess": 0, "emissive": "111111"}
   ]},
   {"name": "clothing","object": [
     {"type": "model", "filename":"assets/models/clothing.glb","s":0.01, "t":90}
@@ -20,10 +51,10 @@
   {"name": "carcasss","object": [
     {"type": "model", "filename":"assets/models/carcasss.glb","s":0.01, "t":90}
   ]},
-  {"name": "vegetable","object": [
-    {"type": "model", "filename":"assets/models/vegetable.glb","s":0.005, "t":90}
+  {"name": "vegetabletable","ignore":true, "object": [
+    {"type": "model", "filename":"assets/models/vegetabletable.glb","s":0.005, "t":90}
   ]},
-  {"name": "moneytable","object": [
+  {"name": "moneytable","ignore":true, "object": [
     {"type": "model", "filename":"assets/models/moneytable.glb","s":0.025, "t":90}
   ]},
   {"name": "chair","object": [
@@ -32,7 +63,7 @@
   {"name": "table","object": [
     {"type": "model", "filename":"assets/models/table.glb","s":0.0009, "t":90}
   ]},
-  {"name": "oven","object": [
+  {"name": "oven","ignore":true, "object": [
     {"type": "model", "filename":"assets/models/oven.glb","s":0.05, "t":90}
   ]},
   {"name": "houselight","object": [
@@ -41,8 +72,8 @@
   {"name": "housefire","object": [
     {"type": "fire", "s": 0.04, "z": 0.0, "description":"was 0.25"}
   ]},
-  {"name": "minorah","object": [
-    {"type": "model", "filename":"assets/models/minorah.glb", "t":90}
+  {"name": "menorah","object": [
+    {"type": "model", "filename":"assets/models/menorah.glb", "t":90}
   ]},
   {"name": "person", "ignore":true, "object": [
     {"type": "model", "filename":"assets/models/person.glb","s":0.004, "t":90},
@@ -51,55 +82,124 @@
 ],
 "positions":
 {"staticpositions":[
+  {"name": "citizen4", "ignore":true, "p": [5.09, 0.93, 0.0], "l":1, "t": 50, "action": "starjump"},
   {"name": "person","ignore":true, "p": [ -8.27, -20.06, -0.03],"d": 3, "t": 50},
   {"name": "person","ignore":true, "p": [ -14.35, 7.26, -0.0],"d": 3, "t": 10},
   {"name": "minorah","ignore":true, "p": [  -0.33, 1.03, 0.0],"d": 4, "s": 0.11, "t": 90},
-  {"name": "minorah","p": [ -8.3, -19.8, 0.06],"d": 3, "s": 0.035},
-  {"name": "minorah","p": [ -14.4, 7.6, 0.06],"d": 3, "t":40, "s": 0.035},
-  {"name": "housefire","p": [ -8.3, -19.9, 0.0],"d": 3},
-  {"name": "housefire","p": [ -14.4, 7.55, 0.0],"d": 3},
-  {"name": "houselight","p": [ -8.3, -19.9, 0.1],"d": 3},
-  {"name": "houselight","p": [ -14.35, 7.6, 0.1],"d": 3},
-  {"name": "oven","p": [ -8.3, -19.9, 0.0],"t":90, "d": 3},
-  {"name": "oven","p": [ -14.4, 7.55, 0.0],"t":50, "d": 3},
-  {"name": "table","p": [-8.3, -19.8, 0.0],"t":0, "d": 3},
+  {"name": "minorah","ignore":true,"p": [ -8.3, -19.8, 0.06],"d": 3, "s": 0.035},
+  {"name": "minorah","ignore":true,"p": [ -14.4, 7.6, 0.06],"d": 3, "t":40, "s": 0.035},
+  {"name": "housefire","ignore":true,"p": [ -8.3, -19.9, 0.0],"d": 3},
+  {"name": "housefire","ignore":true,"p": [ -14.4, 7.55, 0.0],"d": 3},
+  {"name": "houselight","ignore":true,"p": [ -8.3, -19.9, 0.1],"d": 3},
+  {"name": "houselight","ignore":true,"p": [ -14.35, 7.6, 0.1],"d": 3},
+  {"name": "oven","ignore":true,"p": [ -8.3, -19.9, 0.0],"t":90, "d": 3},
+  {"name": "oven","ignore":true,"p": [ -14.4, 7.55, 0.0],"t":50, "d": 3},
+  {"name": "houselight","ignore":true, "p": [ -16.95, -45.09, 0.15],"d": 3},
+  {"name": "oven","ignore":true, "p": [ -16.95, -45.09, 0.0],"t":180, "s":0.5, "d": 3},
+
+  {"name": "table","ignore":true,"p": [-8.3, -19.8, 0.0],"t":0, "d": 3},
   {"name": "table","p": [ -14.45, 7.8, 0.0],"t":50, "d": 3, "ignore": true},
-  {"name": "chair","p": [-8.3, -20.08, 0.0],"t":0, "d": 3},
-  {"name": "chair","p": [ -14.35, 7.28, 0.0],"t":-10, "d": 3},
-  {"name": "vegetable","p": [-7.1,-10.1],"t":90, "d": 6},
-  {"name": "vegetable","p": [-7.1,-9],"t":90, "d": 6},
-  {"name": "vegetable","p": [4.2,-11], "t": 0, "d": 6},
-  {"name": "clothing","p": [-7.4,-10.1],"t":90, "d": 6},
-  {"name": "clothing","p": [-7.4,-9],"t":90, "d": 6},
-  {"name": "fishtable","p": [-7.1,-9.5],"t":90, "d": 6},
-  {"name": "fishtable","p": [3.4,-11.0], "t":0, "d": 6},
-  {"name": "moneytable","p": [1.8,-11 ],"t":90, "d": 6},
+  {"name": "chair","ignore":true,"p": [-8.3, -20.08, 0.0],"t":0, "d": 3},
+  {"name": "chair","ignore":true,"p": [ -14.35, 7.28, 0.0],"t":-10, "d": 3},
+  {"name": "vegetable","ignore":true,"p": [-7.1,-10.1],"t":90, "d": 6,"description": "westwall"},
+  {"name": "vegetable","ignore":true,"p": [-7.1,-9],"t":90, "d": 6, "description": "westwall"},
+  {"name": "vegetable","ignore":true,"p": [4.2,-11], "t": 0, "d": 6},
+  {"name": "clothing","ignore":true,"p": [-7.4,-10.1],"t":90, "d": 6},
+  {"name": "clothing","ignore":true,"p": [-7.4,-9],"t":90, "d": 6},
+  {"name": "fishtable","ignore":true,"p": [-7.1,-9.5],"t":90, "d": 6},
+  {"name": "fishtable","ignore":true,"p": [3.4,-11.0], "t":0, "d": 6},
+  {"name": "moneytable","ignore":true,"p": [1.8,-11 ],"t":90, "d": 6},
   {"name": "laver","p": [2.53,-0.5], "d": 3, "ignore": true},
-  {"name": "carcass","p": [3.2,2.5,0.1],"description=":"near altar","d":3},
-  {"name": "carcass","p": [3.2,2.7,0.1], "description":"near altar"  ,"d":3},
-  {"name": "carcass","p": [3.2,2.9,0.1],"description":"near altar"  ,"d":3},
-  {"name": "carcass","p": [3,2.5,0.1] ,"description":"near altar"  ,"d":3},
-  {"name": "carcass","p": [3,2.7,0.1],"description":"near altar"  ,"d":3},
-  {"name": "carcass","p": [3,2.9,0.1],"description":"near altar",  "d":3},
-  {"name": "carcasss","p": [-7.4,-9.55], "t":270, "d":3}
+  {"name": "carcass","ignore":true,"p": [3.2,2.5,0.1],"description=":"near altar","d":3},
+  {"name": "carcass","ignore":true,"p": [3.2,2.7,0.1], "description":"near altar"  ,"d":3},
+  {"name": "carcass","ignore":true,"p": [3.2,2.9,0.1],"description":"near altar"  ,"d":3},
+  {"name": "carcass","ignore":true,"p": [3,2.5,0.1] ,"description":"near altar"  ,"d":3},
+  {"name": "carcass","ignore":true,"p": [3,2.7,0.1],"description":"near altar"  ,"d":3},
+  {"name": "carcass","ignore":true,"p": [3,2.9,0.1],"description":"near altar",  "d":3},
+  {"name": "carcasss","ignore":true,"p": [-7.4,-9.55], "t":270, "d":3},
+  { "name": "detailmap","ignore":true,"p": [   -24.82, 58.57,0.02], "normalize2world": true, "d": 3},
+  { "name": "detailmap","ignore":true,"p": [   -24.91, 59.17,0.02], "normalize2world": true, "d": 3},
+  { "name": "detailmap","ignore":true,"p": [   -25.38, 59.67,0.02], "normalize2world": true, "d": 3}
+
 ],
   "poolpositions":[{"poolsize":40, "maxdistance":20, "positions":[
-    { "name": "grass","p": [ 35.13, 0.13,0.0],  "rx": 30, "ry":30, "rs":0.4, "n": 512 },
-    { "name": "grass","p": [ 29.78, 26.33,0.0],  "rx": 30, "ry":30, "rs":0.4, "n": 512 },
-    { "name": "grass","p": [  3.38, 35.85,0.0],  "rx": 20, "ry":20, "rs":0.4, "n": 256 },
-    { "name": "grass","p": [  -8.94, 35.30,0.0],  "rx": 20, "ry":20, "rs":0.4, "n": 256 },
-    { "name": "grass","p": [  -20.84, 20.39,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 60 },
-    { "name": "grass","p": [  -22.05, 11.56,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 60 },
+    { "name": "grass", "ignore":true,"p": [ 35.13, 0.13,0.0],  "rx": 30, "ry":30, "rs":0.4, "n": 512 },
+    { "name": "grass","ignore":true,"p": [ 29.78, 26.33,0.0],  "rx": 30, "ry":30, "rs":0.4, "n": 512 },
+    { "name": "grass","ignore":true,"p": [  3.38, 35.85,0.0],  "rx": 20, "ry":20, "rs":0.4, "n": 256 },
+    { "name": "grass","ignore":true,"p": [  -8.94, 35.30,0.0],  "rx": 20, "ry":20, "rs":0.4, "n": 256 },
     { "name": "grass","p": [  -18.93, 5.61,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 60 },
-    { "name": "grass","p": [   -13.83, 4.26,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 60 },
-    { "name": "grass","p": [  -22.86, -6.75,0.0],  "rx": 20, "ry":20, "rs":0.4, "n": 256 },
-    { "name": "grass","p": [  -20.68, -23.03,0.0],  "rx": 20, "ry":20, "rs":0.4, "n": 256 },
-    { "name": "grass","p": [  -13.30, -32.13,0.0],  "rx": 20, "ry":20, "rs":0.4, "n": 256 },
-    { "name": "grass","p": [   7.51, -40.81,0.0],  "rx": 20, "ry":20, "rs":0.4, "n": 256 },
-    { "name": "grass","p": [   20.97, -31.88,0.0],  "rx": 20, "ry":20, "rs":0.4, "n": 256 }
+    { "name": "grass","p": [  -3.60, -28.97,0.0],  "rx": 6, "ry":6, "rs":0.4, "n": 64 },
+    { "name": "grass","p": [  -12, -28.97,0.0],  "rx": 6, "ry":6, "rs":0.4, "n": 64 },
+    { "name": "cyprus","p": [  -30, -45.79,0.0],  "rx": 15, "ry":15, "rs":0.4, "n": 10 },
+    { "name": "grass","p": [   -30, -45.79,0.0],  "rx": 15, "ry":15, "rs":0.4, "n": 64 },
+    { "name": "cyprus","ignore":true,"p": [ 0, -53.34,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 10 },
+    { "name": "olive","p": [ 0, -53.34,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 5 },
+    { "name": "grass","ignore":true,"p": [  0, -53.34,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 128 },
+    { "name": "cyprus","ignore":true,"p": [ -6, -61.34,0.0],  "rx": 8, "ry":8, "rs":0.4, "n": 10 },
+    { "name": "olive","p": [ -6, -61.34,0.0],  "rx": 8, "ry":8, "rs":0.4, "n": 5 },
+    { "name": "grass","ignore":true,"p": [  -6, -61.34,0.0],  "rx": 8, "ry":8, "rs":0.4, "n": 64 },
+    { "name": "cyprus","ignore":true,"p": [ -7.14, -52.94,0.0],  "rx": 0.8, "ry":0.8, "rs":0.4, "n": 2 },
+    { "name": "olive","ignore":true,"p": [  -7.14, -52.94,0.0],  "rx": 0.8, "ry":0.8, "rs":0.4, "n": 2 },
+    { "name": "grass","ignore":true,"p": [  -7.14, -52.94,0.0],   "rx": 0.8, "ry":0.8, "rs":0.4, "n": 8 },
+    { "name": "cyprus","ignore":true,"p": [-8.45, -53.54,0.0],  "rx": 0.8, "ry":0.8, "rs":0.4, "n": 2 },
+    { "name": "olive","ignore":true,"p": [ -8.45, -53.54,0.0],  "rx": 0.8, "ry":0.8, "rs":0.4, "n": 2 },
+    { "name": "grass","ignore":true,"p": [ -8.45, -53.54,0.0],   "rx": 0.8, "ry":0.8, "rs":0.4, "n": 8 },
+    { "name": "cyprus","ignore":true,"p": [-11.34, -54.71,0.0],  "rx": 0.8, "ry":0.8, "rs":0.4, "n": 2 },
+    { "name": "olive","ignore":true,"p": [ -11.34, -54.71,0.0],  "rx": 0.8, "ry":0.8, "rs":0.4, "n": 2 },
+    { "name": "grass","ignore":true,"p": [ -11.34, -54.71,0.0],   "rx": 0.8, "ry":0.8, "rs":0.4, "n": 8 },
+    { "name": "cyprus","ignore":true,"p": [-10.57, -53.39,0.0],  "rx": 0.8, "ry":0.8, "rs":0.4, "n": 1 },
+    { "name": "olive","ignore":true,"p": [ -10.57, -53.39,0.0],  "rx": 0.8, "ry":0.8, "rs":0.4, "n": 1 },
+    { "name": "grass","ignore":true,"p": [ -10.57, -53.39,0.0],   "rx": 0.8, "ry":0.8, "rs":0.4, "n": 8 },
+    { "name": "cyprus","ignore":true,"p": [-7.50, -55.26,0.0],  "rx": 1.0, "ry":1.0, "rs":0.4, "n": 2 },
+    { "name": "olive","ignore":true,"p": [ -7.50, -55.26,0.0],  "rx": 1.0, "ry":1.0, "rs":0.4, "n": 2 },
+    { "name": "grass","ignore":true,"p": [ -7.50, -55.26,0.0],   "rx": 1.0, "ry":1.0, "rs":0.4, "n": 8 },
+    { "name": "cyprus","ignore":true,"p": [-12.09, -55.56,0.0],  "rx": 0.8, "ry":0.8, "rs":0.4, "n": 2 },
+    { "name": "olive","ignore":true,"p": [ -12.09, -55.56,0.0],  "rx": 0.8, "ry":0.8, "rs":0.4, "n": 2 },
+    { "name": "grass","ignore":true,"p": [ -12.09, -55.56,0.0],   "rx": 0.8, "ry":0.8, "rs":0.4, "n": 8 },
+    { "name": "cyprus","ignore":true,"p": [-9.78, -54.89,0.0],  "rx": 0.8, "ry":0.8, "rs":0.4, "n": 2 },
+    { "name": "olive","ignore":true,"p": [ -9.78, -54.89,0.0],  "rx": 0.8, "ry":0.8, "rs":0.4, "n": 2 },
+    { "name": "grass","ignore":true,"p": [ -9.78, -54.89,0.0],   "rx": 0.8, "ry":0.8, "rs":0.4, "n": 8 },
+    { "name": "cyprus","ignore":true,"p": [-9, -56.01,0.0],  "rx": 0.8, "ry":1, "rs":0.4, "n": 2 },
+    { "name": "olive","ignore":true,"p": [-9, -56.01,0.0],  "rx": 0.8, "ry": 1, "rs":0.4, "n": 2 },
+    { "name": "grass","ignore":true,"p": [ -9, -56.01,0.0],   "rx": 0.8, "ry":1, "rs":0.4, "n": 8 },
+    { "name": "cyprus","ignore":true,"p": [-10.13, -56.57,0.0],  "rx": 1, "ry":1.5, "rs":0.4, "n": 2 },
+    { "name": "olive","ignore":true,"p": [-10.13, -56.57,0.0],  "rx": 1, "ry": 1.5, "rs":0.4, "n": 2 },
+    { "name": "grass","ignore":true,"p": [ -10.13, -56.57,0.0],   "rx": 1, "ry":1.5, "rs":0.4, "n": 8 },
+    { "name": "cyprus","ignore":true,"p": [-12.76, -56.70,0.0],  "rx": 1, "ry":1.5, "rs":0.4, "n": 2 },
+    { "name": "olive","ignore":true,"p": [-12.76, -56.70,0.0],  "rx": 1, "ry": 1.5, "rs":0.4, "n": 2 },
+    { "name": "grass","ignore":true,"p": [ -12.76, -56.70,0.0],   "rx": 1, "ry":1.5, "rs":0.4, "n": 8 },
+    { "name": "cyprus","ignore":true,"p": [-10.62, -57.97,0.0],  "rx": 1, "ry":1.5, "rs":0.4, "n": 2 },
+    { "name": "olive","ignore":true,"p": [-10.62, -57.97,0.0],  "rx": 1, "ry": 1.5, "rs":0.4, "n": 2 },
+    { "name": "grass","ignore":true,"p": [-10.62, -57.97,0.0],   "rx": 1, "ry":1.5, "rs":0.4, "n": 8 },
+
+    { "name": "olive","p": [  16, -30,0.0],  "rx": 15, "ry":15, "rs":0.4, "n": 5 },
+    { "name": "cyprus","ignore":true,"p": [ -32, 41.32,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 5 },
+    { "name": "cyprus","ignore":true, "p": [ -15, 41.32,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 5 },
+    { "name": "olive","ignore":true,"p": [ -32, 41.32,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 10 },
+    { "name": "olive","ignore":true,"p": [ -15, 41.32,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 10 },
+    { "name": "detailmap","ignore":true,"p": [  -14.67, 65.47,0.01],  "rx": 5, "ry":5,  "n": 60,"normalize2world": true},
+    { "name": "cyprus", "p": [ -24, 78,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 10 },
+    { "name": "cyprus","p": [ -22, 68,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 10 },
+    { "name": "cyprus", "p": [ -10, 78,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 10 },
+    { "name": "cyprus", "p": [ -8, 69,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 10 },
+    { "name": "olive","p": [ -24, 78,0.0],  "rx": 10, "ry":10,  "rs":0.4, "n": 20 },
+    { "name": "olive","p": [ -22, 68,0.0],  "rx": 10, "ry":10,  "rs":0.4, "n": 20 },
+    { "name": "olive","p": [ -10,78,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 20 },
+    { "name": "olive","p": [ -8,69,0.0],  "rx": 10, "ry":10, "rs":0.4, "n": 20 },
+    { "name": "rocksmall","p": [ -24, 78,0.0],  "rx": 10, "ry":10,  "rs":0.4,"rt":360, "n": 10 },
+    { "name": "rocksmall","p": [ -22, 68,0.0],  "rx": 10, "ry":10,  "rs":0.4,"rt":360, "n": 10 },
+    { "name": "rocksmall","p": [ -10, 78,0.0],  "rx": 10, "ry":10, "rs":0.4,"rt":360, "n": 10 },
+    { "name": "rocksmall","p": [ -8, 69,0.0],  "rx": 10, "ry":10, "rs":0.4,"rt":360, "n": 10 },
+    { "name": "grass", "ignore":true,"p": [-10.04, -44.08,0.0],   "rx": 1.5, "ry":1, "rs":0.4, "n": 5 },
+    { "name": "myrtle","ignore":true, "p": [-10.04, -44.08,0.0],   "rx": 1.5, "ry":1, "rs":0.4, "n": 5 },
+    { "name": "sage","ignore":true, "p": [-10.04, -44.08,0.0],   "rx": 1.5, "ry":1, "rs":0.4, "n": 5 }
 
   ]
-
-  }]
+  },
+    {"poolsize":5, "maxdistance":3, "label":"stationory actors","positions":[
+    ]},
+    {"poolsize":1, "maxdistance":6,"label":"walking actors", "positions":[
+    ]}
+  ]
 }
 }

@@ -1,0 +1,60 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10.0"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "angle_android_graphic_jni",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "angle_android_graphic_jni::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-angle_android_graphic_jni-Debug-ab81b8e3a511dc4f9214.json",
+					"name" : "angle_android_graphic_jni",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/skinh/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_angle-0.3.9/android/.cxx/Debug/u6hb2b25/arm64-v8a",
+		"source" : "C:/Users/skinh/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_angle-0.3.9/android/src/main/cpp"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}

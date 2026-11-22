@@ -1,5 +1,6 @@
 import 'package:openworld/updateable.dart';
-import 'package:openworld/three_dart/three_dart.dart' as THREE;
+import 'package:three_js/three_js.dart' as THREE;
+//import 'package:openworld/three_dart/three_dart.dart' as THREE;
 import 'package:openworld/openworld.dart' as OPENWORLD;
 
 class Flares {
@@ -8,9 +9,9 @@ class Flares {
 
     var textureLoader = new THREE.TextureLoader();
     var flareA =
-        await textureLoader.loadAsync(textureA);//"assets/models/ark/lensflare2.jpg");
+        await textureLoader.fromAsset(textureA);//"assets/models/ark/lensflare2.jpg");
     var flareB =
-        await textureLoader.loadAsync(textureB);//"assets/models/ark/lensflare0.png");
+        await textureLoader.fromAsset(textureB);//"assets/models/ark/lensflare0.png");
     var fct = 0.03;
     var sa = 2 * fct, sb = 5 * fct;
 
@@ -28,7 +29,7 @@ class Flares {
       },
       "ar": {
         'map': flareA,
-        'color': 0xff0000,
+        'color': 0xff0000,  //THREE.Color.fromHex32(0xff0000),
         'blending': THREE.AdditiveBlending
       },
       "br": {
@@ -154,14 +155,14 @@ class Flares {
       var y = item[1] * fct;
       var z = item[2] * fct;
 
-      var material = new THREE.SpriteMaterial(p);
+      var material = new THREE.SpriteMaterial.fromMap(p);
       var sprite = new THREE.Sprite(material);
 
       var spriteWidth = 128;
       var spriteHeight = 128;
 
-      sprite.scale.set(s * spriteWidth, s * spriteHeight, s);
-      sprite.position.set(x, y, z);
+      sprite.scale.setValues(s * spriteWidth, s * spriteHeight, s);
+      sprite.position.setValues(x, y, z);
 
       group.add(sprite);
 

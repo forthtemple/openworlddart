@@ -1,0 +1,52 @@
+[
+  {
+    "title": "Opening Blessing",
+    "mode": "leader_with_response",
+    "text": "Blessed are You, LORD our God, God of Israel, who has chosen His people and caused His name to dwell in this House. You formed the light and established the morning; You renew the work of creation each day. May our service be acceptable before You, and may we serve You with reverence, purity, and a whole heart. Blessed are You, LORD, who gives light to Israel and receives the service of His people."
+  },
+  {
+    "title": "Ten Commandments",
+    "mode": "unison",
+    "reference": "Exodus 20:2-14",
+    "text": "I am the LORD your God, who brought you out of the land of Egypt, out of the house of bondage. You shall have no other gods before Me. You shall not make for yourself a carved image, or any likeness of what is in heaven above, or on the earth beneath, or in the waters under the earth. You shall not bow down to them or serve them, for I, the LORD your God, am a jealous God, visiting the guilt of the fathers upon the children, upon the third and fourth generations of those who hate Me, but showing covenant faithfulness to thousands, to those who love Me and keep My commandments. You shall not take the name of the LORD your God in vain, for the LORD will not hold guiltless one who takes His name in vain. Remember the Sabbath day, to keep it holy. Six days you shall labor and do all your work, but the seventh day is a Sabbath to the LORD your God. You shall not do any work: you, your son, your daughter, your male servant, your female servant, your animal, or the stranger who is within your gates. For in six days the LORD made the heavens and the earth, the sea, and all that is in them, and He rested on the seventh day. Therefore the LORD blessed the Sabbath day and made it holy. Honor your father and your mother, so that your days may be long upon the land which the LORD your God gives you. You shall not murder. You shall not commit adultery. You shall not steal. You shall not bear false witness against your neighbor. You shall not covet your neighbor's house. You shall not covet your neighbor's wife, his male servant, his female servant, his ox, his donkey, or anything that belongs to your neighbor."
+  },
+  {
+    "title": "Shema",
+    "mode": "unison",
+    "reference": "Deuteronomy 6:4-9",
+    "text": "Hear, O Israel: the LORD is our God, the LORD is one. You shall love the LORD your God with all your heart, with all your soul, and with all your strength. These words which I command you today shall be upon your heart. You shall teach them diligently to your children, and speak of them when you sit in your house, when you walk on the way, when you lie down, and when you rise up. You shall bind them as a sign upon your hand, and they shall be as frontlets between your eyes. You shall write them on the doorposts of your house and on your gates."
+  },
+  {
+    "title": "And If You Listen",
+    "mode": "unison",
+    "reference": "Deuteronomy 11:13-21",
+    "text": "And it shall be, if you surely listen to My commandments which I command you today, to love the LORD your God and to serve Him with all your heart and with all your soul, then I will give the rain of your land in its season, the early rain and the late rain, and you shall gather in your grain, your wine, and your oil. I will give grass in your field for your animals, and you shall eat and be satisfied. Take care for yourselves, lest your heart be deceived, and you turn aside and serve other gods and bow down to them. Then the anger of the LORD will burn against you, and He will shut up the heavens so that there will be no rain, and the ground will not give its produce, and you will perish quickly from the good land which the LORD gives you. Therefore you shall place these words of Mine upon your heart and upon your soul. You shall bind them as a sign upon your hand, and they shall be as frontlets between your eyes. You shall teach them to your children, speaking of them when you sit in your house, when you walk on the way, when you lie down, and when you rise up. You shall write them on the doorposts of your house and on your gates, so that your days and the days of your children may be multiplied upon the land which the LORD swore to your fathers to give them, like the days of the heavens above the earth."
+  },
+  {
+    "title": "And the LORD Said",
+    "mode": "unison",
+    "reference": "Numbers 15:37-41",
+    "text": "And the LORD spoke to Moses, saying: Speak to the children of Israel and say to them that they shall make for themselves fringes on the corners of their garments throughout their generations, and they shall put upon the fringe of each corner a cord of blue. It shall be for you as a fringe, and you shall see it and remember all the commandments of the LORD and do them, and you shall not follow after your heart and after your eyes, after which you go astray. So you shall remember and do all My commandments, and you shall be holy to your God. I am the LORD your God, who brought you out of the land of Egypt to be your God. I am the LORD your God."
+  },
+  {
+    "title": "True and Firm",
+    "mode": "leader_with_response",
+    "text": "True and firm, established and enduring, right and faithful is this word concerning us forever: You are the LORD our God and there is no god besides You. You redeemed our fathers from Egypt and brought them from bondage to freedom. Blessed are You, LORD, redeemer of Israel."
+  },
+  {
+    "title": "Avodah / Temple Service Blessing",
+    "mode": "leader_with_response",
+    "text": "Be pleased, LORD our God, with Your people Israel and with their service. Accept the fire-offerings of Israel and their prayer with favor. May the service of Your people Israel always be acceptable before You. Blessed are You, LORD, whom alone we serve in reverence."
+  },
+  {
+    "title": "Priestly Blessing",
+    "mode": "unison",
+    "reference": "Numbers 6:24-26",
+    "text": "May the LORD bless you and keep you. May the LORD make His face shine upon you and be gracious to you. May the LORD lift up His face toward you and give you peace."
+  },
+  {
+    "title": "Sabbath Addition",
+    "mode": "leader_with_response",
+    "text": "May the One who caused His name to dwell in this House cause love, brotherhood, peace, and friendship to dwell among you."
+  }
+]

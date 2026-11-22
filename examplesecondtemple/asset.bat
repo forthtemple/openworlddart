@@ -1,0 +1,1 @@
+dart run openworld:pack_assets --in protected --out assets/packs/game.owp	

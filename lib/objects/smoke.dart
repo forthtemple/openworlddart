@@ -1,19 +1,24 @@
 import 'package:openworld/updateable.dart';
-import 'package:openworld/three_dart/three_dart.dart' as THREE;
+import 'package:three_js/three_js.dart' as THREE;
+
+//import 'package:openworld/three_dart/three_dart.dart' as THREE;
 import 'package:openworld/openworld.dart' as OPENWORLD;
 
 class Smoke extends Updateable
 {
+  static THREE.Group? particleorig;
+
   THREE.Group smokeGroup=THREE.Group();
 
-  createSmoke(path,{numparticles:20}) async
+  createSmoke(path,{numparticles=20}) async
   {
-    var particleorig=await OPENWORLD.Sprite.loadSprite(path,2000,2000,ambient:false);
+    if (Smoke.particleorig==null)  // So dont load the texture every time create a new smokegroup
+      Smoke.particleorig=await OPENWORLD.Sprite.loadSprite(path,2000,2000,ambient:false, transparent: true);
     smokeGroup=THREE.Group();
     for (var p = 0; p < numparticles; p++) {
       var particle =  OPENWORLD.Sprite.cloneSprite(particleorig);
       // new THREE.Mesh(smokeGeo,smokeMaterial);
-      particle.position.set(OPENWORLD.Math.random()*500-250, OPENWORLD.Math.random()*500-250,OPENWORLD.Math.random()*500-250);
+      particle.position.setValues(OPENWORLD.Math.random()*500-250, OPENWORLD.Math.random()*500-250,OPENWORLD.Math.random()*500-250);
       particle.rotation.z = OPENWORLD.Math.random() * 360;
       //   particle.rotation=THREE.Euler(2.0*(OPENWORLD.Math.random()-0.5),2.0*(OPENWORLD.Math.random()-0.5),2.0*(OPENWORLD.Math.random()-0.5));
       //  particle.up=THREE.Vector3(1.0*(OPENWORLD.Math.random()-0.5),1.0*(OPENWORLD.Math.random()-0.5),1.0*(OPENWORLD.Math.random()-0.5));
@@ -39,7 +44,7 @@ class Smoke extends Updateable
         //THREE.Vector3 rot=particle.rotation;
         //rot.mu
 
-        particle.position.add(particle.up.multiplyScalar(1.0));
+        particle.position.add(particle.up);//.multiplyScalar(1.0));
         // print("pos"+particle.position.x.toString()+" "+particle.position.y.toString()+" "+particle.position.z.toString());
 
 

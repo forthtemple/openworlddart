@@ -1,0 +1,84 @@
+group 'org.fluttergl.flutter_angle'
+version '1.0'
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.4.0'
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    // Conditional for compatibility with AGP <4.2.
+    if (project.android.hasProperty("namespace")) {
+        namespace 'org.fluttergl.flutter_angle'
+    }
+    
+    compileSdkVersion 35
+    ndkVersion = "28.2.13676358"
+
+    defaultConfig {
+        minSdkVersion 21
+        ndk {
+            abiFilters 'arm64-v8a'
+        }
+        
+         externalNativeBuild {
+             cmake {
+                 cppFlags '-std=c++14'
+                 arguments "-DANDROID_STL=c++_shared"
+                 version "3.31.4"
+             }
+         }
+    }
+
+    // buildTypes {
+    //     debug {
+    //         ndk {
+    //             abiFilters 'arm64-v8a'
+    //         }
+    //     }
+    //     release {
+    //         ndk {
+    //             abiFilters 'arm64-v8a'
+    //         }
+    //     }
+    // }
+
+    sourceSets {
+        debug {
+            jniLibs.srcDirs = ['src/release/jniLibs']
+        }
+        release {
+            jniLibs.srcDirs = ['src/release/jniLibs']
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    buildToolsVersion '35.0.1'
+
+     externalNativeBuild {
+         cmake {
+             path "src/main/cpp/CMakeLists.txt"
+             version "3.31.4"
+         }
+     }
+
+}

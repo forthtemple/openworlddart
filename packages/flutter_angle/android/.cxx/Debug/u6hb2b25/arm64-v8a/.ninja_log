@@ -1,0 +1,13 @@
+# ninja log v5
+0	145	8144146609172965	CMakeFiles/angle_android_graphic_jni.dir/angle_android_graphic_jni.cpp.o	782ac109454cf8af
+147	308	8144146610671766	C:/Users/skinh/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_angle-0.3.9/android/src/release/jniLibs/arm64-v8a/libangle_android_graphic_jni.so	f144893096861eda
+3	209	8144175926182876	C:/Users/skinh/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_angle-0.3.9/android/src/release/jniLibs/arm64-v8a/libangle_android_graphic_jni.so	f144893096861eda
+4	226	8145047270215288	C:/Users/skinh/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_angle-0.3.9/android/src/release/jniLibs/arm64-v8a/libangle_android_graphic_jni.so	f144893096861eda
+5	107	8145055008956320	C:/Users/skinh/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_angle-0.3.9/android/src/release/jniLibs/arm64-v8a/libangle_android_graphic_jni.so	f144893096861eda
+3	108	8145111053153967	C:/Users/skinh/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_angle-0.3.9/android/src/release/jniLibs/arm64-v8a/libangle_android_graphic_jni.so	f144893096861eda
+8	175	8151123141093048	C:/Users/skinh/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_angle-0.3.9/android/src/release/jniLibs/arm64-v8a/libangle_android_graphic_jni.so	f144893096861eda
+3	405	8153735657367141	C:/Users/skinh/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_angle-0.3.9/android/src/release/jniLibs/arm64-v8a/libangle_android_graphic_jni.so	f144893096861eda
+2	123	8153742594040211	C:/Users/skinh/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_angle-0.3.9/android/src/release/jniLibs/arm64-v8a/libangle_android_graphic_jni.so	f144893096861eda
+9	197	8153762595886233	C:/Users/skinh/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_angle-0.3.9/android/src/release/jniLibs/arm64-v8a/libangle_android_graphic_jni.so	f144893096861eda
+5	207	8153890793844088	C:/Users/skinh/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_angle-0.3.9/android/src/release/jniLibs/arm64-v8a/libangle_android_graphic_jni.so	f144893096861eda
+4	360	8168327420457569	C:/Users/skinh/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_angle-0.3.9/android/src/release/jniLibs/arm64-v8a/libangle_android_graphic_jni.so	f144893096861eda

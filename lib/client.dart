@@ -1,8 +1,11 @@
+//
 import 'dart:convert';
 
-import 'package:openworld/three_dart/three_dart.dart' as THREE;
+//import 'package:openworld/three_dart/three_dart.dart' as THREE;
+import 'package:three_js/three_js.dart' as THREE;
+
 import 'dart:math' as math;
-import 'package:openworld/three_dart_jsm/three_dart_jsm.dart' as THREE_JSM;
+//import 'package:openworld/three_dart_jsm/three_dart_jsm.dart' as THREE_JSM;
 import 'package:http/http.dart' as http;
 
 // Another player in the game

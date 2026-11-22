@@ -12,4 +12,5 @@ class MainFlutterWindow: NSWindow {
 
     super.awakeFromNib()
   }
+    override func keyDown(with event:NSEvent) {}  // this is claudes idea to stop click sound on a mac
 }

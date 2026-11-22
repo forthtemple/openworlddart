@@ -1,10 +1,10 @@
 # Project-level configuration.
 cmake_minimum_required(VERSION 3.14)
-project(rhodes3d LANGUAGES CXX)
+project(secondtemple LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
-set(BINARY_NAME "rhodes3d")
+set(BINARY_NAME "secondtemple")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.
@@ -86,6 +86,25 @@ if(PLUGIN_BUNDLED_LIBRARIES)
     DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
     COMPONENT Runtime)
 endif()
+
+# --- BEGIN custom fix: force the correct ANGLE build to win ---
+# Another plugin bundles its own (older/mismatched) libEGL.dll / libGLESv2.dll,
+# and the install(FILES "${PLUGIN_BUNDLED_LIBRARIES}" ...) step above can copy
+# that version over the fast one, depending on plugin ordering (with the wrong
+# ones the game runs at about half the frame rate). This install(CODE ...)
+# block runs after the block above (install() commands run in the order
+# written), so it overwrites whatever was just copied with the known-good
+# ANGLE build kept in windows/angle/. That folder is part of the project, so
+# `flutter clean` doesn't delete it and it's committed to git.
+set(GOOD_ANGLE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/angle")
+if(NOT EXISTS "${GOOD_ANGLE_DIR}/libEGL.dll" OR NOT EXISTS "${GOOD_ANGLE_DIR}/libGLESv2.dll")
+  message(FATAL_ERROR "Missing windows/angle/libEGL.dll or libGLESv2.dll (the fast ANGLE build). See windows/angle/README.txt")
+endif()
+install(CODE "
+  file(COPY \"${GOOD_ANGLE_DIR}/libEGL.dll\" DESTINATION \"${INSTALL_BUNDLE_LIB_DIR}\")
+  file(COPY \"${GOOD_ANGLE_DIR}/libGLESv2.dll\" DESTINATION \"${INSTALL_BUNDLE_LIB_DIR}\")
+  " COMPONENT Runtime)
+# --- END custom fix ---
 
 # Copy the native assets provided by the build.dart from all packages.
 set(NATIVE_ASSETS_DIR "${PROJECT_BUILD_DIR}native_assets/windows/")
